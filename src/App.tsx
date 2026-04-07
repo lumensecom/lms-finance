@@ -52,9 +52,9 @@ const SERVICES_DATA = [
   { id: "auditoria-forense", title: "Auditoría Forense", shortDesc: "Investigación financiera profunda para la prevención, detección y cuantificación de fraudes o irregularidades.", icon: Fingerprint, highlight: null, problem: "El fraude interno, la malversación de activos o el lavado de activos son riesgos latentes que destruyen silenciosamente el patrimonio y la reputación de una organización si no se detectan a tiempo y con la metodología adecuada.", solution: "Combinamos conocimientos contables, legales e investigativos para rastrear irregularidades. Recolectamos evidencia sólida que puede ser utilizada en instancias judiciales y diseñamos matrices de control para evitar futuros incidentes operativos.", benefits: ["Detección, investigación y cuantificación técnica de irregularidades.", "Obtención de pruebas válidas para sustentar procesos legales.", "Identificación de brechas para fortalecer el control interno."] },
   { id: "asesoria-legal", title: "Asesoría Legal Corporativa y Tributaria", shortDesc: "Blindaje legal integral en derecho comercial, laboral y tributario, acompañando la operación de tu empresa.", icon: Scale, highlight: null, problem: "La burocracia y la normativa son laberintos complejos. Un contrato mal redactado o una contingencia laboral no resuelta a tiempo puede paralizar la contratación de tu empresa, generar demandas o resultar en embargos inesperados.", solution: "Nuestro equipo jurídico y contable trabaja de la mano para brindarte un servicio integral. Nos encargamos de todo el soporte corporativo: desde asambleas de accionistas y contratos laborales hasta litigios tributarios y blindaje patrimonial.", benefits: ["Soporte legal integrado directamente a tu estrategia financiera.", "Mantenimiento impecable de libros corporativos.", "Reducción drástica de contingencias laborales y comerciales."] },
   { id: "auditoria-externa", title: "Auditoría Externa", shortDesc: "Examen independiente de sus cifras financieras para brindar confianza absoluta a terceros, bancos e inversores.", icon: Search, highlight: null, problem: "La falta de un dictamen verdaderamente independiente sobre los estados financieros genera desconfianza en el ecosistema corporativo, frenando oportunidades de apalancamiento financiero o potenciales alianzas estratégicas.", solution: "Realizamos una evaluación rigurosa y objetiva de la información financiera de su empresa. Emitimos una opinión profesional sobre la razonabilidad de las cifras, validando bajo estándares internacionales que reflejen fielmente la situación real.", benefits: ["Alta credibilidad ante instituciones financieras e inversores.", "Identificación objetiva de debilidades en los procesos de reporte.", "Transparencia total frente a los accionistas y juntas directivas."] },
-  { id: "facturacion-softlogy", title: "Facturación Electrónica con Softlogy", shortDesc: "Implementación, integración y soporte especializado en el ecosistema de facturación y nómina electrónica.", icon: Receipt, highlight: null, problem: "Implementar o migrar los sistemas de facturación electrónica suele generar rechazos por parte de la DIAN, interrupciones en el ciclo de ventas diario y graves dolores de cabeza tecnológicos para el personal administrativo.", solution: "Lideramos la parametrización técnica y normativa utilizando la robusta plataforma de Softlogy. Nos encargamos de las pruebas de habilitación ante la DIAN, capacitamos a su equipo y brindamos soporte para que su proceso comercial no se detenga.", benefits: ["Cumplimiento riguroso de los requisitos técnicos de la DIAN.", "Cero interrupciones operativas en el ciclo de ventas.", "Soporte técnico y normativo continuo por expertos."] },
+  { id: "facturacion-soflogy", title: "Facturación Electrónica con soflogy", shortDesc: "Implementación, integración y soporte especializado en el ecosistema de facturación y nómina electrónica.", icon: Receipt, highlight: null, problem: "Implementar o transicionar los sistemas de facturación electrónica suele generar rechazos por parte de la DIAN, interrupciones en el ciclo de ventas diario y graves dolores de cabeza tecnológicos para el personal administrativo.", solution: "Lideramos la parametrización técnica y normativa utilizando la robusta plataforma de soflogy. Nos encargamos de las pruebas de habilitación ante la DIAN, capacitamos a su equipo y brindamos soporte para que su proceso comercial no se detenga.", benefits: ["Cumplimiento riguroso de los requisitos técnicos de la DIAN.", "Cero interrupciones operativas en el ciclo de ventas.", "Soporte técnico y normativo continuo por expertos."] },
   { id: "control-interno", title: "Asesoría desarrollo de control interno", shortDesc: "Diseño e implementación de políticas y manuales corporativos para mitigar riesgos operativos y financieros.", icon: Settings, highlight: null, problem: "El crecimiento acelerado de las empresas sin una estructura formal de control genera ineficiencias operativas, sobrecostos y un alto riesgo de errores materiales no detectados en la información financiera diaria.", solution: "Evaluamos los procesos críticos de su empresa mediante matrices de riesgo avanzado. Diseñamos e implementamos manuales, políticas y controles preventivos a la medida que protegen la operatividad y aseguran la eficiencia del negocio.", benefits: ["Mitigación sistemática de riesgos de fraude y errores.", "Estandarización y agilidad operativa en los procesos internos.", "Protección efectiva y documentada de los activos de la compañía."] },
-  { id: "matricula-mercantil", title: "Renovación de Matrícula Mercantil", shortDesc: "Gestión ágil y oportuna de todas sus obligaciones y renovaciones registrales ante la Cámara de Comercio.", icon: FileSignature, highlight: null, problem: "El incumplimiento o la extemporaneidad en la renovación de la matrícula mercantil no solo acarrea multas directas, sino que puede paralizar por completo procesos de contratación pública, desembolsos bancarios o alianzas.", solution: "Asumimos el control del calendario registral de su organización. Realizamos el análisis financiero para la liquidación correcta, el diligenciamiento de formularios y la radicación de la renovación de manera 100% oportuna.", benefits: ["Continuidad operativa empresarial sin bloqueos registrales.", "Supresión total de multas por extemporaneidad.", "Liberación de tiempo administrativo para sus directivos."] },
+  { id: "matricula-mercantil", title: "Renovación de matricula Mercantil", shortDesc: "Gestión ágil y oportuna de todas sus obligaciones y renovaciones registrales ante la Cámara de Comercio.", icon: FileSignature, highlight: null, problem: "El incumplimiento o la extemporaneidad en la renovación de la matrícula mercantil no solo acarrea multas directas, sino que puede paralizar por completo procesos de contratación pública, desembolsos bancarios o alianzas.", solution: "Asumimos el control del calendario registral de su organización. Realizamos el análisis financiero para la liquidación correcta, el diligenciamiento de formularios y la radicación de la renovación de manera 100% oportuna.", benefits: ["Continuidad operativa empresarial sin bloqueos registrales.", "Supresión total de multas por extemporaneidad.", "Liberación de tiempo administrativo para sus directivos."] },
   { id: "registro-turismo", title: "Renovación Registro Nacional de Turismo", shortDesc: "Trámite especializado y mantenimiento legal para empresas operadoras e involucradas en el sector turismo (RNT).", icon: Plane, highlight: null, problem: "Operar sin el Registro Nacional de Turismo (RNT) vigente expone a los hoteles, agencias y operadores a la clausura inmediata de sus establecimientos y a multas millonarias por parte de la Superintendencia de Industria y Comercio.", solution: "Nos encargamos del proceso integral de actualización, la correcta liquidación de contribuciones (parafiscales de Fontur) y la renovación del RNT, garantizando que su operación comercial no sufra traumatismos ni cierres preventivos.", benefits: ["Operación turística 100% legal, avalada y blindada.", "Eliminación de riesgos de investigación y sanción de la SIC.", "Asesoría en el pago exacto y justo de contribuciones parafiscales."] },
   { id: "constitucion-empresas", title: "Constitución de empresas", shortDesc: "Asesoría legal, tributaria y corporativa desde el día cero para crear y estructurar formalmente su sociedad.", icon: Building, highlight: null, problem: "Elegir el tipo societario incorrecto o redactar estatutos genéricos descargados de internet puede limitar el ingreso de futuros inversionistas, generar cargas fiscales perjudiciales o detonar conflictos graves entre socios.", solution: "Estructuramos su empresa estratégicamente. Lo asesoramos en la elección de la figura legal óptima (SAS, SA, etc.), redactamos estatutos a la medida y ejecutamos todos los trámites ante la Cámara de Comercio, la DIAN y el sector bancario.", benefits: ["Estructura legal y tributaria optimizada desde la fundación.", "Estatutos diseñados específicamente para proteger a los socios.", "Trámite 'llave en mano', entregando una empresa lista para facturar."] }
 ];
@@ -317,7 +317,7 @@ const MagneticButton = ({ href, children, className = "", size = "lg" }) => {
 
   const handleLeave = useCallback(() => { x.set(0); y.set(0); }, [x, y]);
 
-  const pad = size === "lg" ? "py-4 sm:h-20 px-6 sm:px-16 text-base sm:text-xl md:text-2xl w-full sm:w-auto" : "px-6 sm:px-12 py-4 sm:py-5 text-base sm:text-lg";
+  const pad = size === "lg" ? "h-16 sm:h-20 px-8 sm:px-16 text-lg sm:text-xl md:text-2xl" : "px-8 sm:px-12 py-4 sm:py-5 text-base sm:text-lg";
 
   return (
     <motion.a
@@ -376,7 +376,7 @@ const Header = ({ activePage, setActivePage }) => {
         className="w-full bg-slate-900 text-white flex justify-center items-center text-[10px] sm:text-xs font-bold tracking-wide h-8 sm:h-10 overflow-hidden"
       >
         <span className="bg-emerald-500 text-slate-900 px-2 py-0.5 rounded-sm mr-2 font-black uppercase text-[8px] sm:text-[10px] tracking-widest">Gratis</span>
-        <span className="hidden sm:inline">Agenda un diagnóstico con nuestros expertos y descubre cómo optimizar tu empresa</span><span className="sm:hidden">Diagnóstico gratuito con expertos</span>
+        <span>Agenda un diagnóstico con nuestros expertos y descubre cómo optimizar tu empresa</span>
         <ArrowRight className="w-3 h-3 ml-1.5 text-emerald-400" />
       </motion.div>
 
@@ -429,28 +429,33 @@ const Header = ({ activePage, setActivePage }) => {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.22, ease: EASE }}
-            className="md:hidden absolute top-full left-0 w-full bg-white/96 backdrop-blur-3xl border-b border-slate-200 shadow-2xl"
+            initial={{ opacity: 0, y: -8, scaleY: 0.97 }}
+            animate={{ opacity: 1, y: 0, scaleY: 1 }}
+            exit={{ opacity: 0, y: -8, scaleY: 0.97 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            style={{ transformOrigin: 'top', backgroundColor: '#ffffff', zIndex: 999 }}
+            className="md:hidden absolute top-full left-0 w-full border-b-2 border-emerald-100 shadow-xl"
           >
-            <div className="p-4 flex flex-col gap-1.5">
+            <div className="px-4 pt-3 pb-5 flex flex-col gap-1">
               {navLinks.map((link) => {
                 const isActive = activePage === link.id ||
                   (activePage.startsWith('servicio_') && link.id === 'servicios') ||
                   (activePage.startsWith('blog_') && link.id === 'blog');
                 return (
                   <button key={link.id} onClick={() => { setActivePage(link.id); setMobileOpen(false); }}
-                    className={`text-left font-bold py-4 px-4 rounded-xl transition-colors ${isActive ? 'bg-emerald-50 text-emerald-700' : 'text-slate-700 hover:bg-slate-50'}`}>
+                    className={`text-left font-bold py-4 px-4 rounded-xl transition-colors flex items-center gap-3 ${isActive ? 'bg-emerald-50 text-emerald-700' : 'text-slate-800'}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isActive ? 'bg-emerald-500' : 'bg-slate-300'}`} />
                     {link.label}
                   </button>
                 );
               })}
+              <div className="h-px bg-slate-100 my-2 mx-1" />
               <a href={WA_LINKS.DIAGNOSTICO} target="_blank" rel="noreferrer"
-                className="bg-emerald-500 text-white py-4 mt-3 rounded-xl text-center font-bold shadow-md shadow-emerald-500/20 active:scale-95 transition-transform">
+                onClick={() => setMobileOpen(false)}
+                className="bg-emerald-500 text-white py-4 rounded-xl text-center font-bold shadow-lg shadow-emerald-500/25 active:scale-[0.98] transition-transform">
                 Contáctanos por WhatsApp
               </a>
+              <p className="text-center text-xs text-slate-400 mt-1 pb-1">Sin compromiso · Respuesta en menos de 2 horas</p>
             </div>
           </motion.div>
         )}
@@ -508,7 +513,7 @@ const HomeView = ({ setActivePage }) => {
             </motion.h1>
 
             <motion.p
-              className="text-base sm:text-xl md:text-2xl text-slate-700 mb-8 md:mb-10 font-medium max-w-3xl leading-relaxed px-4 sm:px-2"
+              className="text-base sm:text-xl md:text-2xl text-slate-700 mb-8 md:mb-10 font-medium max-w-3xl leading-snug px-2"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: EASE, delay: 0.12 }}
@@ -765,7 +770,7 @@ const MetodologiaView = () => {
 const ServicesView = ({ setActivePage }) => (
   <div className="pt-24 bg-slate-50 min-h-screen">
     <Section>
-      <div className="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-[85rem] mx-auto px-4 sm:px-6 relative z-10">
         <motion.div className="text-center mb-10 sm:mb-16" variants={fadeUp} initial="initial" whileInView="animate" viewport={{ once: true }}>
           <Badge color="dark" icon={Briefcase}>Catálogo de Soluciones</Badge>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 font-serif mb-4 sm:mb-6 leading-tight">
@@ -777,7 +782,7 @@ const ServicesView = ({ setActivePage }) => (
         </motion.div>
 
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 mx-auto"
+          className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 mx-auto"
           variants={staggerContainer} initial="initial" whileInView="animate" viewport={{ once: true, margin: "-40px" }}
         >
           {SERVICES_DATA.map((srv) => {
@@ -995,7 +1000,7 @@ const AboutView = () => (
             <motion.div key={i} variants={staggerItem}
               whileHover={{ y: -6 }} transition={{ duration: 0.3, ease: EASE }}
               className="bg-slate-50 p-4 rounded-3xl shadow-sm hover:shadow-md transition-shadow group border border-slate-200">
-              <div className="aspect-[4/5] rounded-2xl overflow-hidden mb-4 sm:mb-5 relative">
+              <div className="aspect-[4/5] rounded-2xl overflow-hidden mb-4 sm:mb-6 relative">
                 <img src={member.img} alt={member.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
                 <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent flex items-end justify-center pb-4 sm:pb-6">
                   <motion.a href={member.url} target="_blank" rel="noreferrer"
@@ -1051,7 +1056,7 @@ const BlogView = ({ setActivePage }) => {
                 ))}
               </div>
             </div>
-            <div className="lg:w-1/2 p-6 sm:p-8 lg:p-12 flex flex-col justify-center relative bg-white z-20">
+            <div className="lg:w-1/2 p-6 sm:p-8 sm:p-12 flex flex-col justify-center relative bg-white z-20">
               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-full blur-[80px] pointer-events-none" />
               <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6 relative z-10">
                 <span className="text-slate-400 text-[9px] sm:text-xs font-bold uppercase tracking-widest">{featured.date}</span>
@@ -1088,7 +1093,7 @@ const BlogView = ({ setActivePage }) => {
             <SpotlightCard key={post.id} highlightColor={post.color}
               onClick={() => setActivePage(`blog_${post.id}`)}
               className="bg-white rounded-3xl border-slate-200 flex flex-col h-full shadow-sm overflow-hidden group cursor-pointer">
-              <div className="h-44 sm:h-52 overflow-hidden relative shrink-0">
+              <div className="h-48 sm:h-56 sm:h-64 overflow-hidden relative shrink-0">
                 <div className="absolute inset-0 bg-slate-900/20 z-10 group-hover:bg-transparent transition-colors duration-500" />
                 <img src={post.img} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute top-4 left-4 z-20">
@@ -1151,7 +1156,7 @@ const ArticleDetailView = ({ activePage, setActivePage }) => {
           </div>
         </motion.div>
 
-        <motion.div className="w-full aspect-video rounded-2xl sm:rounded-3xl overflow-hidden mb-8 sm:mb-12 shadow-xl border border-slate-200"
+        <motion.div className="w-full aspect-video sm:aspect-[21/9] rounded-2xl sm:rounded-3xl overflow-hidden mb-8 sm:mb-12 shadow-xl border border-slate-200"
           initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, ease: EASE, delay: 0.15 }}>
           <img src={article.img} alt={article.title} className="w-full h-full object-cover" />
         </motion.div>
@@ -1205,7 +1210,7 @@ CATÁLOGO DE 17 SERVICIOS LMS (5 RAMAS):
 2. Auditoría & Control: Revisoría Fiscal (Blindaje Supersociedades), Auditoría Externa, Auditoría Forense (Detección de fraude), Desarrollo de Control Interno.
 3. Finanzas & Impuestos: Recuperación de Saldos a Favor DIAN (Honorarios 4% solo a éxito), Declaraciones Tributarias, Valoración de Empresas, EEFF, Informes gerenciales.
 4. Legal & Trámites: Asesoría Legal Corporativa, Constitución de Empresas, Matrícula Mercantil, Registro Nacional de Turismo (RNT).
-5. Tecnología: Implementación de ERP, Facturación Electrónica Softlogy.
+5. Tecnología: Implementación de ERP, Facturación Electrónica Soflogy.
 
 DIRECTRICES:
 - Tono: Profesional, seguro, empático y resolutivo. Usas lenguaje gerencial.
@@ -1471,7 +1476,7 @@ const WhatsAppFAB = () => {
 const Footer = ({ setActivePage }) => (
   <footer className="bg-slate-900 text-white pt-16 sm:pt-20 pb-8 sm:pb-10 mt-auto">
     <Container>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mb-12 sm:mb-16">
+      <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12 mb-12 sm:mb-16">
         <div className="col-span-1 sm:col-span-2">
           <BrandLogo onClick={() => setActivePage('inicio')} isDark />
           <p className="text-slate-400 max-w-sm text-sm leading-relaxed mt-6">
@@ -1498,8 +1503,8 @@ const Footer = ({ setActivePage }) => (
         <div>
           <h4 className="font-bold mb-4 sm:mb-6 text-lg font-serif">Contacto Directo</h4>
           <ul className="space-y-3 sm:space-y-4 text-sm text-slate-400 font-medium">
-            <li className="flex items-center gap-3"><Phone className="w-4 h-4 text-emerald-500 shrink-0" /> +57 320 857 5355</li>
-            <li className="flex items-center gap-3"><Phone className="w-4 h-4 text-emerald-500 shrink-0" /> +57 312 592 3915</li>
+            <li className="flex items-center gap-3"><Phone className="w-4 h-4 text-emerald-500 shrink-0" /> +57 322 702 4011</li>
+            <li className="flex items-center gap-3"><Phone className="w-4 h-4 text-emerald-500 shrink-0" /> +57 316 752 1053</li>
             <li className="flex items-center gap-3 break-all"><Mail className="w-4 h-4 text-emerald-500 shrink-0" /> contacto@lms-accounting.com</li>
             <li className="flex items-center gap-3"><MapPin className="w-4 h-4 text-emerald-500 shrink-0" /> Bogotá, Colombia</li>
           </ul>
