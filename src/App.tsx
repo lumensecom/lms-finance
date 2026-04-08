@@ -640,40 +640,50 @@ export default function App() {
           </div>
         </section>
 
-        {/* FAQ - Reforzado */}
+        {/* FAQ - Reforzado y con diseño Premium Side-by-Side */}
         <section className="py-24 bg-slate-50">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="reveal-target text-center mb-16">
-              <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">Soporte y Seguridad</h2>
-              <h3 className="text-4xl md:text-5xl font-serif text-slate-900 mb-4">Preguntas <span className="italic text-[#1A6B4A]">Frecuentes</span></h3>
-              <p className="text-slate-600 font-light mt-4">Resolvemos las dudas más comunes sobre la validación de terceros.</p>
-            </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid lg:grid-cols-12 gap-12 items-start">
+              
+              {/* Columna Izquierda: Títulos y Contacto */}
+              <div className="lg:col-span-5 reveal-target sticky top-32">
+                <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">Soporte y Seguridad</h2>
+                <h3 className="text-4xl md:text-5xl font-serif text-slate-900 mb-6 leading-tight">Preguntas <br/> <span className="italic text-[#1A6B4A]">Frecuentes</span></h3>
+                <p className="text-slate-600 font-light mb-8 text-lg leading-relaxed">Resolvemos las dudas más comunes sobre la validación de terceros. ¿No encuentras lo que buscas? Agenda una llamada de diagnóstico y analizamos tu caso en vivo.</p>
+                <button onClick={scrollToCalendly} className="flex items-center gap-2 text-[#1A6B4A] font-bold hover:text-[#0B3D2E] transition-colors border-b-2 border-transparent hover:border-[#0B3D2E] pb-1">
+                  <MessageSquare size={18} />
+                  Hablar con un experto en vivo
+                </button>
+              </div>
 
-            <div className="reveal-target space-y-4">
-              {faqs.map((faq, index) => (
-                <div 
-                  key={index} 
-                  className="bg-white border border-slate-200 rounded-2xl overflow-hidden transition-all duration-300 hover:border-emerald-200"
-                >
-                  <button 
-                    onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                    className="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none"
-                  >
-                    <span className="font-bold text-slate-900">{faq.q}</span>
-                    <ChevronDown 
-                      className={`text-slate-400 transition-transform duration-300 ${openFaq === index ? 'rotate-180' : ''}`} 
-                      size={20} 
-                    />
-                  </button>
+              {/* Columna Derecha: Acordeones Minimalistas */}
+              <div className="lg:col-span-7 space-y-4 reveal-target reveal-delay-100">
+                {faqs.map((faq, index) => (
                   <div 
-                    className={`px-6 text-slate-600 transition-all duration-300 ease-in-out ${
-                      openFaq === index ? 'pb-5 max-h-40 opacity-100' : 'max-h-0 opacity-0 pb-0'
-                    }`}
+                    key={index} 
+                    className={`bg-white rounded-2xl overflow-hidden transition-all duration-300 border ${openFaq === index ? 'border-emerald-300 shadow-lg shadow-emerald-500/5' : 'border-slate-200 hover:border-emerald-200'}`}
                   >
-                    {faq.a}
+                    <button 
+                      onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                      className="w-full px-6 md:px-8 py-6 text-left flex justify-between items-center focus:outline-none"
+                    >
+                      <span className={`font-bold text-lg transition-colors ${openFaq === index ? 'text-[#1A6B4A]' : 'text-slate-900'}`}>{faq.q}</span>
+                      <ChevronDown 
+                        className={`text-slate-400 transition-transform duration-300 shrink-0 ml-4 ${openFaq === index ? 'rotate-180 text-[#1A6B4A]' : ''}`} 
+                        size={20} 
+                      />
+                    </button>
+                    <div 
+                      className={`px-6 md:px-8 text-slate-600 transition-all duration-300 ease-in-out font-light leading-relaxed ${
+                        openFaq === index ? 'pb-6 max-h-40 opacity-100' : 'max-h-0 opacity-0 pb-0'
+                      }`}
+                    >
+                      {faq.a}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+
             </div>
           </div>
         </section>
@@ -694,101 +704,105 @@ export default function App() {
             </div>
 
             <div className="grid lg:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
-              {/* Slider Controller */}
-              <div className="reveal-target bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-sm shadow-xl">
-                <label className="block text-white font-medium mb-8 text-lg text-center lg:text-left">
-                  ¿Cuántos terceros necesitas procesar?
-                </label>
-                
-                <div className="relative mb-12">
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="4" 
-                    step="1" 
-                    value={pricingIndex}
-                    onChange={(e) => setPricingIndex(parseInt(e.target.value))}
-                    className="w-full h-3 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-[#10b981] relative z-10"
-                  />
-                  <div className="flex justify-between text-emerald-200/50 text-xs font-mono font-bold mt-4 px-1">
-                    <span className={`transition-colors ${pricingIndex === 0 ? "text-emerald-400 scale-110" : ""}`}>100</span>
-                    <span className={`transition-colors ${pricingIndex === 1 ? "text-emerald-400 scale-110" : ""}`}>250</span>
-                    <span className={`transition-colors ${pricingIndex === 2 ? "text-emerald-400 scale-110" : ""}`}>750</span>
-                    <span className={`transition-colors ${pricingIndex === 3 ? "text-emerald-400 scale-110" : ""}`}>1.25k</span>
-                    <span className={`transition-colors ${pricingIndex === 4 ? "text-emerald-400 scale-110" : ""}`}>Gigantes</span>
+              {/* Slider Controller envuelto estáticamente para prevenir bugs de animación */}
+              <div className="reveal-target">
+                <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-sm shadow-xl">
+                  <label className="block text-white font-medium mb-8 text-lg text-center lg:text-left">
+                    ¿Cuántos terceros necesitas procesar?
+                  </label>
+                  
+                  <div className="relative mb-12">
+                    <input 
+                      type="range" 
+                      min="0" 
+                      max="4" 
+                      step="1" 
+                      value={pricingIndex}
+                      onChange={(e) => setPricingIndex(parseInt(e.target.value))}
+                      className="w-full h-3 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-[#10b981] relative z-10"
+                    />
+                    <div className="flex justify-between text-emerald-200/50 text-xs font-mono font-bold mt-4 px-1">
+                      <span className={`transition-colors ${pricingIndex === 0 ? "text-emerald-400 scale-110" : ""}`}>100</span>
+                      <span className={`transition-colors ${pricingIndex === 1 ? "text-emerald-400 scale-110" : ""}`}>250</span>
+                      <span className={`transition-colors ${pricingIndex === 2 ? "text-emerald-400 scale-110" : ""}`}>750</span>
+                      <span className={`transition-colors ${pricingIndex === 3 ? "text-emerald-400 scale-110" : ""}`}>1.25k</span>
+                      <span className={`transition-colors ${pricingIndex === 4 ? "text-emerald-400 scale-110" : ""}`}>Gigantes</span>
+                    </div>
                   </div>
-                </div>
 
-                <div className="space-y-4 border-t border-white/10 pt-8 mt-8">
-                  <div className="flex items-center gap-3 text-emerald-100/80 text-sm font-light">
-                    <CheckCircle2 size={18} className="text-[#10b981]" />
-                    <span>Todas las llamadas son por Meet/Zoom.</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-emerald-100/80 text-sm font-light">
-                    <CheckCircle2 size={18} className="text-[#10b981]" />
-                    <span>Evaluamos tu formato actual en vivo.</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-emerald-100/80 text-sm font-light">
-                    <CheckCircle2 size={18} className="text-[#10b981]" />
-                    <span>Sin contratos amarrados ni costos ocultos.</span>
+                  <div className="space-y-4 border-t border-white/10 pt-8 mt-8">
+                    <div className="flex items-center gap-3 text-emerald-100/80 text-sm font-light">
+                      <CheckCircle2 size={18} className="text-[#10b981]" />
+                      <span>Todas las llamadas son por Meet/Zoom.</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-emerald-100/80 text-sm font-light">
+                      <CheckCircle2 size={18} className="text-[#10b981]" />
+                      <span>Evaluamos tu formato actual en vivo.</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-emerald-100/80 text-sm font-light">
+                      <CheckCircle2 size={18} className="text-[#10b981]" />
+                      <span>Sin contratos amarrados ni costos ocultos.</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Dynamic Pricing Card (Con borde Premium si aplica) */}
-              <div className={`reveal-target reveal-delay-100 bg-white rounded-[2rem] p-8 md:p-10 shadow-2xl relative transform transition-all duration-500 hover:-translate-y-2 ${isPremiumPlan ? 'border-4 border-amber-300 shadow-amber-500/20' : 'border border-slate-100'}`}>
-                {pricingIndex === 2 && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-400 to-teal-500 text-slate-900 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider shadow-md">
-                    Plan Más Popular
+              {/* Dynamic Pricing Card envuelto estáticamente para prevenir bugs de animación */}
+              <div className="reveal-target reveal-delay-100">
+                <div className={`bg-white rounded-[2rem] p-8 md:p-10 shadow-2xl relative transform transition-all duration-500 hover:-translate-y-2 ${isPremiumPlan ? 'border-4 border-amber-300 shadow-amber-500/20' : 'border border-slate-100'}`}>
+                  {pricingIndex === 2 && (
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-400 to-teal-500 text-slate-900 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider shadow-md">
+                      Plan Más Popular
+                    </div>
+                  )}
+                  {isPremiumPlan && (
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-300 to-yellow-500 text-slate-900 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider shadow-md flex items-center gap-1">
+                      <Sparkles size={12} /> Exclusivo
+                    </div>
+                  )}
+                  
+                  <h4 className="text-2xl font-bold text-slate-400 mb-2">{currentPlan.name}</h4>
+                  <div className="flex items-baseline gap-2 mb-6 border-b border-slate-100 pb-8">
+                    <span className={`font-extrabold text-slate-900 tracking-tight transition-all duration-300 ${currentPlan.name === 'Enterprise' ? 'text-4xl' : 'text-5xl'}`}>
+                      {currentPlan.price}
+                    </span>
+                    {currentPlan.name !== "Enterprise" && <span className="text-slate-500 font-medium">/ pago único</span>}
                   </div>
-                )}
-                {isPremiumPlan && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-300 to-yellow-500 text-slate-900 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider shadow-md flex items-center gap-1">
-                    <Sparkles size={12} /> Exclusivo
-                  </div>
-                )}
-                
-                <h4 className="text-2xl font-bold text-slate-400 mb-2">{currentPlan.name}</h4>
-                <div className="flex items-baseline gap-2 mb-6 border-b border-slate-100 pb-8">
-                  <span className={`font-extrabold text-slate-900 tracking-tight transition-all duration-300 ${currentPlan.name === 'Enterprise' ? 'text-4xl' : 'text-5xl'}`}>
-                    {currentPlan.price}
-                  </span>
-                  {currentPlan.name !== "Enterprise" && <span className="text-slate-500 font-medium">/ pago único</span>}
+                  
+                  <ul className="space-y-5 mb-10">
+                    <li className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
+                        <Users size={18} className="text-emerald-600" />
+                      </div>
+                      <span className="text-slate-700 text-lg">
+                        {currentPlan.name === "Enterprise" ? (
+                          <><strong>{currentPlan.nits}</strong></>
+                        ) : (
+                          <>Hasta <strong>{currentPlan.nits} NITs</strong> <span className="text-sm text-slate-500">{currentPlan.type}</span></>
+                        )}
+                      </span>
+                    </li>
+                    <li className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
+                        <ShieldCheck size={18} className="text-emerald-600" />
+                      </div>
+                      <span className="text-slate-700 text-lg">
+                        Precisión del <strong>{currentPlan.accuracy}</strong>
+                      </span>
+                    </li>
+                    <li className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
+                        <Bot size={18} className="text-emerald-600" />
+                      </div>
+                      <span className="text-slate-700 text-lg leading-tight">{currentPlan.feature}</span>
+                    </li>
+                  </ul>
+                  
+                  <button onClick={scrollToCalendly} className={`w-full text-white px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-3 group ${isPremiumPlan ? 'bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 shadow-amber-500/30' : 'bg-[#0B3D2E] hover:bg-[#1A6B4A] shadow-[0_10px_30px_-10px_rgba(11,61,46,0.5)]'}`}>
+                    <Calendar size={20} className="group-hover:scale-110 transition-transform" />
+                    Agendar para {currentPlan.name}
+                  </button>
                 </div>
-                
-                <ul className="space-y-5 mb-10">
-                  <li className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
-                      <Users size={18} className="text-emerald-600" />
-                    </div>
-                    <span className="text-slate-700 text-lg">
-                      {currentPlan.name === "Enterprise" ? (
-                        <><strong>{currentPlan.nits}</strong></>
-                      ) : (
-                        <>Hasta <strong>{currentPlan.nits} NITs</strong> <span className="text-sm text-slate-500">{currentPlan.type}</span></>
-                      )}
-                    </span>
-                  </li>
-                  <li className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
-                      <ShieldCheck size={18} className="text-emerald-600" />
-                    </div>
-                    <span className="text-slate-700 text-lg">
-                      Precisión del <strong>{currentPlan.accuracy}</strong>
-                    </span>
-                  </li>
-                  <li className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
-                      <Bot size={18} className="text-emerald-600" />
-                    </div>
-                    <span className="text-slate-700 text-lg leading-tight">{currentPlan.feature}</span>
-                  </li>
-                </ul>
-                
-                <button onClick={scrollToCalendly} className={`w-full text-white px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-3 group ${isPremiumPlan ? 'bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 shadow-amber-500/30' : 'bg-[#0B3D2E] hover:bg-[#1A6B4A] shadow-[0_10px_30px_-10px_rgba(11,61,46,0.5)]'}`}>
-                  <Calendar size={20} className="group-hover:scale-110 transition-transform" />
-                  Agendar para {currentPlan.name}
-                </button>
               </div>
             </div>
 
