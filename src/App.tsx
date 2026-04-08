@@ -22,7 +22,8 @@ import {
   MessageSquare,
   ChevronDown,
   Calendar,
-  Play
+  Play,
+  Sparkles
 } from 'lucide-react';
 
 /* =========================================
@@ -55,20 +56,27 @@ const BrandLogo = ({ onClick, isDark = false }) => (
 export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
+  const [isNearBottom, setIsNearBottom] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
   const [pricingIndex, setPricingIndex] = useState(2); // Inicia en plan Pro
 
   // Calculator State
   const [nits, setNits] = useState(500);
-  const [salary, setSalary] = useState(2500000);
+  const fixedSalary = 2500000; // Salario fijado como solicitaste
 
-  // Handle scroll for navbar
+  // Handle scroll for navbar and floating CTA
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-      // Detectar cuando el usuario hace scroll más allá de la pantalla inicial
-      setIsScrolledPastHero(window.scrollY > window.innerHeight * 0.7);
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      
+      setIsScrolled(scrollY > 20);
+      setIsScrolledPastHero(scrollY > windowHeight * 0.7);
+      
+      // Detectar si está cerca del final (oculta CTA para no pisar Calendly)
+      setIsNearBottom(scrollY + windowHeight >= documentHeight - 800); 
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -106,8 +114,8 @@ export default function App() {
     }
   };
 
-  // Calculator Logic
-  const manualCost = Math.round(salary * 0.75); // 3 weeks = 3/4 of monthly salary
+  // Calculator Logic con Salario Fijo
+  const manualCost = Math.round(fixedSalary * 0.75); // 3 semanas
   
   let lmsCost = 1500000;
   if (nits <= 1000) lmsCost = 249000;
@@ -133,6 +141,14 @@ export default function App() {
       a: "Absolutamente. Utilizamos cifrado de nivel bancario (AES-256). Una vez procesado, los datos se eliminan automáticamente de nuestros servidores por cumplimiento de la ley de protección de datos (Ley 1581)."
     },
     {
+      q: "¿Cómo calculan el ahorro mostrado?",
+      a: "Basamos el cálculo en el salario base de un auxiliar contable estándar en Colombia ($2.500.000 COP) y el tiempo promedio de 3 semanas que se gasta validando, corrigiendo y buscando NITs uno a uno manualmente."
+    },
+    {
+      q: "¿Qué información extraen de la base de datos de la DIAN?",
+      a: "Validamos que el RUT exista y esté activo, corregimos nombres/razones sociales exactas, y separamos nombres de apellidos para personas naturales (requisito vital para Exógena)."
+    },
+    {
       q: "¿Cómo funciona el diagnóstico gratuito?",
       a: "Agendamos una breve llamada por Meet/Zoom. Analizamos el estado de tus bases de datos, te explicamos la normativa aplicable a tu sector y te mostramos en vivo cómo nuestra tecnología limpia tu información."
     }
@@ -147,6 +163,7 @@ export default function App() {
   ];
 
   const currentPlan = pricingTiers[pricingIndex];
+  const isPremiumPlan = pricingIndex >= 3; // Premium y Enterprise
 
   return (
     <>
@@ -208,7 +225,7 @@ export default function App() {
         `}
       </style>
 
-      <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-[#10b981] selection:text-white">
+      <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-[#10b981] selection:text-white relative">
         
         {/* Navigation - Diseño Dock Flotante */}
         <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'py-3' : 'py-5'}`}>
@@ -228,7 +245,7 @@ export default function App() {
                   { name: 'El Problema', href: '#problema' },
                   { name: 'Cómo Funciona', href: '#como-funciona' },
                   { name: 'Características', href: '#caracteristicas' },
-                  { name: 'Calculadora', href: '#calculadora' }
+                  { name: 'Ahorro', href: '#calculadora' }
                 ].map((item) => (
                   <a
                     key={item.name}
@@ -490,12 +507,12 @@ export default function App() {
           </div>
         </section>
 
-        {/* Savings Calculator */}
+        {/* Savings Calculator (Optimizado a Mostrar Ahorro con Salario Fijo) */}
         <section id="calculadora" className="py-24 bg-slate-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="reveal-target text-center max-w-3xl mx-auto mb-12">
               <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">Análisis de Retorno</h2>
-              <h3 className="text-4xl md:text-5xl font-serif text-slate-900 mb-4">Calculadora de <span className="italic text-[#1A6B4A]">Costos Ocultos</span></h3>
+              <h3 className="text-4xl md:text-5xl font-serif text-slate-900 mb-4">Calculadora de <span className="italic text-[#1A6B4A]">Ganancia</span></h3>
             </div>
 
             <div className="reveal-target bg-[#0B3D2E] rounded-3xl overflow-hidden shadow-2xl">
@@ -507,15 +524,15 @@ export default function App() {
                     <div className="p-2 bg-emerald-500/20 rounded-lg text-emerald-400">
                       <Calculator size={24} />
                     </div>
-                    <h2 className="text-2xl font-bold text-white">Calcula tu ahorro</h2>
+                    <h2 className="text-2xl font-bold text-white">¿Cuánto tiempo ahorras?</h2>
                   </div>
-                  <p className="text-slate-300 mb-8">Descubre cuánto dinero pierde tu firma validando NITs manualmente.</p>
+                  <p className="text-slate-300 mb-8 font-light">Calculado sobre el salario promedio de un auxiliar contable y las horas operativas que pierde validando terceros.</p>
 
                   <div className="space-y-8">
                     {/* Input 1: NITS */}
                     <div>
                       <div className="flex justify-between mb-2">
-                        <label className="text-sm font-medium text-slate-300">Cantidad de NITs a validar</label>
+                        <label className="text-sm font-medium text-slate-300">Cantidad de NITs en tu base</label>
                         <span className="text-emerald-400 font-bold">{nits.toLocaleString('es-CO')}</span>
                       </div>
                       <input 
@@ -529,47 +546,38 @@ export default function App() {
                       />
                     </div>
 
-                    {/* Input 2: Salary */}
-                    <div>
-                      <div className="flex justify-between mb-2">
-                        <label className="text-sm font-medium text-slate-300">Salario Auxiliar Contable (COP)</label>
-                        <span className="text-emerald-400 font-bold">{formatCurrency(salary)}</span>
+                    <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4 mt-6">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-sm font-medium text-slate-400">Salario Promedio Aux. (Fijo)</span>
+                        <span className="text-slate-300 font-mono text-sm">{formatCurrency(fixedSalary)}</span>
                       </div>
-                      <input 
-                        type="number" 
-                        min="1300000" 
-                        step="100000" 
-                        value={salary}
-                        onChange={(e) => setSalary(Number(e.target.value))}
-                        className="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all font-mono"
-                      />
-                      <p className="text-xs text-slate-400 mt-2">* Estimación basada en 3 semanas de labor manual operativa.</p>
+                      <p className="text-xs text-slate-500 italic mt-2">* Basado en 3 semanas de labor manual en temporada de Exógena.</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Right Side: Results */}
-                <div className="bg-[#1A6B4A] p-8 lg:p-12 flex flex-col justify-center">
-                  <div className="space-y-6">
-                    
-                    <div className="bg-white/10 rounded-2xl p-6 border border-white/10 backdrop-blur-sm">
-                      <div className="text-sm text-slate-200 mb-1">Costo Manual (Estimado)</div>
+                <div className="bg-gradient-to-br from-[#1A6B4A] to-[#0d4a32] p-8 lg:p-12 flex flex-col justify-center relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400 rounded-full mix-blend-overlay filter blur-3xl opacity-20"></div>
+                  
+                  <div className="space-y-6 relative z-10">
+                    <div className="bg-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-sm">
+                      <div className="text-sm text-emerald-100 mb-1">Costo Hundido Operativo</div>
                       <div className="text-2xl font-bold text-white line-through opacity-75">{formatCurrency(manualCost)}</div>
                     </div>
 
-                    <div className="bg-white/10 rounded-2xl p-6 border border-white/10 backdrop-blur-sm">
-                      <div className="text-sm text-slate-200 mb-1">Costo con Inteligencia Artificial</div>
-                      <div className="text-3xl font-bold text-emerald-300">{formatCurrency(lmsCost)}</div>
-                    </div>
-
-                    <div className="bg-white rounded-2xl p-6 shadow-xl transform scale-105 relative overflow-hidden">
-                      <div className="absolute -right-6 -top-6 text-emerald-100 opacity-50">
+                    {/* Resaltamos la GANANCIA en lugar de comparar precios directamente */}
+                    <div className="bg-white rounded-2xl p-6 shadow-xl transform scale-105 relative border border-emerald-100">
+                      <div className="absolute -right-6 -top-6 text-emerald-50 opacity-50">
                         <BarChart3 size={100} />
                       </div>
+                      <div className="absolute top-4 right-4 animate-pulse">
+                        <Sparkles size={24} className="text-amber-400" />
+                      </div>
                       <div className="relative z-10">
-                        <div className="text-sm font-bold text-[#1A6B4A] uppercase tracking-wider mb-2">Tu Ahorro Neto</div>
+                        <div className="text-sm font-bold text-emerald-600 uppercase tracking-wider mb-2">Lo que ahorras con IA</div>
                         <div className="text-4xl lg:text-5xl font-extrabold text-[#0B3D2E] mb-2">{formatCurrency(savings)}</div>
-                        <div className="text-sm text-slate-600 font-medium">Cero multas y cero estrés.</div>
+                        <div className="text-sm text-slate-600 font-medium">Libera a tu equipo para trabajo estratégico.</div>
                       </div>
                     </div>
 
@@ -632,19 +640,20 @@ export default function App() {
           </div>
         </section>
 
-        {/* FAQ */}
+        {/* FAQ - Reforzado */}
         <section className="py-24 bg-slate-50">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="reveal-target text-center mb-16">
-              <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">Soporte</h2>
+              <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">Soporte y Seguridad</h2>
               <h3 className="text-4xl md:text-5xl font-serif text-slate-900 mb-4">Preguntas <span className="italic text-[#1A6B4A]">Frecuentes</span></h3>
+              <p className="text-slate-600 font-light mt-4">Resolvemos las dudas más comunes sobre la validación de terceros.</p>
             </div>
 
             <div className="reveal-target space-y-4">
               {faqs.map((faq, index) => (
                 <div 
                   key={index} 
-                  className="bg-white border border-slate-200 rounded-2xl overflow-hidden transition-all duration-300"
+                  className="bg-white border border-slate-200 rounded-2xl overflow-hidden transition-all duration-300 hover:border-emerald-200"
                 >
                   <button 
                     onClick={() => setOpenFaq(openFaq === index ? null : index)}
@@ -726,11 +735,16 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Dynamic Pricing Card */}
-              <div className="reveal-target reveal-delay-100 bg-white rounded-[2rem] p-8 md:p-10 shadow-2xl relative transform transition-all duration-500 hover:-translate-y-2 border border-slate-100">
+              {/* Dynamic Pricing Card (Con borde Premium si aplica) */}
+              <div className={`reveal-target reveal-delay-100 bg-white rounded-[2rem] p-8 md:p-10 shadow-2xl relative transform transition-all duration-500 hover:-translate-y-2 ${isPremiumPlan ? 'border-4 border-amber-300 shadow-amber-500/20' : 'border border-slate-100'}`}>
                 {pricingIndex === 2 && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-400 to-teal-500 text-slate-900 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider shadow-md">
                     Plan Más Popular
+                  </div>
+                )}
+                {isPremiumPlan && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-300 to-yellow-500 text-slate-900 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider shadow-md flex items-center gap-1">
+                    <Sparkles size={12} /> Exclusivo
                   </div>
                 )}
                 
@@ -771,7 +785,7 @@ export default function App() {
                   </li>
                 </ul>
                 
-                <button onClick={scrollToCalendly} className="w-full bg-[#0B3D2E] hover:bg-[#1A6B4A] text-white px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-[0_10px_30px_-10px_rgba(11,61,46,0.5)] flex items-center justify-center gap-3 group">
+                <button onClick={scrollToCalendly} className={`w-full text-white px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-3 group ${isPremiumPlan ? 'bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 shadow-amber-500/30' : 'bg-[#0B3D2E] hover:bg-[#1A6B4A] shadow-[0_10px_30px_-10px_rgba(11,61,46,0.5)]'}`}>
                   <Calendar size={20} className="group-hover:scale-110 transition-transform" />
                   Agendar para {currentPlan.name}
                 </button>
@@ -814,7 +828,7 @@ export default function App() {
                 <ul className="space-y-2 text-sm">
                   <li><a href="#como-funciona" className="hover:text-emerald-400 transition-colors">Cómo Funciona</a></li>
                   <li><a href="#caracteristicas" className="hover:text-emerald-400 transition-colors">Características</a></li>
-                  <li><a href="#calculadora" className="hover:text-emerald-400 transition-colors">Calculadora</a></li>
+                  <li><a href="#calculadora" className="hover:text-emerald-400 transition-colors">Ahorro</a></li>
                 </ul>
               </div>
 
@@ -837,8 +851,8 @@ export default function App() {
           </div>
         </footer>
 
-        {/* CTA Flotante Sutil (Aparece al hacer scroll hacia abajo) */}
-        <div className={`fixed bottom-6 lg:bottom-10 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolledPastHero ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-24 opacity-0 scale-90 pointer-events-none'}`}>
+        {/* CTA Flotante Sutil (Desaparece al llegar al fondo) */}
+        <div className={`fixed bottom-6 lg:bottom-10 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolledPastHero && !isNearBottom ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-24 opacity-0 scale-90 pointer-events-none'}`}>
           <button onClick={scrollToCalendly} className="bg-[#0B3D2E] text-white px-5 sm:px-6 py-3.5 rounded-full font-bold text-sm sm:text-base shadow-[0_15px_40px_-10px_rgba(11,61,46,0.8)] border border-[#1A6B4A]/50 flex items-center gap-3 hover:bg-[#1A6B4A] hover:scale-105 transition-all duration-300 group">
             {/* Indicador Pulse animado */}
             <span className="relative flex h-3 w-3">
