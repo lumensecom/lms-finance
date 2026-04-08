@@ -23,7 +23,8 @@ import {
   ChevronDown,
   Calendar,
   Play,
-  Sparkles
+  Sparkles,
+  Star
 } from 'lucide-react';
 
 /* =========================================
@@ -59,11 +60,12 @@ export default function App() {
   const [isNearBottom, setIsNearBottom] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
-  const [pricingIndex, setPricingIndex] = useState(2); // Inicia en plan Pro
+  const [openPricingFaq, setOpenPricingFaq] = useState(false); 
+  const [pricingIndex, setPricingIndex] = useState(2);
 
   // Calculator State
-  const [nits, setNits] = useState(500);
-  const fixedSalary = 2500000; // Salario fijado como solicitaste
+  const [nits, setNits] = useState(750);
+  const fixedSalary = 2500000; // Salario fijado
 
   // Handle scroll for navbar and floating CTA
   useEffect(() => {
@@ -88,13 +90,12 @@ export default function App() {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('reveal-visible');
-          // Dejamos de observar una vez que ya apareció para evitar parpadeos
           observer.unobserve(entry.target);
         }
       });
     }, { 
       threshold: 0.1, 
-      rootMargin: "0px 0px -10% 0px" // Dispara la animación un poco antes de llegar al borde inferior
+      rootMargin: "0px 0px -10% 0px" 
     });
 
     document.querySelectorAll('.reveal-target').forEach((el) => {
@@ -114,14 +115,27 @@ export default function App() {
     }
   };
 
-  // Calculator Logic con Salario Fijo
-  const manualCost = Math.round(fixedSalary * 0.75); // 3 semanas
+  // ==========================================
+  // CALCULATOR LOGIC (Lógica Corregida y Escalable)
+  // ==========================================
+  // Supuesto: Validar 1 NIT a mano toma ~10 minutos (búsqueda RUES, DIAN, copiar, pegar, depurar).
+  // 10 minutos = 1/6 de hora.
+  const hoursSaved = Math.round((nits * 10) / 60); 
+  // Valor hora de auxiliar = Salario Base / 160 horas al mes
+  const hourlyRate = Math.round(fixedSalary / 160); 
+  const manualCost = hoursSaved * hourlyRate; // Lo que cuesta hacerlo a mano
   
-  let lmsCost = 1500000;
-  if (nits <= 1000) lmsCost = 249000;
-  else if (nits <= 5000) lmsCost = 699000;
-
-  const savings = Math.max(0, manualCost - lmsCost);
+  // Costo Inteligencia Artificial
+  let lmsCost = 0;
+  if (nits <= 100) lmsCost = 149900;
+  else if (nits <= 250) lmsCost = 299900;
+  else if (nits <= 750) lmsCost = 649900;
+  else if (nits <= 1000) lmsCost = 999900;
+  else lmsCost = -1; // Flag for blurred/custom plan
+  
+  // Ahorro Total = Costo Manual - Costo LMS
+  const savings = lmsCost !== -1 ? Math.max(0, manualCost - lmsCost) : 0;
+  const isCustomVolume = nits > 1000;
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('es-CO', { 
@@ -142,7 +156,7 @@ export default function App() {
     },
     {
       q: "¿Cómo calculan el ahorro mostrado?",
-      a: "Basamos el cálculo en el salario base de un auxiliar contable estándar en Colombia ($2.500.000 COP) y el tiempo promedio de 3 semanas que se gasta validando, corrigiendo y buscando NITs uno a uno manualmente."
+      a: "Basamos el cálculo en el salario base de un auxiliar contable en Colombia ($2.500.000 COP) y las horas que se gastan revisando manualmente el RUES y la DIAN (aprox. 10 mins por NIT con correcciones)."
     },
     {
       q: "¿Qué información extraen de la base de datos de la DIAN?",
@@ -163,11 +177,10 @@ export default function App() {
   ];
 
   const currentPlan = pricingTiers[pricingIndex];
-  const isPremiumPlan = pricingIndex >= 3; // Premium y Enterprise
+  const isPremiumPlan = pricingIndex >= 3; 
 
   return (
     <>
-      {/* Importación de Google Fonts para la tipografía dinámica y Animaciones */}
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700;800&display=swap');
@@ -194,7 +207,6 @@ export default function App() {
           .animate-float1 { animation: float1 15s ease-in-out infinite; }
           .animate-float2 { animation: float2 20s ease-in-out infinite; }
 
-          /* Premium Scroll Reveal Styles */
           .reveal-target {
             opacity: 0;
             transform: translateY(50px) scale(0.96);
@@ -209,7 +221,6 @@ export default function App() {
           .reveal-delay-200 { transition-delay: 200ms; }
           .reveal-delay-300 { transition-delay: 300ms; }
           
-          /* Animaciones específicas de carga inicial (Hero) */
           @keyframes premiumFadeUp {
             from { opacity: 0; transform: translateY(50px) scale(0.96); }
             to { opacity: 1; transform: translateY(0) scale(1); }
@@ -301,18 +312,25 @@ export default function App() {
           
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10">
             <div className="max-w-4xl mx-auto text-center">
-              <div className="animate-premium-up inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-emerald-300 font-medium text-sm mb-8 border border-white/10 shadow-lg backdrop-blur-md">
-                <ShieldCheck size={16} />
-                <span>Información Exógena Perfecta</span>
+              
+              {/* Stars Social Proof */}
+              <div className="animate-premium-up inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 shadow-lg backdrop-blur-md mb-8 hover:bg-white/10 transition-colors cursor-default">
+                <div className="flex gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={14} className="text-yellow-400 fill-yellow-400" />
+                  ))}
+                </div>
+                <span className="text-sm text-emerald-50 font-medium">+ de 20 empresas confían en nosotros</span>
               </div>
               
-              {/* Tipografía mixta: Sans Serif + Instrument Serif en itálica */}
+              {/* Titulo Original Restablecido */}
               <h1 className="animate-premium-up anim-delay-100 text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] mb-6 tracking-tight">
                 Valida miles de <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-200">NITs sin errores</span> en segundos.
               </h1>
               
+              {/* Subtítulo con tipografías mixtas para resaltar */}
               <p className="animate-premium-up anim-delay-200 text-lg sm:text-xl text-slate-300 mb-10 leading-relaxed max-w-2xl mx-auto font-light">
-                Cruza tu Excel con las bases oficiales de la DIAN. Obtén nombres exactos, corrige dígitos de verificación y elimina sanciones por inconsistencias de terceros.
+                Cruza tu Excel con el <span className="font-serif italic text-emerald-300 text-2xl mx-1">RUES</span> y las bases oficiales de la <span className="font-serif italic text-emerald-300 text-2xl mx-1">DIAN</span>. Obtén nombres exactos, corrige dígitos de verificación y prevén <span className="text-white font-medium border-b border-emerald-400/50 pb-0.5">sanciones operativas</span>.
               </p>
               
               <div className="animate-premium-up anim-delay-300 flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
@@ -342,7 +360,6 @@ export default function App() {
             <p className="text-center text-sm font-bold text-slate-400 uppercase tracking-widest mb-8">Empresas e integraciones que confían en nosotros</p>
             <div className="relative flex overflow-x-hidden group">
               <div className="animate-marquee whitespace-nowrap flex items-center gap-16 py-2 group-hover:[animation-play-state:paused]">
-                {/* Repetición para el efecto marquee infinito */}
                 {[...Array(3)].map((_, i) => (
                   <React.Fragment key={i}>
                     <div className="flex items-center gap-2 text-slate-400 grayscale hover:grayscale-0 hover:text-[#1A6B4A] transition-all cursor-pointer">
@@ -375,7 +392,6 @@ export default function App() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="reveal-target text-center max-w-3xl mx-auto mb-16">
               <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">El Problema Oculto</h2>
-              {/* Uso de Instrument Serif aquí */}
               <h3 className="text-4xl md:text-5xl text-slate-900 mb-6 font-serif font-normal leading-tight">
                 ¿Sabías que un dígito mal en el <span className="italic text-[#1A6B4A]">RUT</span> puede costarte millones?
               </h3>
@@ -422,7 +438,6 @@ export default function App() {
             </div>
 
             <div className="grid md:grid-cols-3 gap-8 lg:gap-12 relative">
-              {/* Connector Line */}
               <div className="hidden md:block absolute top-24 left-[15%] right-[15%] h-0.5 bg-slate-200 -z-10"></div>
               
               {[
@@ -479,8 +494,8 @@ export default function App() {
                   <Users size={28} />
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold text-slate-900 mb-2">Personas Naturales</h4>
-                  <p className="text-slate-600">La IA se encarga de separar correctamente los nombres y apellidos en las casillas correspondientes, tal cual lo exige el formato de la DIAN.</p>
+                  <h4 className="text-xl font-bold text-slate-900 mb-2">Personas Naturales (Comerciantes)</h4>
+                  <p className="text-slate-600">Validamos <strong>exclusivamente</strong> personas naturales que cuenten con matrícula mercantil activa en el RUES. Separamos nombres y apellidos automáticamente según exigencias de la DIAN.</p>
                 </div>
               </div>
 
@@ -507,7 +522,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* Savings Calculator (Optimizado a Mostrar Ahorro con Salario Fijo) */}
+        {/* Savings Calculator Visual e Interactivo */}
         <section id="calculadora" className="py-24 bg-slate-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="reveal-target text-center max-w-3xl mx-auto mb-12">
@@ -519,26 +534,40 @@ export default function App() {
               <div className="grid lg:grid-cols-2">
                 
                 {/* Left Side: Inputs */}
-                <div className="p-8 lg:p-12">
+                <div className="p-8 lg:p-12 relative flex flex-col justify-center">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="p-2 bg-emerald-500/20 rounded-lg text-emerald-400">
                       <Calculator size={24} />
                     </div>
                     <h2 className="text-2xl font-bold text-white">¿Cuánto tiempo ahorras?</h2>
                   </div>
-                  <p className="text-slate-300 mb-8 font-light">Calculado sobre el salario promedio de un auxiliar contable y las horas operativas que pierde validando terceros.</p>
+                  <p className="text-slate-300 mb-6 font-light">Mueve el slider para ver las horas operativas y el dinero real que dejas de perder validando terceros manualmente.</p>
 
-                  <div className="space-y-8">
-                    {/* Input 1: NITS */}
+                  <div className="space-y-6">
+                    {/* Insignias Visuales de Tiempo y Pérdida */}
+                    <div className="flex flex-wrap gap-3 mb-2">
+                      <span className="bg-red-500/10 border border-red-500/20 text-red-400 text-xs md:text-sm font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-all shadow-[0_0_15px_rgba(239,68,68,0.15)]">
+                        <AlertOctagon size={14} /> Estás perdiendo {formatCurrency(manualCost)}
+                      </span>
+                      <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs md:text-sm font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-all">
+                        <Clock size={14} /> +{hoursSaved}h ahorradas
+                      </span>
+                      {!isCustomVolume && (
+                        <span className="bg-teal-500/10 border border-teal-500/20 text-teal-300 text-xs md:text-sm font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-all">
+                          <TrendingDown size={14} /> +{formatCurrency(savings)} a favor
+                        </span>
+                      )}
+                    </div>
+
                     <div>
                       <div className="flex justify-between mb-2">
-                        <label className="text-sm font-medium text-slate-300">Cantidad de NITs en tu base</label>
-                        <span className="text-emerald-400 font-bold">{nits.toLocaleString('es-CO')}</span>
+                        <label className="text-sm font-medium text-slate-300">Cantidad de NITs a depurar</label>
+                        <span className="text-emerald-400 font-bold">{nits >= 5000 ? '+5.000' : nits.toLocaleString('es-CO')} NITs</span>
                       </div>
                       <input 
                         type="range" 
                         min="100" 
-                        max="10000" 
+                        max="5000" 
                         step="100" 
                         value={nits}
                         onChange={(e) => setNits(Number(e.target.value))}
@@ -546,12 +575,12 @@ export default function App() {
                       />
                     </div>
 
-                    <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4 mt-6">
+                    <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4 mt-4">
                       <div className="flex justify-between items-center mb-1">
                         <span className="text-sm font-medium text-slate-400">Salario Promedio Aux. (Fijo)</span>
                         <span className="text-slate-300 font-mono text-sm">{formatCurrency(fixedSalary)}</span>
                       </div>
-                      <p className="text-xs text-slate-500 italic mt-2">* Basado en 3 semanas de labor manual en temporada de Exógena.</p>
+                      <p className="text-[11px] text-slate-500 italic mt-2">* Basado en 10 minutos de trabajo promedio manual por NIT entre búsquedas RUES/DIAN y corrección en Excel.</p>
                     </div>
                   </div>
                 </div>
@@ -561,13 +590,22 @@ export default function App() {
                   <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400 rounded-full mix-blend-overlay filter blur-3xl opacity-20"></div>
                   
                   <div className="space-y-6 relative z-10">
-                    <div className="bg-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-sm">
-                      <div className="text-sm text-emerald-100 mb-1">Costo Hundido Operativo</div>
-                      <div className="text-2xl font-bold text-white line-through opacity-75">{formatCurrency(manualCost)}</div>
+                    <div className="bg-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-sm relative overflow-hidden">
+                      <div className="flex items-center gap-2 mb-1 relative z-10">
+                        <div className="text-sm text-emerald-100">Costo de nuestra Inteligencia Artificial</div>
+                      </div>
+                      <div className={`text-2xl font-bold text-white transition-all duration-500 relative z-10 ${isCustomVolume ? 'blur-md opacity-30' : ''}`}>
+                        {isCustomVolume ? '$1.500.000' : formatCurrency(lmsCost)}
+                      </div>
+                      {isCustomVolume && (
+                         <div className="absolute inset-0 flex items-center justify-center z-20">
+                           <span className="bg-slate-900/80 text-white text-sm font-bold px-4 py-2 rounded-full border border-white/10 backdrop-blur-md shadow-lg">Cotización a la medida</span>
+                         </div>
+                      )}
                     </div>
 
-                    {/* Resaltamos la GANANCIA en lugar de comparar precios directamente */}
-                    <div className="bg-white rounded-2xl p-6 shadow-xl transform scale-105 relative border border-emerald-100">
+                    {/* Resaltamos la GANANCIA  */}
+                    <div className="bg-white rounded-2xl p-6 shadow-xl transform scale-105 relative border border-emerald-100 overflow-hidden">
                       <div className="absolute -right-6 -top-6 text-emerald-50 opacity-50">
                         <BarChart3 size={100} />
                       </div>
@@ -575,9 +613,18 @@ export default function App() {
                         <Sparkles size={24} className="text-amber-400" />
                       </div>
                       <div className="relative z-10">
-                        <div className="text-sm font-bold text-emerald-600 uppercase tracking-wider mb-2">Lo que ahorras con IA</div>
-                        <div className="text-4xl lg:text-5xl font-extrabold text-[#0B3D2E] mb-2">{formatCurrency(savings)}</div>
-                        <div className="text-sm text-slate-600 font-medium">Libera a tu equipo para trabajo estratégico.</div>
+                        <div className="text-sm font-bold text-emerald-600 uppercase tracking-wider mb-2 flex items-center gap-2">
+                          <TrendingDown size={16} /> Lo que ahorras con IA
+                        </div>
+                        <div className={`text-4xl lg:text-5xl font-extrabold text-[#0B3D2E] mb-2 transition-all duration-500 relative z-10 ${isCustomVolume ? 'blur-md opacity-20' : ''}`}>
+                          {isCustomVolume ? '$10.000.000' : formatCurrency(savings)}
+                        </div>
+                        {isCustomVolume && (
+                          <div className="absolute top-10 left-0 w-full flex justify-start z-20">
+                            <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-lg font-black px-4 py-2 rounded-r-lg shadow-lg">Volumen Premium</span>
+                          </div>
+                        )}
+                        <div className="text-sm text-slate-600 font-medium mt-2">+{hoursSaved} horas libres para trabajo estratégico.</div>
                       </div>
                     </div>
 
@@ -640,12 +687,11 @@ export default function App() {
           </div>
         </section>
 
-        {/* FAQ - Reforzado y con diseño Premium Side-by-Side */}
+        {/* FAQ */}
         <section className="py-24 bg-slate-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-12 gap-12 items-start">
               
-              {/* Columna Izquierda: Títulos y Contacto */}
               <div className="lg:col-span-5 reveal-target sticky top-32">
                 <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">Soporte y Seguridad</h2>
                 <h3 className="text-4xl md:text-5xl font-serif text-slate-900 mb-6 leading-tight">Preguntas <br/> <span className="italic text-[#1A6B4A]">Frecuentes</span></h3>
@@ -656,7 +702,6 @@ export default function App() {
                 </button>
               </div>
 
-              {/* Columna Derecha: Acordeones Minimalistas */}
               <div className="lg:col-span-7 space-y-4 reveal-target reveal-delay-100">
                 {faqs.map((faq, index) => (
                   <div 
@@ -703,8 +748,7 @@ export default function App() {
               </p>
             </div>
 
-            <div className="grid lg:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
-              {/* Slider Controller envuelto estáticamente para prevenir bugs de animación */}
+            <div className="grid lg:grid-cols-2 gap-12 items-start max-w-5xl mx-auto">
               <div className="reveal-target">
                 <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-sm shadow-xl">
                   <label className="block text-white font-medium mb-8 text-lg text-center lg:text-left">
@@ -747,7 +791,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Dynamic Pricing Card envuelto estáticamente para prevenir bugs de animación */}
               <div className="reveal-target reveal-delay-100">
                 <div className={`bg-white rounded-[2rem] p-8 md:p-10 shadow-2xl relative transform transition-all duration-500 hover:-translate-y-2 ${isPremiumPlan ? 'border-4 border-amber-300 shadow-amber-500/20' : 'border border-slate-100'}`}>
                   {pricingIndex === 2 && (
@@ -769,7 +812,7 @@ export default function App() {
                     {currentPlan.name !== "Enterprise" && <span className="text-slate-500 font-medium">/ pago único</span>}
                   </div>
                   
-                  <ul className="space-y-5 mb-10">
+                  <ul className="space-y-5 mb-8">
                     <li className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
                         <Users size={18} className="text-emerald-600" />
@@ -797,8 +840,25 @@ export default function App() {
                       <span className="text-slate-700 text-lg leading-tight">{currentPlan.feature}</span>
                     </li>
                   </ul>
+
+                  <div className="mt-8 border-t border-slate-100 pt-6 mb-8">
+                    <button 
+                      onClick={() => setOpenPricingFaq(!openPricingFaq)}
+                      className="w-full flex justify-between items-center text-slate-600 font-medium text-sm hover:text-[#1A6B4A] transition-colors focus:outline-none"
+                    >
+                      <span>Ver detalles técnicos de la validación</span>
+                      <ChevronDown size={16} className={`transition-transform duration-300 ${openPricingFaq ? 'rotate-180 text-[#1A6B4A]' : ''}`} />
+                    </button>
+                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${openPricingFaq ? 'max-h-40 opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
+                      <ul className="space-y-3 text-sm text-slate-500 font-light">
+                        <li className="flex gap-2 items-start"><CheckCircle2 size={14} className="text-emerald-400 shrink-0 mt-0.5"/> Validación de Dígito de Verificación (DV)</li>
+                        <li className="flex gap-2 items-start"><CheckCircle2 size={14} className="text-emerald-400 shrink-0 mt-0.5"/> Separación exacta de nombres y apellidos</li>
+                        <li className="flex gap-2 items-start"><CheckCircle2 size={14} className="text-emerald-400 shrink-0 mt-0.5"/> Detección de RUT inactivos o cancelados</li>
+                      </ul>
+                    </div>
+                  </div>
                   
-                  <button onClick={scrollToCalendly} className={`w-full text-white px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-3 group ${isPremiumPlan ? 'bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 shadow-amber-500/30' : 'bg-[#0B3D2E] hover:bg-[#1A6B4A] shadow-[0_10px_30px_-10px_rgba(11,61,46,0.5)]'}`}>
+                  <button onClick={scrollToCalendly} className={`w-full text-white px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-3 group hover:-translate-y-1 ${isPremiumPlan ? 'bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 shadow-amber-500/30' : 'bg-[#0B3D2E] hover:bg-[#1A6B4A] shadow-[0_10px_30px_-10px_rgba(11,61,46,0.5)]'}`}>
                     <Calendar size={20} className="group-hover:scale-110 transition-transform" />
                     Agendar para {currentPlan.name}
                   </button>
