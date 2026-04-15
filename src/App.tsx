@@ -24,7 +24,9 @@ import {
   Calendar,
   Play,
   Sparkles,
-  Star
+  Star,
+  ArrowRight,
+  Database
 } from 'lucide-react';
 
 /* =========================================
@@ -61,10 +63,10 @@ export default function App() {
   const [isNearBottom, setIsNearBottom] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
-  const [openPricingFaq, setOpenPricingFaq] = useState(false); 
+  const [openPricingFaq, setOpenPricingFaq] = useState(false);
   const [pricingIndex, setPricingIndex] = useState(2);
 
-  // Calculator State
+  // Calculator State (ROI)
   const [nits, setNits] = useState(750);
   const fixedSalary = 2500000;
 
@@ -114,15 +116,12 @@ export default function App() {
   };
 
   // ==========================================
-  // CALCULATOR LOGIC
+  // CALCULATOR LOGIC (Calculadora de Ahorro)
   // ==========================================
-  // Supuesto: Validar 1 NIT a mano toma ~10 minutos. 10 minutos = 1/6 de hora.
   const hoursSaved = Math.round((nits * 10) / 60); 
-  // Valor hora de auxiliar = Salario Base / 160 horas al mes
   const hourlyRate = Math.round(fixedSalary / 160); 
   const manualCost = hoursSaved * hourlyRate; 
   
-  // Costo Inteligencia Artificial
   let lmsCost = 0;
   if (nits <= 100) lmsCost = 149900;
   else if (nits <= 250) lmsCost = 299900;
@@ -165,15 +164,12 @@ export default function App() {
   ];
 
   const pricingTiers = [
-    { name: "Starter", price: "$149.900", nits: "100", type: "(Nac + Int)", accuracy: "90%", feature: "Búsqueda 1 a 1 manual." },
-    { name: "Básico", price: "$299.900", nits: "250", type: "(Nac + Int)", accuracy: "90%", feature: "+ Carga masiva CSV (Básica)." },
-    { name: "Pro", price: "$649.900", nits: "750", type: "(Nac + Int)", accuracy: "91%", feature: "+ Carga masiva CSV (Rápida)." },
-    { name: "Premium", price: "$1.199.900", nits: "1.250", type: "(Nac + Int)", accuracy: "90%", feature: "+ Soporte prioritario." },
-    { name: "Enterprise", price: "A medida", nits: "Volúmenes Gigantes", type: "", accuracy: "Variable", feature: "Desarrollo a la medida." }
+    { name: "Starter", price: "$149.900", nits: "100", type: "(Nac + Int)", accuracy: "90%", feature: "Carga masiva CSV incluida.", highlight: false },
+    { name: "Básico", price: "$299.900", nits: "250", type: "(Nac + Int)", accuracy: "90%", feature: "Carga masiva CSV incluida.", highlight: false },
+    { name: "Pro", price: "$649.900", nits: "750", type: "(Nac + Int)", accuracy: "91%", feature: "Carga masiva CSV rápida.", highlight: "border-2 border-[#1A6B4A] shadow-lg shadow-emerald-500/10", badge: "Más Popular" },
+    { name: "Premium", price: "$1.199.900", nits: "1.250", type: "(Nac + Int)", accuracy: "90%", feature: "Carga CSV + Soporte prioritario.", highlight: "border-2 border-amber-400 shadow-xl shadow-amber-500/20 bg-gradient-to-b from-white to-amber-50/30", badge: "Exclusivo", badgeIcon: Sparkles, badgeColor: "bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-900" },
+    { name: "Enterprise", price: "A medida", nits: "+1.250 NITs", type: "Volumen a la medida", accuracy: "Variable", feature: "Integración 100% a la medida.", highlight: false }
   ];
-
-  const currentPlan = pricingTiers[pricingIndex];
-  const isPremiumPlan = pricingIndex >= 3; 
 
   return (
     <>
@@ -202,6 +198,13 @@ export default function App() {
           }
           .animate-float1 { animation: float1 15s ease-in-out infinite; }
           .animate-float2 { animation: float2 20s ease-in-out infinite; }
+          
+          @keyframes scan {
+            0% { transform: translateY(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(400%); opacity: 0; }
+          }
+          .animate-scan { animation: scan 3s ease-in-out infinite; }
 
           .reveal-target {
             opacity: 0;
@@ -229,6 +232,15 @@ export default function App() {
           .anim-delay-200 { animation-delay: 200ms; }
           .anim-delay-300 { animation-delay: 300ms; }
           .anim-delay-400 { animation-delay: 400ms; }
+
+          /* Scrollbar oculta para la tabla de precios en móvil */
+          .no-scrollbar::-webkit-scrollbar {
+            display: none;
+          }
+          .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
         `}
       </style>
 
@@ -249,8 +261,8 @@ export default function App() {
                 {[
                   { name: 'El Riesgo', href: '#problema' },
                   { name: 'Cómo Funciona', href: '#como-funciona' },
-                  { name: 'Cobertura', href: '#caracteristicas' },
-                  { name: 'Rentabilidad', href: '#calculadora' }
+                  { name: 'Rentabilidad', href: '#calculadora' },
+                  { name: 'Planes', href: '#planes' }
                 ].map((item) => (
                   <a
                     key={item.name}
@@ -282,8 +294,8 @@ export default function App() {
             <div className="lg:hidden absolute top-full left-0 w-full bg-white shadow-xl border-t border-slate-100 py-4 px-4 flex flex-col space-y-4">
               <a href="#problema" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">El Riesgo</a>
               <a href="#como-funciona" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">Cómo Funciona</a>
-              <a href="#caracteristicas" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">Cobertura</a>
               <a href="#calculadora" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">Rentabilidad</a>
+              <a href="#planes" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">Planes</a>
               <button onClick={() => { setIsMobileMenuOpen(false); scrollToCalendly(); }} className="bg-[#1A6B4A] text-white px-5 py-3 rounded-xl font-medium w-full mt-2 flex justify-center items-center gap-2">
                 <Calendar size={18} />
                 Agendar Diagnóstico
@@ -328,14 +340,61 @@ export default function App() {
                 </button>
               </div>
               
-              <div className="animate-premium-up anim-delay-400 relative max-w-4xl mx-auto rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-slate-700/50 overflow-hidden bg-slate-900 aspect-video group cursor-pointer hover:border-emerald-500/50 transition-colors duration-500">
-                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070')] bg-cover bg-center opacity-50 group-hover:opacity-40 transition-opacity duration-500 blur-[2px] group-hover:blur-0"></div>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <div className="w-20 h-20 rounded-full bg-[#10b981]/90 backdrop-blur-sm flex items-center justify-center text-white shadow-[0_0_30px_rgba(16,185,129,0.6)] group-hover:scale-110 transition-transform duration-300 border border-white/20">
-                    <Play size={32} className="ml-2" fill="currentColor" />
+              {/* ========================================================= */}
+              {/* Gráfico Visual del Proceso (Input NITs y Resultado Imagen)  */}
+              {/* ========================================================= */}
+              <div className="animate-premium-up anim-delay-400 relative max-w-5xl mx-auto rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-slate-700/50 bg-slate-900/80 backdrop-blur-xl overflow-hidden flex flex-col md:flex-row">
+                
+                {/* Left Side: Input Data (NITs) */}
+                <div className="w-full md:w-5/12 p-6 border-b md:border-b-0 md:border-r border-slate-700/50 bg-slate-800/30 flex flex-col justify-center">
+                  <div className="flex items-center gap-2 mb-4 text-slate-400 text-sm font-medium justify-between">
+                    <div className="flex items-center gap-2">
+                      <FileSpreadsheet size={18} className="text-emerald-400" /> Ingresa tus NITs
+                    </div>
+                    <span className="text-[10px] bg-slate-700/50 px-2 py-1 rounded text-slate-300 font-mono tracking-wider">RAW DATA</span>
                   </div>
-                  <span className="mt-6 font-medium text-white tracking-widest uppercase text-sm drop-shadow-md bg-black/30 px-4 py-1.5 rounded-full backdrop-blur-md border border-white/10">Ver cómo funciona (2 min)</span>
+                  <div className="relative group">
+                    <textarea 
+                      className="w-full h-48 bg-slate-900 border border-slate-600/50 rounded-xl p-4 text-slate-300 font-mono text-sm focus:outline-none focus:border-emerald-500/50 transition-all resize-none shadow-inner leading-relaxed overflow-hidden"
+                      defaultValue={`830003564\n900234567-1\n1010123456\n860.001.022\n1020333444 PEREZ`}
+                      readOnly
+                    ></textarea>
+                    <div className="absolute bottom-3 right-3">
+                      <button className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-md text-xs font-bold flex items-center gap-1.5 transition-colors cursor-default">
+                        <Bot size={14} /> Procesar
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-4 text-center">Pega tu lista sucia y la IA hace el resto.</p>
                 </div>
+
+                {/* Middle AI Bot Indicator */}
+                <div className="hidden md:flex absolute left-[41.66%] top-1/2 -translate-y-1/2 -translate-x-1/2 w-14 h-14 bg-[#1A6B4A] rounded-full border-4 border-slate-900 items-center justify-center z-20 shadow-[0_0_20px_rgba(26,107,74,0.8)]">
+                  <Bot size={24} className="text-emerald-400 animate-pulse" />
+                </div>
+
+                {/* Right Side: Imagen Imgur Entregada */}
+                <div className="w-full md:w-7/12 p-6 bg-slate-900/50 relative overflow-hidden flex flex-col items-center justify-center">
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-500/5 to-transparent w-full h-20 animate-scan pointer-events-none"></div>
+                  
+                  <div className="w-full relative z-10 rounded-xl overflow-hidden shadow-[0_0_30px_rgba(16,185,129,0.1)] border border-emerald-500/20 bg-slate-800">
+                     <div className="bg-slate-800/90 backdrop-blur-md py-3 px-4 border-b border-slate-700/50 flex items-center gap-2">
+                        <CheckCircle2 size={16} className="text-emerald-400" /> 
+                        <span className="text-emerald-400 text-xs font-bold uppercase tracking-wider">Estructura Perfecta para DIAN</span>
+                     </div>
+                     
+                     <img 
+                       src="https://i.ibb.co/YTwCD1LN/image.png" 
+                       alt="Estructura Perfecta DIAN generada por LMS" 
+                       className="w-full h-auto object-contain bg-white"
+                       onError={(e) => {
+                         e.target.onerror = null; 
+                         e.target.src = "https://ibb.co/YTwCD1LN"; 
+                       }}
+                     />
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
@@ -387,9 +446,9 @@ export default function App() {
                 <div className="w-14 h-14 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center mb-6">
                   <AlertOctagon size={28} />
                 </div>
-                <div className="text-4xl font-extrabold text-rose-600 mb-3">7.500 UVT</div>
-                <h4 className="text-lg font-bold text-slate-900 mb-2">Sanción Art. 651 E.T.</h4>
-                <p className="text-slate-600 leading-relaxed text-sm">Es el tope legal (Ley 2277 de 2022) al que se expone una compañía por suministrar información tributaria con errores o de manera extemporánea.</p>
+                <div className="text-3xl font-extrabold text-rose-600 mb-3 leading-tight">Sanciones de Alto Nivel</div>
+                <h4 className="text-lg font-bold text-slate-900 mb-2">Multas Variables</h4>
+                <p className="text-slate-600 leading-relaxed text-sm">Es la penalidad a la que se expone una compañía por suministrar información tributaria con errores, inconsistencias o de manera extemporánea.</p>
               </div>
 
               <div className="reveal-target reveal-delay-100 bg-amber-50 border border-amber-100 rounded-3xl p-8 hover:shadow-lg transition-shadow">
@@ -669,141 +728,75 @@ export default function App() {
           </div>
         </section>
 
-        {/* Agendamiento Dinámico por Planes */}
-        <section className="bg-[#0B3D2E] py-24 relative overflow-hidden">
+        {/* NUEVA TABLA DE PRECIOS DINÁMICA */}
+        <section id="planes" className="bg-[#0B3D2E] py-24 relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
           <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-[#1A6B4A] rounded-full blur-3xl opacity-30 pointer-events-none"></div>
           
-          <div className="max-w-6xl mx-auto px-4 relative z-10">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="reveal-target text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold font-serif text-white mb-4 leading-tight">
-                Seleccione el <span className="italic text-emerald-300">plan adecuado</span>
+                Planes de <span className="italic text-emerald-300">Validación Integral</span>
               </h2>
               <p className="text-emerald-100/70 text-lg max-w-2xl mx-auto font-light">
-                Configure el volumen requerido y coordine una reunión estratégica para activar la arquitectura de validación correspondiente a su firma.
+                Seleccione la cobertura adecuada para su volumen operativo. Sin contratos forzosos.
               </p>
             </div>
 
-            <div className="grid lg:grid-cols-2 gap-12 items-start max-w-5xl mx-auto">
-              <div className="reveal-target">
-                <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-sm shadow-xl">
-                  <label className="block text-white font-medium mb-8 text-lg text-center lg:text-left">
-                    Estructure su volumen operativo
-                  </label>
-                  
-                  <div className="relative mb-12">
-                    <input 
-                      type="range" 
-                      min="0" 
-                      max="4" 
-                      step="1" 
-                      value={pricingIndex}
-                      onChange={(e) => setPricingIndex(parseInt(e.target.value))}
-                      className="w-full h-3 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-[#10b981] relative z-10"
-                    />
-                    <div className="flex justify-between text-emerald-200/50 text-xs font-mono font-bold mt-4 px-1">
-                      <span className={`transition-colors ${pricingIndex === 0 ? "text-emerald-400 scale-110" : ""}`}>100</span>
-                      <span className={`transition-colors ${pricingIndex === 1 ? "text-emerald-400 scale-110" : ""}`}>250</span>
-                      <span className={`transition-colors ${pricingIndex === 2 ? "text-emerald-400 scale-110" : ""}`}>750</span>
-                      <span className={`transition-colors ${pricingIndex === 3 ? "text-emerald-400 scale-110" : ""}`}>1.25k</span>
-                      <span className={`transition-colors ${pricingIndex === 4 ? "text-emerald-400 scale-110" : ""}`}>Corp.</span>
-                    </div>
-                  </div>
+            {/* Grid de Precios (Tabla tipo Card para visibilidad inmediata) */}
+            <div className="reveal-target flex overflow-x-auto no-scrollbar lg:grid lg:grid-cols-5 gap-6 pb-8 lg:pb-0 snap-x">
+              {pricingTiers.map((tier, idx) => {
+                const isPremium = tier.name === "Premium" || tier.name === "Pro";
+                const isEnterprise = tier.name === "Enterprise";
 
-                  <div className="space-y-4 border-t border-white/10 pt-8 mt-8">
-                    <div className="flex items-center gap-3 text-emerald-100/80 text-sm font-light">
-                      <CheckCircle2 size={18} className="text-[#10b981]" />
-                      <span>Sesión ejecutiva inicial garantizada (Meet/Zoom).</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-emerald-100/80 text-sm font-light">
-                      <CheckCircle2 size={18} className="text-[#10b981]" />
-                      <span>Inspección estructural de su formato actual en vivo.</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-emerald-100/80 text-sm font-light">
-                      <CheckCircle2 size={18} className="text-[#10b981]" />
-                      <span>Transparencia absoluta. Sin cobros contingentes.</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="reveal-target reveal-delay-100">
-                <div className={`bg-white rounded-[2rem] p-8 md:p-10 shadow-2xl relative transform transition-all duration-500 hover:-translate-y-2 ${isPremiumPlan ? 'border-4 border-amber-300 shadow-amber-500/20' : 'border border-slate-100'}`}>
-                  {pricingIndex === 2 && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-400 to-teal-500 text-slate-900 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider shadow-md">
-                      Modelo Estándar
-                    </div>
-                  )}
-                  {isPremiumPlan && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-300 to-yellow-500 text-slate-900 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider shadow-md flex items-center gap-1">
-                      <Sparkles size={12} /> Exclusivo
-                    </div>
-                  )}
-                  
-                  <h4 className="text-2xl font-bold text-slate-400 mb-2">{currentPlan.name}</h4>
-                  <div className="flex items-baseline gap-2 mb-6 border-b border-slate-100 pb-8">
-                    <span className={`font-extrabold text-slate-900 tracking-tight transition-all duration-300 ${currentPlan.name === 'Enterprise' ? 'text-4xl' : 'text-5xl'}`}>
-                      {currentPlan.price}
-                    </span>
-                    {currentPlan.name !== "Enterprise" && <span className="text-slate-500 font-medium">/ pago único</span>}
-                  </div>
-                  
-                  <ul className="space-y-5 mb-8">
-                    <li className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
-                        <Users size={18} className="text-emerald-600" />
+                return (
+                  <div key={idx} className={`min-w-[280px] lg:min-w-0 snap-center bg-white rounded-3xl p-6 relative flex flex-col transition-all duration-300 hover:-translate-y-2 ${tier.highlight || 'border border-slate-200'}`}>
+                    
+                    {/* Badge Condicional */}
+                    {tier.badge && (
+                      <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-md ${tier.badgeColor || 'bg-gradient-to-r from-emerald-400 to-teal-500 text-slate-900'}`}>
+                        {tier.badgeIcon && <tier.badgeIcon size={10} className="inline mr-1" />}
+                        {tier.badge}
                       </div>
-                      <span className="text-slate-700 text-lg">
-                        {currentPlan.name === "Enterprise" ? (
-                          <><strong>{currentPlan.nits}</strong></>
-                        ) : (
-                          <>Hasta <strong>{currentPlan.nits} registros</strong> <span className="text-sm text-slate-500">{currentPlan.type}</span></>
-                        )}
-                      </span>
-                    </li>
-                    <li className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
-                        <ShieldCheck size={18} className="text-emerald-600" />
+                    )}
+                    
+                    <div className="mb-6 flex-grow border-b border-slate-100 pb-6">
+                      <h4 className="text-lg font-bold text-slate-400 mb-1">{tier.name}</h4>
+                      <div className="flex items-baseline gap-1">
+                        <span className={`font-extrabold text-slate-900 tracking-tight ${isEnterprise ? 'text-2xl' : 'text-3xl'}`}>
+                          {tier.price}
+                        </span>
+                        {!isEnterprise && <span className="text-slate-500 text-xs font-medium">/ único</span>}
                       </div>
-                      <span className="text-slate-700 text-lg">
-                        Certidumbre del <strong>{currentPlan.accuracy}</strong>
-                      </span>
-                    </li>
-                    <li className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
-                        <Bot size={18} className="text-emerald-600" />
-                      </div>
-                      <span className="text-slate-700 text-lg leading-tight">{currentPlan.feature}</span>
-                    </li>
-                  </ul>
-
-                  <div className="mt-8 border-t border-slate-100 pt-6 mb-8">
-                    <button 
-                      onClick={() => setOpenPricingFaq(!openPricingFaq)}
-                      className="w-full flex justify-between items-center text-slate-600 font-medium text-sm hover:text-[#1A6B4A] transition-colors focus:outline-none"
-                    >
-                      <span>Ver alcances técnicos de auditoría</span>
-                      <ChevronDown size={16} className={`transition-transform duration-300 ${openPricingFaq ? 'rotate-180 text-[#1A6B4A]' : ''}`} />
+                    </div>
+                    
+                    <ul className="space-y-4 mb-8 text-sm">
+                      <li className="flex items-start gap-3">
+                        <CheckCircle2 size={16} className={`${isPremium ? 'text-amber-500' : 'text-emerald-500'} shrink-0 mt-0.5`} />
+                        <span className="text-slate-700">
+                          {isEnterprise ? <strong>{tier.nits}</strong> : <>Hasta <strong>{tier.nits} NITs</strong> <span className="text-slate-400 text-xs block">{tier.type}</span></>}
+                        </span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle2 size={16} className={`${isPremium ? 'text-amber-500' : 'text-emerald-500'} shrink-0 mt-0.5`} />
+                        <span className="text-slate-700">Precisión <strong>{tier.accuracy}</strong></span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <CheckCircle2 size={16} className={`${isPremium ? 'text-amber-500' : 'text-emerald-500'} shrink-0 mt-0.5`} />
+                        <span className="text-slate-700">{tier.feature}</span>
+                      </li>
+                    </ul>
+                    
+                    <button onClick={scrollToCalendly} className={`w-full py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${isPremium ? (tier.name === 'Premium' ? 'bg-gradient-to-r from-amber-500 to-yellow-600 text-white shadow-amber-500/30' : 'bg-[#1A6B4A] text-white shadow-emerald-500/30') : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>
+                      Elegir {tier.name}
                     </button>
-                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${openPricingFaq ? 'max-h-40 opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
-                      <ul className="space-y-3 text-sm text-slate-500 font-light">
-                        <li className="flex gap-2 items-start"><CheckCircle2 size={14} className="text-emerald-400 shrink-0 mt-0.5"/> Validación y ajuste de Dígito de Verificación (DV).</li>
-                        <li className="flex gap-2 items-start"><CheckCircle2 size={14} className="text-emerald-400 shrink-0 mt-0.5"/> Desfragmentación exacta de nombres y apellidos.</li>
-                        <li className="flex gap-2 items-start"><CheckCircle2 size={14} className="text-emerald-400 shrink-0 mt-0.5"/> Detección temprana de contribuyentes inactivos.</li>
-                      </ul>
-                    </div>
                   </div>
-                  
-                  <button onClick={scrollToCalendly} className={`w-full text-white px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-3 group hover:-translate-y-1 ${isPremiumPlan ? 'bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 shadow-amber-500/30' : 'bg-[#0B3D2E] hover:bg-[#1A6B4A] shadow-[0_10px_30px_-10px_rgba(11,61,46,0.5)]'}`}>
-                    <Calendar size={20} className="group-hover:scale-110 transition-transform" />
-                    Reservar reunión ejecutiva
-                  </button>
-                </div>
-              </div>
+                );
+              })}
             </div>
 
             {/* Calendly Inline Widget */}
-            <div id="agendamiento-calendly" className="reveal-target mt-20 w-full max-w-5xl mx-auto">
+            <div id="agendamiento-calendly" className="reveal-target mt-16 w-full max-w-5xl mx-auto">
               <div className="bg-white rounded-3xl overflow-hidden shadow-2xl h-[700px] border border-white/10 relative">
                 <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 to-teal-500 z-10"></div>
                 <iframe
