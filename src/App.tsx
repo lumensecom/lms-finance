@@ -63,8 +63,6 @@ export default function App() {
   const [isNearBottom, setIsNearBottom] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
-  const [openPricingFaq, setOpenPricingFaq] = useState(false);
-  const [pricingIndex, setPricingIndex] = useState(2);
 
   // Calculator State (ROI)
   const [nits, setNits] = useState(750);
@@ -113,6 +111,27 @@ export default function App() {
       const y = element.getBoundingClientRect().top + window.scrollY - 100;
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
+  };
+
+  // Función para descargar Excel/CSV de ejemplo (con BOM para acentos en Excel)
+  const handleDownloadExample = () => {
+    const csvContent = 
+      "TD,NIT/CC,DV,Primer Apellido,Segundo Apellido,Primer Nombre,Otros Nombres,Razon Social,Cod Dpto,Cod Mun,Pais\n" +
+      "31,830003564,9,,,,,\"EMPRESA DE ENERGIA S.A ESP\",11,001,169\n" +
+      "31,900234567,1,,,,,\"TECNOLOGIA AVANZADA S.A.S.\",05,001,169\n" +
+      "13,1010123456,7,RODRIGUEZ,MARTINEZ,ANA,,,76,001,169\n" +
+      "31,860001022,3,,,,,\"COMERCIALIZADORA NACIONAL\",08,001,169\n" +
+      "13,1020333444,2,PEREZ,GOMEZ,JUAN,DIEGO,,11,001,169";
+    
+    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "LMS_Ejemplo_Estructura_Exogena.csv");
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   // ==========================================
@@ -167,7 +186,7 @@ export default function App() {
     { name: "Starter", price: "$149.900", nits: "100", type: "(Nac + Int)", accuracy: "90%", feature: "Carga masiva CSV incluida.", highlight: false },
     { name: "Básico", price: "$299.900", nits: "250", type: "(Nac + Int)", accuracy: "90%", feature: "Carga masiva CSV incluida.", highlight: false },
     { name: "Pro", price: "$649.900", nits: "750", type: "(Nac + Int)", accuracy: "91%", feature: "Carga masiva CSV rápida.", highlight: "border-2 border-[#1A6B4A] shadow-lg shadow-emerald-500/10", badge: "Más Popular" },
-    { name: "Premium", price: "$1.199.900", nits: "1.250", type: "(Nac + Int)", accuracy: "90%", feature: "Carga CSV + Soporte prioritario.", highlight: "border-2 border-amber-400 shadow-xl shadow-amber-500/20 bg-gradient-to-b from-white to-amber-50/30", badge: "Exclusivo", badgeIcon: Sparkles, badgeColor: "bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-900" },
+    { name: "Premium", price: "$1.199.900", nits: "1.250", type: "(Nac + Int)", accuracy: "90%", feature: "Carga CSV + Soporte.", highlight: "border-2 border-amber-400 shadow-xl shadow-amber-500/20 bg-gradient-to-b from-white to-amber-50/30", badge: "Exclusivo", badgeIcon: Sparkles, badgeColor: "bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-900" },
     { name: "Enterprise", price: "A medida", nits: "+1.250 NITs", type: "Volumen a la medida", accuracy: "Variable", feature: "Integración 100% a la medida.", highlight: false }
   ];
 
@@ -233,7 +252,7 @@ export default function App() {
           .anim-delay-300 { animation-delay: 300ms; }
           .anim-delay-400 { animation-delay: 400ms; }
 
-          /* Scrollbar oculta para la tabla de precios en móvil */
+          /* Scrollbar oculta para la tabla de precios y overflow */
           .no-scrollbar::-webkit-scrollbar {
             display: none;
           }
@@ -341,12 +360,12 @@ export default function App() {
               </div>
               
               {/* ========================================================= */}
-              {/* Gráfico Visual del Proceso (Input NITs y Resultado Imagen)  */}
+              {/* Gráfico Visual del Proceso (Input NITs y Resultado Tabla)  */}
               {/* ========================================================= */}
-              <div className="animate-premium-up anim-delay-400 relative max-w-5xl mx-auto rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-slate-700/50 bg-slate-900/80 backdrop-blur-xl overflow-hidden flex flex-col md:flex-row">
+              <div className="animate-premium-up anim-delay-400 relative max-w-6xl mx-auto rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-slate-700/50 bg-slate-900/80 backdrop-blur-xl overflow-hidden flex flex-col md:flex-row">
                 
                 {/* Left Side: Input Data (NITs) */}
-                <div className="w-full md:w-5/12 p-6 border-b md:border-b-0 md:border-r border-slate-700/50 bg-slate-800/30 flex flex-col justify-center">
+                <div className="w-full md:w-4/12 p-6 border-b md:border-b-0 md:border-r border-slate-700/50 bg-slate-800/30 flex flex-col justify-center">
                   <div className="flex items-center gap-2 mb-4 text-slate-400 text-sm font-medium justify-between">
                     <div className="flex items-center gap-2">
                       <FileSpreadsheet size={18} className="text-emerald-400" /> Ingresa tus NITs
@@ -355,7 +374,7 @@ export default function App() {
                   </div>
                   <div className="relative group">
                     <textarea 
-                      className="w-full h-48 bg-slate-900 border border-slate-600/50 rounded-xl p-4 text-slate-300 font-mono text-sm focus:outline-none focus:border-emerald-500/50 transition-all resize-none shadow-inner leading-relaxed overflow-hidden"
+                      className="w-full h-56 bg-slate-900 border border-slate-600/50 rounded-xl p-4 text-slate-300 font-mono text-sm focus:outline-none focus:border-emerald-500/50 transition-all resize-none shadow-inner leading-relaxed overflow-hidden"
                       defaultValue={`830003564\n900234567-1\n1010123456\n860.001.022\n1020333444 PEREZ`}
                       readOnly
                     ></textarea>
@@ -369,29 +388,94 @@ export default function App() {
                 </div>
 
                 {/* Middle AI Bot Indicator */}
-                <div className="hidden md:flex absolute left-[41.66%] top-1/2 -translate-y-1/2 -translate-x-1/2 w-14 h-14 bg-[#1A6B4A] rounded-full border-4 border-slate-900 items-center justify-center z-20 shadow-[0_0_20px_rgba(26,107,74,0.8)]">
+                <div className="hidden md:flex absolute left-[33.33%] top-1/2 -translate-y-1/2 -translate-x-1/2 w-14 h-14 bg-[#1A6B4A] rounded-full border-4 border-slate-900 items-center justify-center z-20 shadow-[0_0_20px_rgba(26,107,74,0.8)]">
                   <Bot size={24} className="text-emerald-400 animate-pulse" />
                 </div>
 
-                {/* Right Side: Imagen Imgur Entregada */}
-                <div className="w-full md:w-7/12 p-6 bg-slate-900/50 relative overflow-hidden flex flex-col items-center justify-center">
+                {/* Right Side: Tabla Reconstruida Dinámica */}
+                <div className="w-full md:w-8/12 p-6 bg-slate-900/50 relative overflow-hidden flex flex-col justify-center">
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-500/5 to-transparent w-full h-20 animate-scan pointer-events-none"></div>
                   
-                  <div className="w-full relative z-10 rounded-xl overflow-hidden shadow-[0_0_30px_rgba(16,185,129,0.1)] border border-emerald-500/20 bg-slate-800">
-                     <div className="bg-slate-800/90 backdrop-blur-md py-3 px-4 border-b border-slate-700/50 flex items-center gap-2">
-                        <CheckCircle2 size={16} className="text-emerald-400" /> 
-                        <span className="text-emerald-400 text-xs font-bold uppercase tracking-wider">Estructura Perfecta para DIAN</span>
+                  <div className="w-full relative z-10 rounded-xl overflow-hidden shadow-[0_0_30px_rgba(16,185,129,0.1)] border border-emerald-500/20 bg-white flex flex-col">
+                     
+                     {/* Cabecera Mockup */}
+                     <div className="bg-slate-50 py-3 px-4 border-b border-slate-200 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 size={16} className="text-emerald-500" /> 
+                          <span className="text-slate-700 text-xs font-bold uppercase tracking-wider">Estructura Perfecta DIAN</span>
+                        </div>
+                        <div className="flex gap-1">
+                          <div className="w-2 h-2 rounded-full bg-slate-300"></div>
+                          <div className="w-2 h-2 rounded-full bg-slate-300"></div>
+                          <div className="w-2 h-2 rounded-full bg-slate-300"></div>
+                        </div>
                      </div>
                      
-                     <img 
-                       src="https://i.ibb.co/YTwCD1LN/image.png" 
-                       alt="Estructura Perfecta DIAN generada por LMS" 
-                       className="w-full h-auto object-contain bg-white"
-                       onError={(e) => {
-                         e.target.onerror = null; 
-                         e.target.src = "https://ibb.co/YTwCD1LN"; 
-                       }}
-                     />
+                     {/* Tabla de Datos con Códigos Dpto/Mun */}
+                     <div className="overflow-x-auto no-scrollbar">
+                       <table className="w-full text-left text-[10px] sm:text-[11px] font-mono text-slate-600 bg-white whitespace-nowrap">
+                         <thead className="bg-slate-100/80 text-slate-500 border-b border-slate-200">
+                           <tr>
+                             <th className="py-2 px-3 font-semibold">T.D.</th>
+                             <th className="py-2 px-3 font-semibold">NIT/CC</th>
+                             <th className="py-2 px-3 font-semibold">DV</th>
+                             <th className="py-2 px-3 font-semibold">Razón Social / Nombres</th>
+                             <th className="py-2 px-3 font-semibold text-emerald-600 bg-emerald-50/50">Cód. Dpto</th>
+                             <th className="py-2 px-3 font-semibold text-emerald-600 bg-emerald-50/50">Cód. Mun</th>
+                           </tr>
+                         </thead>
+                         <tbody className="divide-y divide-slate-100">
+                           <tr className="hover:bg-slate-50 transition-colors">
+                             <td className="py-2 px-3 font-medium text-slate-700">31</td>
+                             <td className="py-2 px-3">830003564</td>
+                             <td className="py-2 px-3 font-bold text-[#1A6B4A]">9</td>
+                             <td className="py-2 px-3 truncate max-w-[150px]">EMPRESA DE ENERGÍA S.A ESP</td>
+                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">11</td>
+                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">001</td>
+                           </tr>
+                           <tr className="hover:bg-slate-50 transition-colors">
+                             <td className="py-2 px-3 font-medium text-slate-700">31</td>
+                             <td className="py-2 px-3">900234567</td>
+                             <td className="py-2 px-3 font-bold text-[#1A6B4A]">1</td>
+                             <td className="py-2 px-3 truncate max-w-[150px]">TECNOLOGÍA AVANZADA S.A.S.</td>
+                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">05</td>
+                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">001</td>
+                           </tr>
+                           <tr className="hover:bg-slate-50 transition-colors">
+                             <td className="py-2 px-3 font-medium text-slate-700">13</td>
+                             <td className="py-2 px-3">1010123456</td>
+                             <td className="py-2 px-3 font-bold text-[#1A6B4A]">7</td>
+                             <td className="py-2 px-3 truncate max-w-[150px]">RODRIGUEZ MARTINEZ ANA</td>
+                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">76</td>
+                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">001</td>
+                           </tr>
+                           <tr className="hover:bg-slate-50 transition-colors">
+                             <td className="py-2 px-3 font-medium text-slate-700">31</td>
+                             <td className="py-2 px-3">860001022</td>
+                             <td className="py-2 px-3 font-bold text-[#1A6B4A]">3</td>
+                             <td className="py-2 px-3 truncate max-w-[150px]">COMERCIALIZADORA NACIONAL</td>
+                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">08</td>
+                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">001</td>
+                           </tr>
+                           <tr className="hover:bg-slate-50 transition-colors">
+                             <td className="py-2 px-3 font-medium text-slate-700">13</td>
+                             <td className="py-2 px-3">1020333444</td>
+                             <td className="py-2 px-3 font-bold text-[#1A6B4A]">2</td>
+                             <td className="py-2 px-3 truncate max-w-[150px]">PEREZ GOMEZ JUAN DIEGO</td>
+                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">11</td>
+                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">001</td>
+                           </tr>
+                         </tbody>
+                       </table>
+                     </div>
+
+                     {/* Botón Descargar Ejemplo CSV */}
+                     <div className="bg-slate-50 p-3 sm:p-4 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3">
+                        <span className="text-xs text-slate-500 font-medium hidden sm:inline-block">Formatos listos para el prevalidador</span>
+                        <button onClick={handleDownloadExample} className="w-full sm:w-auto text-xs font-bold bg-[#1A6B4A] hover:bg-[#0B3D2E] text-white px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm hover:shadow-md">
+                           <Download size={14} /> Descargar Ejemplo (.CSV)
+                        </button>
+                     </div>
                   </div>
                 </div>
 
@@ -728,7 +812,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* NUEVA TABLA DE PRECIOS DINÁMICA */}
+        {/* NUEVA TABLA DE PRECIOS DINÁMICA (Grid Responsivo Completo) */}
         <section id="planes" className="bg-[#0B3D2E] py-24 relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
           <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-[#1A6B4A] rounded-full blur-3xl opacity-30 pointer-events-none"></div>
@@ -743,26 +827,26 @@ export default function App() {
               </p>
             </div>
 
-            {/* Grid de Precios (Tabla tipo Card para visibilidad inmediata) */}
-            <div className="reveal-target flex overflow-x-auto no-scrollbar lg:grid lg:grid-cols-5 gap-6 pb-8 lg:pb-0 snap-x">
+            {/* Grid de Precios en CSS Grid en vez de Flex Horizontal */}
+            <div className="reveal-target grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
               {pricingTiers.map((tier, idx) => {
                 const isPremium = tier.name === "Premium" || tier.name === "Pro";
                 const isEnterprise = tier.name === "Enterprise";
 
                 return (
-                  <div key={idx} className={`min-w-[280px] lg:min-w-0 snap-center bg-white rounded-3xl p-6 relative flex flex-col transition-all duration-300 hover:-translate-y-2 ${tier.highlight || 'border border-slate-200'}`}>
+                  <div key={idx} className={`h-full bg-white rounded-3xl p-6 relative flex flex-col transition-all duration-300 hover:-translate-y-2 ${tier.highlight || 'border border-slate-200'}`}>
                     
                     {/* Badge Condicional */}
                     {tier.badge && (
-                      <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-md ${tier.badgeColor || 'bg-gradient-to-r from-emerald-400 to-teal-500 text-slate-900'}`}>
+                      <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-md whitespace-nowrap ${tier.badgeColor || 'bg-gradient-to-r from-emerald-400 to-teal-500 text-slate-900'}`}>
                         {tier.badgeIcon && <tier.badgeIcon size={10} className="inline mr-1" />}
                         {tier.badge}
                       </div>
                     )}
                     
-                    <div className="mb-6 flex-grow border-b border-slate-100 pb-6">
+                    <div className="mb-6 border-b border-slate-100 pb-6">
                       <h4 className="text-lg font-bold text-slate-400 mb-1">{tier.name}</h4>
-                      <div className="flex items-baseline gap-1">
+                      <div className="flex items-baseline gap-1 flex-wrap">
                         <span className={`font-extrabold text-slate-900 tracking-tight ${isEnterprise ? 'text-2xl' : 'text-3xl'}`}>
                           {tier.price}
                         </span>
@@ -770,24 +854,25 @@ export default function App() {
                       </div>
                     </div>
                     
-                    <ul className="space-y-4 mb-8 text-sm">
+                    {/* flex-grow empuja el botón al fondo si las tarjetas son de distinta altura */}
+                    <ul className="space-y-4 mb-8 text-sm flex-grow">
                       <li className="flex items-start gap-3">
                         <CheckCircle2 size={16} className={`${isPremium ? 'text-amber-500' : 'text-emerald-500'} shrink-0 mt-0.5`} />
-                        <span className="text-slate-700">
-                          {isEnterprise ? <strong>{tier.nits}</strong> : <>Hasta <strong>{tier.nits} NITs</strong> <span className="text-slate-400 text-xs block">{tier.type}</span></>}
+                        <span className="text-slate-700 leading-tight">
+                          {isEnterprise ? <strong>{tier.nits}</strong> : <>Hasta <strong>{tier.nits} NITs</strong> <span className="text-slate-400 text-xs block mt-0.5">{tier.type}</span></>}
                         </span>
                       </li>
                       <li className="flex items-start gap-3">
                         <CheckCircle2 size={16} className={`${isPremium ? 'text-amber-500' : 'text-emerald-500'} shrink-0 mt-0.5`} />
-                        <span className="text-slate-700">Precisión <strong>{tier.accuracy}</strong></span>
+                        <span className="text-slate-700 leading-tight">Precisión <strong>{tier.accuracy}</strong></span>
                       </li>
                       <li className="flex items-start gap-3">
                         <CheckCircle2 size={16} className={`${isPremium ? 'text-amber-500' : 'text-emerald-500'} shrink-0 mt-0.5`} />
-                        <span className="text-slate-700">{tier.feature}</span>
+                        <span className="text-slate-700 leading-tight">{tier.feature}</span>
                       </li>
                     </ul>
                     
-                    <button onClick={scrollToCalendly} className={`w-full py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${isPremium ? (tier.name === 'Premium' ? 'bg-gradient-to-r from-amber-500 to-yellow-600 text-white shadow-amber-500/30' : 'bg-[#1A6B4A] text-white shadow-emerald-500/30') : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>
+                    <button onClick={scrollToCalendly} className={`w-full py-3 mt-auto rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${isPremium ? (tier.name === 'Premium' ? 'bg-gradient-to-r from-amber-500 to-yellow-600 text-white shadow-amber-500/30 hover:from-amber-600 hover:to-yellow-700' : 'bg-[#1A6B4A] text-white shadow-emerald-500/30 hover:bg-[#0B3D2E]') : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>
                       Elegir {tier.name}
                     </button>
                   </div>
