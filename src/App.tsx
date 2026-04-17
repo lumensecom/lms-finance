@@ -26,12 +26,12 @@ import {
   Sparkles,
   Star,
   ArrowRight,
-  Database
+  Database,
+  Lock
 } from 'lucide-react';
 
 /* =========================================
    COMPONENTE DEL LOGO DE LA MARCA
-   (Se añade translate="no" para evitar que Android traduzca "LMS")
    ========================================= */
 const BrandLogo = ({ onClick, isDark = false }) => (
   <div className="flex items-center gap-2 sm:gap-3 cursor-pointer group" onClick={onClick} translate="no">
@@ -63,12 +63,14 @@ export default function App() {
   const [isNearBottom, setIsNearBottom] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
+  
+  // Slider de Precios ajustado a 4 opciones (0, 1, 2, 3)
+  const [pricingIndex, setPricingIndex] = useState(2);
 
   // Calculator State (ROI)
-  const [nits, setNits] = useState(750);
+  const [nits, setNits] = useState(5000);
   const fixedSalary = 2500000;
 
-  // Handle scroll for navbar and floating CTA
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -83,7 +85,6 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Animaciones Premium (Scroll Reveal)
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -104,7 +105,6 @@ export default function App() {
     return () => observer.disconnect();
   }, []);
 
-  // Función para hacer scroll suave hasta el calendario integrado
   const scrollToCalendly = () => {
     const element = document.getElementById('agendamiento-calendly');
     if (element) {
@@ -113,7 +113,6 @@ export default function App() {
     }
   };
 
-  // Función para descargar Excel/CSV de ejemplo (con BOM para acentos en Excel)
   const handleDownloadExample = () => {
     const csvContent = 
       "TD,NIT/CC,DV,Primer Apellido,Segundo Apellido,Primer Nombre,Otros Nombres,Razon Social,Cod Dpto,Cod Mun,Pais\n" +
@@ -135,21 +134,27 @@ export default function App() {
   };
 
   // ==========================================
-  // CALCULATOR LOGIC (Calculadora de Ahorro)
+  // CALCULATOR LOGIC (Tarifa Básica + >5000 = $40)
   // ==========================================
   const hoursSaved = Math.round((nits * 10) / 60); 
   const hourlyRate = Math.round(fixedSalary / 160); 
   const manualCost = hoursSaved * hourlyRate; 
   
   let lmsCost = 0;
-  if (nits <= 100) lmsCost = 149900;
-  else if (nits <= 250) lmsCost = 299900;
-  else if (nits <= 750) lmsCost = 649900;
-  else if (nits <= 1000) lmsCost = 999900;
-  else lmsCost = -1; // Flag para volumen a la medida
+  const baseFee = 300000;
+
+  if (nits <= 1000) {
+    lmsCost = baseFee + (nits * 70);
+  } else if (nits <= 3000) {
+    lmsCost = baseFee + (nits * 60);
+  } else if (nits <= 5000) {
+    lmsCost = baseFee + (nits * 50);
+  } else {
+    // Para más de 5.000 NITs, el costo es 40 pesos por registro
+    lmsCost = baseFee + (nits * 40);
+  }
   
-  const savings = lmsCost !== -1 ? Math.max(0, manualCost - lmsCost) : 0;
-  const isCustomVolume = nits > 1000;
+  const savings = Math.max(0, manualCost - lmsCost);
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('es-CO', { 
@@ -161,33 +166,33 @@ export default function App() {
 
   const faqs = [
     {
+      q: "¿Es un software en la nube donde tengo que subir mi información?",
+      a: "No. Sabemos que la información contable es sumamente sensible. Nosotros operamos como una firma consultora (Done-For-You). Tú nos envías tu base de datos por un canal encriptado y nuestro equipo la procesa en servidores cerrados, eliminando los riesgos de la nube pública."
+    },
+    {
       q: "¿Qué sucede si nuestro documento de origen está desorganizado?",
-      a: "Nuestra tecnología está capacitada para estructurar y organizar la información independientemente del formato de origen. El único requisito es contar con una columna identificadora (NIT o Cédula)."
+      a: "Nuestra tecnología propietaria está capacitada para estructurar y organizar la información independientemente del formato crudo. El único requisito es contar con una columna identificadora (NIT o Cédula)."
     },
     {
-      q: "¿Cómo garantizan la confidencialidad de nuestras bases de datos?",
-      a: "Operamos bajo estrictos protocolos de seguridad y cifrado de nivel bancario (AES-256). Una vez procesado el requerimiento, la información es eliminada permanentemente de nuestros servidores, en total cumplimiento de la Ley 1581 de Protección de Datos."
+      q: "¿En qué basan el cálculo de ahorro mostrado?",
+      a: "El modelo matemático compara el valor de nuestra validación automática contra el salario base de un auxiliar contable en Colombia ($2.500.000 COP) y los 10 minutos operativos que toma auditar y corregir manualmente cada NIT en las plataformas gubernamentales."
     },
     {
-      q: "¿En qué basan el cálculo de ahorro de su plataforma?",
-      a: "El modelo se calcula utilizando el salario base promedio de un auxiliar contable en Colombia ($2.500.000 COP) y el tiempo operativo estandarizado que toma auditar y corregir manualmente cada NIT en las plataformas gubernamentales."
+      q: "¿Qué datos específicos auditan en este proceso?",
+      a: "Verificamos la existencia y vigencia del RUT, corregimos y estandarizamos las razones sociales y aseguramos la segmentación correcta de nombres y apellidos para personas naturales (requisito vital para Exógena)."
     },
     {
-      q: "¿Qué datos específicos validan en este proceso?",
-      a: "Verificamos la existencia y vigencia del RUT, corregimos y estandarizamos las razones sociales y aseguramos la segmentación correcta de nombres y apellidos para personas naturales, previniendo errores críticos en la Información Exógena."
-    },
-    {
-      q: "¿En qué consiste la sesión de diagnóstico?",
-      a: "Es una sesión estratégica de 30 minutos. En ella analizaremos el volumen de su información, revisaremos posibles contingencias fiscales asociadas a su sector y estructuraremos un plan de validación acorde a sus necesidades corporativas."
+      q: "¿En qué consiste la sesión de diagnóstico inicial?",
+      a: "Es una sesión estratégica de 30 minutos. En ella analizaremos el volumen de su información, revisaremos posibles contingencias fiscales asociadas a su sector y estructuraremos un acuerdo de confidencialidad (NDA) para avanzar."
     }
   ];
 
+  // Actualización: Tabla de 4 planes, eliminamos la mención explícita de los 10.000
   const pricingTiers = [
-    { name: "Starter", price: "$149.900", nits: "100", type: "(Nac + Int)", accuracy: "90%", feature: "Carga masiva CSV incluida.", highlight: false },
-    { name: "Básico", price: "$299.900", nits: "250", type: "(Nac + Int)", accuracy: "90%", feature: "Carga masiva CSV incluida.", highlight: false },
-    { name: "Pro", price: "$649.900", nits: "750", type: "(Nac + Int)", accuracy: "91%", feature: "Carga masiva CSV rápida.", highlight: "border-2 border-[#1A6B4A] shadow-lg shadow-emerald-500/10", badge: "Más Popular" },
-    { name: "Premium", price: "$1.199.900", nits: "1.250", type: "(Nac + Int)", accuracy: "90%", feature: "Carga CSV + Soporte.", highlight: "border-2 border-amber-400 shadow-xl shadow-amber-500/20 bg-gradient-to-b from-white to-amber-50/30", badge: "Exclusivo", badgeIcon: Sparkles, badgeColor: "bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-900" },
-    { name: "Enterprise", price: "A medida", nits: "+1.250 NITs", type: "Volumen a la medida", accuracy: "Variable", feature: "Integración 100% a la medida.", highlight: false }
+    { name: "Starter", nits: "1.000", base: "$300.000", unit: "$70", total: "$370.000", feature: "Validación y cruce DIAN", highlight: false },
+    { name: "Básico", nits: "3.000", base: "$300.000", unit: "$60", total: "$480.000", feature: "Validación y cruce DIAN", highlight: false },
+    { name: "Pro", nits: "5.000", base: "$300.000", unit: "$50", total: "$550.000", feature: "Validación prioritaria", highlight: "border-2 border-[#1A6B4A] shadow-lg shadow-emerald-500/10", badge: "Más Popular" },
+    { name: "Premium", nits: "Más de 5.000", base: "$300.000", unit: "$40", total: "A la medida", feature: "Soporte dedicado & SLAs", highlight: "border-2 border-amber-400 shadow-xl shadow-amber-500/20 bg-gradient-to-b from-white to-amber-50/30", badge: "Exclusivo", badgeIcon: Sparkles, badgeColor: "bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-900" }
   ];
 
   return (
@@ -252,7 +257,6 @@ export default function App() {
           .anim-delay-300 { animation-delay: 300ms; }
           .anim-delay-400 { animation-delay: 400ms; }
 
-          /* Scrollbar oculta para la tabla de precios y overflow */
           .no-scrollbar::-webkit-scrollbar {
             display: none;
           }
@@ -265,7 +269,7 @@ export default function App() {
 
       <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-[#10b981] selection:text-white relative">
         
-        {/* Navigation - Diseño Dock Flotante */}
+        {/* Navigation */}
         <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'py-3' : 'py-5'}`}>
           <div className={`absolute inset-0 transition-opacity duration-500 ${isScrolled ? 'bg-white/85 backdrop-blur-xl border-b border-slate-200/50 shadow-sm opacity-100' : 'opacity-0'}`}></div>
 
@@ -279,7 +283,7 @@ export default function App() {
               <div className={`hidden lg:flex flex-none items-center justify-center p-1.5 rounded-full border transition-all duration-500 relative z-10 ${isScrolled ? 'bg-slate-100/60 border-slate-200/60 backdrop-blur-md shadow-sm' : 'bg-white/5 border-white/10 backdrop-blur-md'}`}>
                 {[
                   { name: 'El Riesgo', href: '#problema' },
-                  { name: 'Cómo Funciona', href: '#como-funciona' },
+                  { name: 'Nuestra Metodología', href: '#como-funciona' },
                   { name: 'Rentabilidad', href: '#calculadora' },
                   { name: 'Planes', href: '#planes' }
                 ].map((item) => (
@@ -312,7 +316,7 @@ export default function App() {
           {isMobileMenuOpen && (
             <div className="lg:hidden absolute top-full left-0 w-full bg-white shadow-xl border-t border-slate-100 py-4 px-4 flex flex-col space-y-4">
               <a href="#problema" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">El Riesgo</a>
-              <a href="#como-funciona" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">Cómo Funciona</a>
+              <a href="#como-funciona" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">Nuestra Metodología</a>
               <a href="#calculadora" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">Rentabilidad</a>
               <a href="#planes" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">Planes</a>
               <button onClick={() => { setIsMobileMenuOpen(false); scrollToCalendly(); }} className="bg-[#1A6B4A] text-white px-5 py-3 rounded-xl font-medium w-full mt-2 flex justify-center items-center gap-2">
@@ -360,31 +364,30 @@ export default function App() {
               </div>
               
               {/* ========================================================= */}
-              {/* Gráfico Visual del Proceso (Input NITs y Resultado Tabla)  */}
+              {/* Gráfico Visual del Proceso (Hecho por Nosotros)            */}
               {/* ========================================================= */}
               <div className="animate-premium-up anim-delay-400 relative max-w-6xl mx-auto rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-slate-700/50 bg-slate-900/80 backdrop-blur-xl overflow-hidden flex flex-col md:flex-row">
                 
-                {/* Left Side: Input Data (NITs) */}
+                {/* Left Side: Archivo Enviado (Simulado) */}
                 <div className="w-full md:w-4/12 p-6 border-b md:border-b-0 md:border-r border-slate-700/50 bg-slate-800/30 flex flex-col justify-center">
                   <div className="flex items-center gap-2 mb-4 text-slate-400 text-sm font-medium justify-between">
                     <div className="flex items-center gap-2">
-                      <FileSpreadsheet size={18} className="text-emerald-400" /> Ingresa tus NITs
+                      <Lock size={16} className="text-emerald-400" /> Archivo Recibido (Seguro)
                     </div>
-                    <span className="text-[10px] bg-slate-700/50 px-2 py-1 rounded text-slate-300 font-mono tracking-wider">RAW DATA</span>
                   </div>
                   <div className="relative group">
-                    <textarea 
-                      className="w-full h-56 bg-slate-900 border border-slate-600/50 rounded-xl p-4 text-slate-300 font-mono text-sm focus:outline-none focus:border-emerald-500/50 transition-all resize-none shadow-inner leading-relaxed overflow-hidden"
-                      defaultValue={`830003564\n900234567-1\n1010123456\n860.001.022\n1020333444 PEREZ`}
-                      readOnly
-                    ></textarea>
+                    <div className="w-full h-48 bg-slate-900 border border-slate-600/50 rounded-xl p-4 text-slate-500 font-mono text-xs flex flex-col items-center justify-center shadow-inner leading-relaxed">
+                       <FileSpreadsheet size={40} className="text-slate-600 mb-3" />
+                       <span>[ ARCHIVO.CSV ENCRIPTADO ]</span>
+                       <span className="mt-2 text-[10px] text-emerald-500/50">Base_Terceros_2025.xlsx</span>
+                    </div>
                     <div className="absolute bottom-3 right-3">
-                      <button className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-md text-xs font-bold flex items-center gap-1.5 transition-colors cursor-default">
-                        <Bot size={14} /> Procesar
-                      </button>
+                      <div className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1.5 rounded-md text-[10px] font-bold flex items-center gap-1.5 cursor-default">
+                        <ShieldCheck size={12} /> AES-256
+                      </div>
                     </div>
                   </div>
-                  <p className="text-xs text-slate-500 mt-4 text-center">Pega tu lista sucia y la IA hace el resto.</p>
+                  <p className="text-xs text-slate-500 mt-4 text-center">Nos envías tu archivo y nuestro equipo se encarga del resto.</p>
                 </div>
 
                 {/* Middle AI Bot Indicator */}
@@ -392,17 +395,16 @@ export default function App() {
                   <Bot size={24} className="text-emerald-400 animate-pulse" />
                 </div>
 
-                {/* Right Side: Tabla Reconstruida Dinámica */}
+                {/* Right Side: Tabla Entregable */}
                 <div className="w-full md:w-8/12 p-6 bg-slate-900/50 relative overflow-hidden flex flex-col justify-center">
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-500/5 to-transparent w-full h-20 animate-scan pointer-events-none"></div>
                   
                   <div className="w-full relative z-10 rounded-xl overflow-hidden shadow-[0_0_30px_rgba(16,185,129,0.1)] border border-emerald-500/20 bg-white flex flex-col">
                      
-                     {/* Cabecera Mockup */}
                      <div className="bg-slate-50 py-3 px-4 border-b border-slate-200 flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <CheckCircle2 size={16} className="text-emerald-500" /> 
-                          <span className="text-slate-700 text-xs font-bold uppercase tracking-wider">Estructura Perfecta DIAN</span>
+                          <span className="text-slate-700 text-xs font-bold uppercase tracking-wider">Archivo Limpio Entregado</span>
                         </div>
                         <div className="flex gap-1">
                           <div className="w-2 h-2 rounded-full bg-slate-300"></div>
@@ -411,7 +413,6 @@ export default function App() {
                         </div>
                      </div>
                      
-                     {/* Tabla de Datos con Códigos Dpto/Mun */}
                      <div className="overflow-x-auto no-scrollbar">
                        <table className="w-full text-left text-[10px] sm:text-[11px] font-mono text-slate-600 bg-white whitespace-nowrap">
                          <thead className="bg-slate-100/80 text-slate-500 border-b border-slate-200">
@@ -471,7 +472,7 @@ export default function App() {
 
                      {/* Botón Descargar Ejemplo CSV */}
                      <div className="bg-slate-50 p-3 sm:p-4 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3">
-                        <span className="text-xs text-slate-500 font-medium hidden sm:inline-block">Formatos listos para el prevalidador</span>
+                        <span className="text-xs text-slate-500 font-medium hidden sm:inline-block">Entregables listos para el prevalidador</span>
                         <button onClick={handleDownloadExample} className="w-full sm:w-auto text-xs font-bold bg-[#1A6B4A] hover:bg-[#0B3D2E] text-white px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm hover:shadow-md">
                            <Download size={14} /> Descargar Ejemplo (.CSV)
                         </button>
@@ -560,8 +561,8 @@ export default function App() {
         <section id="como-funciona" className="py-24 bg-slate-50 relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="reveal-target text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">Metodología</h2>
-              <h3 className="text-4xl md:text-5xl font-serif text-slate-900 mb-4">De un Excel desordenado a un archivo <span className="italic text-[#1A6B4A]">estructurado</span> en 3 pasos</h3>
+              <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">Servicio Done-For-You</h2>
+              <h3 className="text-4xl md:text-5xl font-serif text-slate-900 mb-4">Validamos tu información <span className="italic text-[#1A6B4A]">sin exponerte</span> a la nube pública</h3>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8 lg:gap-12 relative">
@@ -570,18 +571,18 @@ export default function App() {
               {[
                 {
                   icon: <Upload size={32} />,
-                  title: "1. Carga de Información",
-                  desc: "Exporte su base de terceros actual (proveedores, clientes, empleados) en formato Excel o CSV. Nuestro sistema admite cualquier estructura inicial."
+                  title: "1. Envío de Base de Datos",
+                  desc: "Compartes tu base de terceros (proveedores, clientes, empleados) mediante canales encriptados directamente con nuestro equipo. Protegemos tu data con NDAs."
                 },
                 {
-                  icon: <Bot size={32} />,
-                  title: "2. Procesamiento Automatizado",
-                  desc: "Nuestro motor tecnológico analiza y depura su información en tiempo récord, identificando inconsistencias fiscales y estructurando los datos bajo estrictos parámetros normativos."
+                  icon: <ShieldCheck size={32} />,
+                  title: "2. Auditoría Interna Avanzada",
+                  desc: "Nuestros ingenieros procesan tu información en servidores locales cerrados utilizando nuestra IA propietaria para estructurar y verificar cada NIT, garantizando privacidad."
                 },
                 {
                   icon: <FileSpreadsheet size={32} />,
-                  title: "3. Descarga y Reporte",
-                  desc: "Obtenga un archivo depurado, limpio y configurado exactamente bajo los requisitos del prevalidador oficial de la DIAN, listo para su transmisión segura."
+                  title: "3. Entrega de Archivo Limpio",
+                  desc: "Te devolvemos un archivo depurado, limpio y configurado bajo los requisitos exactos del prevalidador oficial de la DIAN, listo para que tu equipo lo integre."
                 }
               ].map((step, idx) => (
                 <div key={idx} className={`reveal-target ${idx === 1 ? 'reveal-delay-100' : idx === 2 ? 'reveal-delay-200' : ''} relative group text-center`}>
@@ -596,61 +597,8 @@ export default function App() {
           </div>
         </section>
 
-        {/* Características */}
-        <section id="caracteristicas" className="py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="reveal-target text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">Cobertura Estratégica</h2>
-              <h3 className="text-4xl md:text-5xl font-serif text-slate-900 mb-6">Auditoría sobre <span className="italic text-[#1A6B4A]">diversos tipos</span> de contribuyentes</h3>
-              <p className="text-lg text-slate-600">Nuestra arquitectura comprende la complejidad corporativa del ecosistema empresarial colombiano.</p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="reveal-target flex gap-6 p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-emerald-200 transition-colors group">
-                <div className="w-16 h-16 shrink-0 bg-white rounded-2xl shadow-sm flex items-center justify-center text-[#1A6B4A] group-hover:bg-[#1A6B4A] group-hover:text-white transition-colors">
-                  <Building2 size={28} />
-                </div>
-                <div>
-                  <h4 className="text-xl font-bold text-slate-900 mb-2">Personas Jurídicas</h4>
-                  <p className="text-slate-600 text-sm">Extracción de la razón social registrada oficialmente. Cálculo y corrección automática del dígito de verificación (DV) para prevenir rechazos documentales.</p>
-                </div>
-              </div>
-
-              <div className="reveal-target reveal-delay-100 flex gap-6 p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-emerald-200 transition-colors group">
-                <div className="w-16 h-16 shrink-0 bg-white rounded-2xl shadow-sm flex items-center justify-center text-[#1A6B4A] group-hover:bg-[#1A6B4A] group-hover:text-white transition-colors">
-                  <Users size={28} />
-                </div>
-                <div>
-                  <h4 className="text-xl font-bold text-slate-900 mb-2">Personas Naturales (Comerciantes)</h4>
-                  <p className="text-slate-600 text-sm">Validación aplicable <strong>exclusivamente</strong> a perfiles con matrícula mercantil activa (RUES). Procesamiento de separación de nombres y apellidos según lineamientos DIAN.</p>
-                </div>
-              </div>
-
-              <div className="reveal-target flex gap-6 p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-emerald-200 transition-colors group">
-                <div className="w-16 h-16 shrink-0 bg-white rounded-2xl shadow-sm flex items-center justify-center text-[#1A6B4A] group-hover:bg-[#1A6B4A] group-hover:text-white transition-colors">
-                  <Globe size={28} />
-                </div>
-                <div>
-                  <h4 className="text-xl font-bold text-slate-900 mb-2">Terceros Internacionales</h4>
-                  <p className="text-slate-600 text-sm">Análisis estructural enfocado a proveedores ubicados en el exterior, aplicando las normativas de tipo de documento y requerimientos especiales de reporte.</p>
-                </div>
-              </div>
-
-              <div className="reveal-target reveal-delay-100 flex gap-6 p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-emerald-200 transition-colors group">
-                <div className="w-16 h-16 shrink-0 bg-white rounded-2xl shadow-sm flex items-center justify-center text-[#1A6B4A] group-hover:bg-[#1A6B4A] group-hover:text-white transition-colors">
-                  <UserX size={28} />
-                </div>
-                <div>
-                  <h4 className="text-xl font-bold text-slate-900 mb-2">Identificación de Inactivos</h4>
-                  <p className="text-slate-600 text-sm">Detección y emisión de alertas tempranas frente a contribuyentes con estado RUT cancelado o inactivo, protegiendo sus costos y deducciones asociadas.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Savings Calculator Visual e Interactivo */}
-        <section id="calculadora" className="py-24 bg-slate-50">
+        <section id="calculadora" className="py-24 bg-white border-t border-slate-200/50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="reveal-target text-center max-w-3xl mx-auto mb-12">
               <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">Eficiencia Financiera</h2>
@@ -677,27 +625,31 @@ export default function App() {
                       <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs md:text-sm font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-all">
                         <Clock size={14} /> +{hoursSaved}h operativas a favor
                       </span>
-                      {!isCustomVolume && (
-                        <span className="bg-teal-500/10 border border-teal-500/20 text-teal-300 text-xs md:text-sm font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-all">
-                          <TrendingDown size={14} /> +{formatCurrency(savings)} liberados
-                        </span>
-                      )}
+                      <span className="bg-teal-500/10 border border-teal-500/20 text-teal-300 text-xs md:text-sm font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-all">
+                        <TrendingDown size={14} /> +{formatCurrency(savings)} liberados
+                      </span>
                     </div>
 
                     <div>
                       <div className="flex justify-between mb-2">
                         <label className="text-sm font-medium text-slate-300">Volumen de terceros a depurar</label>
-                        <span className="text-emerald-400 font-bold">{nits >= 5000 ? '+5.000' : nits.toLocaleString('es-CO')} NITs</span>
+                        <span className="text-emerald-400 font-bold">{nits > 8000 ? '+8.000' : nits.toLocaleString('es-CO')} NITs</span>
                       </div>
                       <input 
                         type="range" 
-                        min="100" 
-                        max="5000" 
-                        step="100" 
+                        min="1000" 
+                        max="8000" 
+                        step="500" 
                         value={nits}
                         onChange={(e) => setNits(Number(e.target.value))}
                         className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                       />
+                      <div className="flex justify-between text-emerald-200/50 text-xs font-mono mt-2">
+                        <span>1k</span>
+                        <span>3k</span>
+                        <span>5k</span>
+                        <span>+5k</span>
+                      </div>
                     </div>
 
                     <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4 mt-4">
@@ -716,16 +668,11 @@ export default function App() {
                   <div className="space-y-6 relative z-10">
                     <div className="bg-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-sm relative overflow-hidden">
                       <div className="flex items-center gap-2 mb-1 relative z-10">
-                        <div className="text-sm text-emerald-100">Inversión en Validación Automatizada</div>
+                        <div className="text-sm text-emerald-100">Inversión en Auditoría Automatizada</div>
                       </div>
-                      <div className={`text-2xl font-bold text-white transition-all duration-500 relative z-10 ${isCustomVolume ? 'blur-md opacity-30' : ''}`}>
-                        {isCustomVolume ? '$1.500.000' : formatCurrency(lmsCost)}
+                      <div className={`text-2xl font-bold text-white transition-all duration-500 relative z-10`}>
+                        {formatCurrency(lmsCost)}
                       </div>
-                      {isCustomVolume && (
-                         <div className="absolute inset-0 flex items-center justify-center z-20">
-                           <span className="bg-slate-900/80 text-white text-sm font-bold px-4 py-2 rounded-full border border-white/10 backdrop-blur-md shadow-lg">Requiere Análisis Ejecutivo</span>
-                         </div>
-                      )}
                     </div>
 
                     <div className="bg-white rounded-2xl p-6 shadow-xl transform scale-105 relative border border-emerald-100 overflow-hidden">
@@ -737,16 +684,11 @@ export default function App() {
                       </div>
                       <div className="relative z-10">
                         <div className="text-sm font-bold text-emerald-600 uppercase tracking-wider mb-2 flex items-center gap-2">
-                          <TrendingDown size={16} /> Ahorro proyectado con nuestra tecnología
+                          <TrendingDown size={16} /> Ahorro proyectado con nuestro servicio
                         </div>
-                        <div className={`text-4xl lg:text-5xl font-extrabold text-[#0B3D2E] mb-2 transition-all duration-500 relative z-10 ${isCustomVolume ? 'blur-md opacity-20' : ''}`}>
-                          {isCustomVolume ? '$10.000.000' : formatCurrency(savings)}
+                        <div className={`text-4xl lg:text-5xl font-extrabold text-[#0B3D2E] mb-2 transition-all duration-500 relative z-10`}>
+                          {formatCurrency(savings)}
                         </div>
-                        {isCustomVolume && (
-                          <div className="absolute top-10 left-0 w-full flex justify-start z-20">
-                            <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-lg font-black px-4 py-2 rounded-r-lg shadow-lg">Estructura High-Volume</span>
-                          </div>
-                        )}
                         <div className="text-sm text-slate-600 font-medium mt-2">Retorno de eficiencia medible para su departamento contable.</div>
                       </div>
                     </div>
@@ -767,14 +709,14 @@ export default function App() {
         </section>
 
         {/* FAQ - Acordeón Premium */}
-        <section className="py-24 bg-white">
+        <section className="py-24 bg-slate-50 border-y border-slate-200/50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-12 gap-12 items-start">
               
               <div className="lg:col-span-5 reveal-target sticky top-32">
                 <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">Directorio de Consultas</h2>
                 <h3 className="text-4xl md:text-5xl font-serif text-slate-900 mb-6 leading-tight">Preguntas <br/> <span className="italic text-[#1A6B4A]">Frecuentes</span></h3>
-                <p className="text-slate-600 font-light mb-8 text-lg leading-relaxed">Resolvemos las inquietudes más comunes respecto a nuestro protocolo de verificación. Si requiere un análisis específico, reserve una sesión ejecutiva en vivo.</p>
+                <p className="text-slate-600 font-light mb-8 text-lg leading-relaxed">Resolvemos las inquietudes más comunes respecto a nuestro protocolo de verificación y el resguardo de la información. Si requiere un análisis específico, reserve una sesión ejecutiva en vivo.</p>
                 <button onClick={scrollToCalendly} className="flex items-center gap-2 text-[#1A6B4A] font-bold hover:text-[#0B3D2E] transition-colors border-b-2 border-transparent hover:border-[#0B3D2E] pb-1">
                   <MessageSquare size={18} />
                   Programar llamada con un asesor
@@ -785,7 +727,7 @@ export default function App() {
                 {faqs.map((faq, index) => (
                   <div 
                     key={index} 
-                    className={`bg-slate-50 rounded-2xl overflow-hidden transition-all duration-300 border ${openFaq === index ? 'border-emerald-300 shadow-lg shadow-emerald-500/5' : 'border-slate-200 hover:border-emerald-200'}`}
+                    className={`bg-white rounded-2xl overflow-hidden transition-all duration-300 border ${openFaq === index ? 'border-emerald-300 shadow-lg shadow-emerald-500/5' : 'border-slate-200 hover:border-emerald-200'}`}
                   >
                     <button 
                       onClick={() => setOpenFaq(openFaq === index ? null : index)}
@@ -812,72 +754,78 @@ export default function App() {
           </div>
         </section>
 
-        {/* NUEVA TABLA DE PRECIOS DINÁMICA (Grid Responsivo Completo) */}
+        {/* NUEVA TABLA DE PRECIOS DINÁMICA (Estructura Tarifa Base + NIT) */}
         <section id="planes" className="bg-[#0B3D2E] py-24 relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
           <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-[#1A6B4A] rounded-full blur-3xl opacity-30 pointer-events-none"></div>
           
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="reveal-target text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold font-serif text-white mb-4 leading-tight">
-                Planes de <span className="italic text-emerald-300">Validación Integral</span>
+                Modelos de <span className="italic text-emerald-300">Validación por Registro</span>
               </h2>
               <p className="text-emerald-100/70 text-lg max-w-2xl mx-auto font-light">
-                Seleccione la cobertura adecuada para su volumen operativo. Sin contratos forzosos.
+                Seleccione la cobertura adecuada para su volumen operativo. Procesamiento interno seguro sin software en la nube.
               </p>
             </div>
 
-            {/* Grid de Precios en CSS Grid en vez de Flex Horizontal */}
-            <div className="reveal-target grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
-              {pricingTiers.map((tier, idx) => {
-                const isPremium = tier.name === "Premium" || tier.name === "Pro";
-                const isEnterprise = tier.name === "Enterprise";
+            {/* TABLA DE PRECIOS (DISEÑO PREMIUM SAAS) */}
+            <div className="reveal-target bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
+              <div className="overflow-x-auto no-scrollbar">
+                <table className="w-full text-left border-collapse min-w-[800px]">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-[11px] font-bold uppercase tracking-wider">
+                      <th className="p-6 w-1/5">Paquete / Volumen</th>
+                      <th className="p-6 w-1/5">Tarifa Básica</th>
+                      <th className="p-6 w-1/5">Inversión x NIT</th>
+                      <th className="p-6 w-1/5">Total Estimado</th>
+                      <th className="p-6 w-1/5 text-center">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    
+                    {pricingTiers.map((tier, idx) => {
+                      const isEnterprise = tier.name === "Enterprise";
+                      const isPopular = tier.name === "Pro";
 
-                return (
-                  <div key={idx} className={`h-full bg-white rounded-3xl p-6 relative flex flex-col transition-all duration-300 hover:-translate-y-2 ${tier.highlight || 'border border-slate-200'}`}>
-                    
-                    {/* Badge Condicional */}
-                    {tier.badge && (
-                      <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-md whitespace-nowrap ${tier.badgeColor || 'bg-gradient-to-r from-emerald-400 to-teal-500 text-slate-900'}`}>
-                        {tier.badgeIcon && <tier.badgeIcon size={10} className="inline mr-1" />}
-                        {tier.badge}
-                      </div>
-                    )}
-                    
-                    <div className="mb-6 border-b border-slate-100 pb-6">
-                      <h4 className="text-lg font-bold text-slate-400 mb-1">{tier.name}</h4>
-                      <div className="flex items-baseline gap-1 flex-wrap">
-                        <span className={`font-extrabold text-slate-900 tracking-tight ${isEnterprise ? 'text-2xl' : 'text-3xl'}`}>
-                          {tier.price}
-                        </span>
-                        {!isEnterprise && <span className="text-slate-500 text-xs font-medium">/ único</span>}
-                      </div>
-                    </div>
-                    
-                    {/* flex-grow empuja el botón al fondo si las tarjetas son de distinta altura */}
-                    <ul className="space-y-4 mb-8 text-sm flex-grow">
-                      <li className="flex items-start gap-3">
-                        <CheckCircle2 size={16} className={`${isPremium ? 'text-amber-500' : 'text-emerald-500'} shrink-0 mt-0.5`} />
-                        <span className="text-slate-700 leading-tight">
-                          {isEnterprise ? <strong>{tier.nits}</strong> : <>Hasta <strong>{tier.nits} NITs</strong> <span className="text-slate-400 text-xs block mt-0.5">{tier.type}</span></>}
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <CheckCircle2 size={16} className={`${isPremium ? 'text-amber-500' : 'text-emerald-500'} shrink-0 mt-0.5`} />
-                        <span className="text-slate-700 leading-tight">Precisión <strong>{tier.accuracy}</strong></span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <CheckCircle2 size={16} className={`${isPremium ? 'text-amber-500' : 'text-emerald-500'} shrink-0 mt-0.5`} />
-                        <span className="text-slate-700 leading-tight">{tier.feature}</span>
-                      </li>
-                    </ul>
-                    
-                    <button onClick={scrollToCalendly} className={`w-full py-3 mt-auto rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${isPremium ? (tier.name === 'Premium' ? 'bg-gradient-to-r from-amber-500 to-yellow-600 text-white shadow-amber-500/30 hover:from-amber-600 hover:to-yellow-700' : 'bg-[#1A6B4A] text-white shadow-emerald-500/30 hover:bg-[#0B3D2E]') : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>
-                      Elegir {tier.name}
-                    </button>
-                  </div>
-                );
-              })}
+                      return (
+                        <tr key={idx} className={`${isPopular ? 'bg-emerald-50/30 border-l-4 border-[#1A6B4A] hover:bg-emerald-50/80' : 'hover:bg-slate-50'} transition-colors group relative`}>
+                          
+                          <td className="p-6">
+                            <div className="font-bold text-slate-900 text-xl mb-1 flex items-center gap-2">
+                              {tier.name} 
+                              {tier.badge && <span className={`text-[9px] px-2 py-0.5 rounded-full uppercase tracking-widest ${tier.badgeColor ? tier.badgeColor : 'bg-[#1A6B4A] text-white'}`}>{tier.badge}</span>}
+                            </div>
+                            <div className="text-slate-500 text-sm">Hasta {tier.nits} NITs</div>
+                          </td>
+                          
+                          <td className="p-6 align-middle">
+                            <div className="font-semibold text-slate-700 text-lg">{tier.base}</div>
+                            {!isEnterprise && <div className="text-slate-400 text-xs">Pago único</div>}
+                          </td>
+                          
+                          <td className="p-6 align-middle">
+                            <div className="font-semibold text-slate-700 text-lg">{tier.unit}</div>
+                          </td>
+                          
+                          <td className="p-6 align-middle">
+                            <div className={`font-extrabold text-3xl tracking-tight ${isEnterprise ? 'text-slate-900 text-2xl' : 'text-[#1A6B4A]'}`}>
+                              {tier.total}
+                            </div>
+                          </td>
+                          
+                          <td className="p-6 align-middle text-center">
+                            <button onClick={scrollToCalendly} className={`w-full bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3.5 rounded-xl font-bold text-sm transition-all ${isPopular ? 'bg-[#1A6B4A] text-white hover:bg-[#0B3D2E] shadow-md' : 'group-hover:bg-[#1A6B4A] group-hover:text-white'} ${isEnterprise ? 'bg-slate-900 text-white hover:bg-black group-hover:bg-black' : ''}`}>
+                              {isEnterprise ? 'Contactar Ejecutivo' : 'Agendar'}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+
+                  </tbody>
+                </table>
+              </div>
             </div>
 
             {/* Calendly Inline Widget */}
@@ -907,7 +855,7 @@ export default function App() {
                   <BrandLogo isDark={true} />
                 </div>
                 <p className="text-sm text-slate-500 max-w-md mt-4 leading-relaxed">
-                  Soluciones tecnológicas para firmas corporativas. Minimice su riesgo fiscal ante la DIAN mediante modelos de inteligencia financiera.
+                  Soluciones tecnológicas para firmas corporativas. Minimice su riesgo fiscal ante la DIAN mediante modelos de auditoría confidencial.
                 </p>
               </div>
               
@@ -933,7 +881,7 @@ export default function App() {
             <div className="pt-8 border-t border-slate-800 text-sm flex flex-col md:flex-row justify-between items-center gap-4">
               <p>© {new Date().getFullYear()} LMS Accounting Group. Todos los derechos reservados.</p>
               <p className="text-slate-500 flex items-center gap-1">
-                Estructuración Contable mediante Inteligencia Artificial
+                Servicios de Auditoría con Inteligencia Artificial Privada
               </p>
             </div>
           </div>
