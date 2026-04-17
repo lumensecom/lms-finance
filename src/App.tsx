@@ -8,7 +8,6 @@ import {
   Clock, 
   Menu, 
   X, 
-  Calculator, 
   Download,
   AlertTriangle,
   ChevronRight,
@@ -27,7 +26,8 @@ import {
   Star,
   ArrowRight,
   Database,
-  Lock
+  Lock,
+  Zap
 } from 'lucide-react';
 
 /* =========================================
@@ -63,13 +63,6 @@ export default function App() {
   const [isNearBottom, setIsNearBottom] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
-  
-  // Slider de Precios ajustado a 4 opciones (0, 1, 2, 3)
-  const [pricingIndex, setPricingIndex] = useState(2);
-
-  // Calculator State (ROI)
-  const [nits, setNits] = useState(5000);
-  const fixedSalary = 2500000;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -108,7 +101,15 @@ export default function App() {
   const scrollToCalendly = () => {
     const element = document.getElementById('agendamiento-calendly');
     if (element) {
-      const y = element.getBoundingClientRect().top + window.scrollY - 100;
+      const y = element.getBoundingClientRect().top - 100;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
+  const scrollToPlanes = () => {
+    const element = document.getElementById('planes');
+    if (element) {
+      const y = element.getBoundingClientRect().top - 100;
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
@@ -133,61 +134,29 @@ export default function App() {
     document.body.removeChild(link);
   };
 
-  // ==========================================
-  // CALCULATOR LOGIC (Tarifa Básica + >5000 = $40)
-  // ==========================================
-  const hoursSaved = Math.round((nits * 10) / 60); 
-  const hourlyRate = Math.round(fixedSalary / 160); 
-  const manualCost = hoursSaved * hourlyRate; 
-  
-  let lmsCost = 0;
-  const baseFee = 300000;
-
-  if (nits <= 1000) {
-    lmsCost = baseFee + (nits * 70);
-  } else if (nits <= 3000) {
-    lmsCost = baseFee + (nits * 60);
-  } else if (nits <= 5000) {
-    lmsCost = baseFee + (nits * 50);
-  } else {
-    // Para más de 5.000 NITs, el costo es 40 pesos por registro
-    lmsCost = baseFee + (nits * 40);
-  }
-  
-  const savings = Math.max(0, manualCost - lmsCost);
-
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat('es-CO', { 
-      style: 'currency', 
-      currency: 'COP',
-      maximumFractionDigits: 0
-    }).format(value);
-  };
-
   const faqs = [
     {
       q: "¿Es un software en la nube donde tengo que subir mi información?",
-      a: "No. Sabemos que la información contable es sumamente sensible. Nosotros operamos como una firma consultora (Done-For-You). Tú nos envías tu base de datos por un canal encriptado y nuestro equipo la procesa en servidores cerrados, eliminando los riesgos de la nube pública."
+      a: "No. Comprendemos que la información contable y fiscal es sumamente sensible. Operamos bajo un modelo de consultoría estructurada (Done-For-You). La empresa transmite su base de datos mediante canales encriptados y nuestro equipo de ingenieros la procesa en servidores locales cerrados, mitigando por completo los riesgos asociados a la nube pública."
     },
     {
       q: "¿Qué sucede si nuestro documento de origen está desorganizado?",
-      a: "Nuestra tecnología propietaria está capacitada para estructurar y organizar la información independientemente del formato crudo. El único requisito es contar con una columna identificadora (NIT o Cédula)."
+      a: "Nuestra tecnología propietaria está capacitada para reestructurar y organizar la información independientemente del formato crudo. El único requisito funcional es contar con una columna identificadora (NIT o Cédula)."
     },
     {
-      q: "¿En qué basan el cálculo de ahorro mostrado?",
-      a: "El modelo matemático compara el valor de nuestra validación automática contra el salario base de un auxiliar contable en Colombia ($2.500.000 COP) y los 10 minutos operativos que toma auditar y corregir manualmente cada NIT en las plataformas gubernamentales."
+      q: "¿En qué basan la proyección de ahorro de tiempo operativo?",
+      a: "El modelo matemático refleja la pérdida operativa real. Se calcula proyectando los 10 minutos de tiempo estandarizado que toma auditar, cruzar y corregir manualmente cada NIT en las plataformas gubernamentales y reestructurarlo en el formato Excel."
     },
     {
       q: "¿Qué datos específicos auditan en este proceso?",
-      a: "Verificamos la existencia y vigencia del RUT, corregimos y estandarizamos las razones sociales y aseguramos la segmentación correcta de nombres y apellidos para personas naturales (requisito vital para Exógena)."
+      a: "Verificamos la existencia y vigencia del RUT, corregimos y estandarizamos las razones sociales y aseguramos la segmentación correcta de nombres y apellidos para personas naturales, lo cual es un requisito vital para evitar requerimientos de la DIAN."
     },
     {
-      q: "¿En qué consiste la sesión de diagnóstico inicial?",
-      a: "Es una sesión estratégica de 30 minutos. En ella analizaremos el volumen de su información, revisaremos posibles contingencias fiscales asociadas a su sector y estructuraremos un acuerdo de confidencialidad (NDA) para avanzar."
+      q: "¿En qué consiste la sesión de evaluación inicial?",
+      a: "Es una sesión estratégica de 30 minutos. En ella analizaremos el volumen de su información, revisaremos las posibles contingencias fiscales asociadas a su sector y estructuraremos un acuerdo de confidencialidad (NDA) para avanzar con seguridad."
     }
   ];
 
-  // Actualización: Tabla de 4 planes, eliminamos la mención explícita de los 10.000
   const pricingTiers = [
     { name: "Starter", nits: "1.000", base: "$300.000", unit: "$70", total: "$370.000", feature: "Validación y cruce DIAN", highlight: false },
     { name: "Básico", nits: "3.000", base: "$300.000", unit: "$60", total: "$480.000", feature: "Validación y cruce DIAN", highlight: false },
@@ -232,8 +201,8 @@ export default function App() {
 
           .reveal-target {
             opacity: 0;
-            transform: translateY(50px) scale(0.96);
-            transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(40px) scale(0.98);
+            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
             will-change: opacity, transform;
           }
           .reveal-visible {
@@ -245,12 +214,12 @@ export default function App() {
           .reveal-delay-300 { transition-delay: 300ms; }
           
           @keyframes premiumFadeUp {
-            from { opacity: 0; transform: translateY(50px) scale(0.96); }
+            from { opacity: 0; transform: translateY(40px) scale(0.98); }
             to { opacity: 1; transform: translateY(0) scale(1); }
           }
           .animate-premium-up {
             opacity: 0;
-            animation: premiumFadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: premiumFadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
           }
           .anim-delay-100 { animation-delay: 100ms; }
           .anim-delay-200 { animation-delay: 200ms; }
@@ -269,9 +238,9 @@ export default function App() {
 
       <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-[#10b981] selection:text-white relative">
         
-        {/* Navigation */}
+        {/* Navigation - Diseño Dock Flotante */}
         <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'py-3' : 'py-5'}`}>
-          <div className={`absolute inset-0 transition-opacity duration-500 ${isScrolled ? 'bg-white/85 backdrop-blur-xl border-b border-slate-200/50 shadow-sm opacity-100' : 'opacity-0'}`}></div>
+          <div className={`absolute inset-0 transition-opacity duration-500 ${isScrolled ? 'bg-white/90 backdrop-blur-xl border-b border-slate-200/50 shadow-sm opacity-100' : 'opacity-0'}`}></div>
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center">
@@ -284,7 +253,7 @@ export default function App() {
                 {[
                   { name: 'El Riesgo', href: '#problema' },
                   { name: 'Nuestra Metodología', href: '#como-funciona' },
-                  { name: 'Rentabilidad', href: '#calculadora' },
+                  { name: 'Eficiencia', href: '#calculadora' },
                   { name: 'Planes', href: '#planes' }
                 ].map((item) => (
                   <a
@@ -297,7 +266,10 @@ export default function App() {
                 ))}
               </div>
 
-              <div className="hidden lg:flex flex-1 justify-end relative z-10">
+              <div className="hidden lg:flex flex-1 justify-end items-center gap-4 relative z-10">
+                <button onClick={scrollToPlanes} className={`text-sm font-bold transition-colors hover:scale-105 ${isScrolled ? 'text-slate-600 hover:text-[#1A6B4A]' : 'text-emerald-100 hover:text-white'}`}>
+                  Ver planes de fee
+                </button>
                 <button onClick={scrollToCalendly} className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all transform hover:scale-105 flex items-center gap-2 ${isScrolled ? 'bg-[#1A6B4A] hover:bg-[#0B3D2E] text-white shadow-lg shadow-emerald-500/20' : 'bg-white text-[#0B3D2E] hover:bg-slate-100 shadow-xl'}`}>
                   <Calendar size={16} />
                   Agendar Diagnóstico
@@ -314,15 +286,20 @@ export default function App() {
 
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
-            <div className="lg:hidden absolute top-full left-0 w-full bg-white shadow-xl border-t border-slate-100 py-4 px-4 flex flex-col space-y-4">
+            <div className="lg:hidden absolute top-full left-0 w-full bg-white shadow-2xl border-t border-slate-100 py-4 px-4 flex flex-col space-y-4">
               <a href="#problema" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">El Riesgo</a>
               <a href="#como-funciona" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">Nuestra Metodología</a>
-              <a href="#calculadora" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">Rentabilidad</a>
+              <a href="#calculadora" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">Eficiencia</a>
               <a href="#planes" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">Planes</a>
-              <button onClick={() => { setIsMobileMenuOpen(false); scrollToCalendly(); }} className="bg-[#1A6B4A] text-white px-5 py-3 rounded-xl font-medium w-full mt-2 flex justify-center items-center gap-2">
-                <Calendar size={18} />
-                Agendar Diagnóstico
-              </button>
+              <div className="border-t border-slate-100 pt-4 flex flex-col gap-3">
+                <button onClick={() => { setIsMobileMenuOpen(false); scrollToPlanes(); }} className="text-slate-600 font-bold p-2 text-center">
+                  Ver planes de fee
+                </button>
+                <button onClick={() => { setIsMobileMenuOpen(false); scrollToCalendly(); }} className="bg-[#1A6B4A] text-white px-5 py-3 rounded-xl font-medium w-full flex justify-center items-center gap-2 shadow-lg">
+                  <Calendar size={18} />
+                  Agendar Diagnóstico
+                </button>
+              </div>
             </div>
           )}
         </nav>
@@ -353,7 +330,7 @@ export default function App() {
               </h1>
               
               <p className="animate-premium-up anim-delay-200 text-lg sm:text-xl text-slate-300 mb-10 leading-relaxed max-w-2xl mx-auto font-light">
-                Audita tu base de datos contra el <span className="font-serif italic text-emerald-300 text-2xl mx-1">RUES</span> y los registros de la <span className="font-serif italic text-emerald-300 text-2xl mx-1">DIAN</span>. Extrae información exacta, corrige el dígito de verificación y elimina <span className="text-white font-medium border-b border-emerald-400/50 pb-0.5">contingencias operativas</span>.
+                Audita tu base de datos contra el <span className="font-serif italic text-emerald-300 text-2xl mx-1">RUES</span> y los registros de la <span className="font-serif italic text-emerald-300 text-2xl mx-1">DIAN</span>. Extrae información exacta, corrige el dígito de verificación y previene <span className="text-white font-medium border-b border-emerald-400/50 pb-0.5">contingencias operativas</span>.
               </p>
               
               <div className="animate-premium-up anim-delay-300 flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
@@ -364,22 +341,25 @@ export default function App() {
               </div>
               
               {/* ========================================================= */}
-              {/* Gráfico Visual del Proceso (Hecho por Nosotros)            */}
+              {/* Gráfico Visual del Proceso                                */}
               {/* ========================================================= */}
               <div className="animate-premium-up anim-delay-400 relative max-w-6xl mx-auto rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-slate-700/50 bg-slate-900/80 backdrop-blur-xl overflow-hidden flex flex-col md:flex-row">
                 
-                {/* Left Side: Archivo Enviado (Simulado) */}
+                {/* Left Side: Archivo Enviado */}
                 <div className="w-full md:w-4/12 p-6 border-b md:border-b-0 md:border-r border-slate-700/50 bg-slate-800/30 flex flex-col justify-center">
-                  <div className="flex items-center gap-2 mb-4 text-slate-400 text-sm font-medium justify-between">
-                    <div className="flex items-center gap-2">
-                      <Lock size={16} className="text-emerald-400" /> Archivo Recibido (Seguro)
+                  <div className="flex flex-col gap-1 mb-4">
+                    <div className="flex items-center gap-2 text-slate-400 text-sm font-medium justify-between">
+                      <div className="flex items-center gap-2">
+                        <Lock size={16} className="text-emerald-400" /> Paso 1: Archivo Recibido
+                      </div>
                     </div>
+                    <p className="text-[11px] text-slate-500 font-light leading-tight text-left">Ejemplo: Listado de NITs sin formato ni verificación.</p>
                   </div>
-                  <div className="relative group">
+                  <div className="relative group mt-2">
                     <div className="w-full h-48 bg-slate-900 border border-slate-600/50 rounded-xl p-4 text-slate-500 font-mono text-xs flex flex-col items-center justify-center shadow-inner leading-relaxed">
                        <FileSpreadsheet size={40} className="text-slate-600 mb-3" />
                        <span>[ ARCHIVO.CSV ENCRIPTADO ]</span>
-                       <span className="mt-2 text-[10px] text-emerald-500/50">Base_Terceros_2025.xlsx</span>
+                       <span className="mt-2 text-[10px] text-emerald-500/50">Base_Terceros_2026.xlsx</span>
                     </div>
                     <div className="absolute bottom-3 right-3">
                       <div className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1.5 rounded-md text-[10px] font-bold flex items-center gap-1.5 cursor-default">
@@ -387,7 +367,7 @@ export default function App() {
                       </div>
                     </div>
                   </div>
-                  <p className="text-xs text-slate-500 mt-4 text-center">Nos envías tu archivo y nuestro equipo se encarga del resto.</p>
+                  <p className="text-xs text-slate-500 mt-4 text-center">Recepción encriptada del documento para su auditoría.</p>
                 </div>
 
                 {/* Middle AI Bot Indicator */}
@@ -401,12 +381,15 @@ export default function App() {
                   
                   <div className="w-full relative z-10 rounded-xl overflow-hidden shadow-[0_0_30px_rgba(16,185,129,0.1)] border border-emerald-500/20 bg-white flex flex-col">
                      
-                     <div className="bg-slate-50 py-3 px-4 border-b border-slate-200 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <CheckCircle2 size={16} className="text-emerald-500" /> 
-                          <span className="text-slate-700 text-xs font-bold uppercase tracking-wider">Archivo Limpio Entregado</span>
+                     <div className="bg-slate-50 py-3 px-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 size={16} className="text-emerald-500" /> 
+                            <span className="text-slate-700 text-xs font-bold uppercase tracking-wider">Paso 2: Archivo Estructurado</span>
+                          </div>
+                          <p className="text-[10px] text-slate-500 font-normal">Resultado: DV calculado, nombres separados y validación DIAN.</p>
                         </div>
-                        <div className="flex gap-1">
+                        <div className="flex gap-1 hidden sm:flex">
                           <div className="w-2 h-2 rounded-full bg-slate-300"></div>
                           <div className="w-2 h-2 rounded-full bg-slate-300"></div>
                           <div className="w-2 h-2 rounded-full bg-slate-300"></div>
@@ -470,9 +453,8 @@ export default function App() {
                        </table>
                      </div>
 
-                     {/* Botón Descargar Ejemplo CSV */}
                      <div className="bg-slate-50 p-3 sm:p-4 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3">
-                        <span className="text-xs text-slate-500 font-medium hidden sm:inline-block">Entregables listos para el prevalidador</span>
+                        <span className="text-xs text-slate-500 font-medium hidden sm:inline-block">Estructura lista para el prevalidador</span>
                         <button onClick={handleDownloadExample} className="w-full sm:w-auto text-xs font-bold bg-[#1A6B4A] hover:bg-[#0B3D2E] text-white px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm hover:shadow-md">
                            <Download size={14} /> Descargar Ejemplo (.CSV)
                         </button>
@@ -519,9 +501,9 @@ export default function App() {
         <section id="problema" className="py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="reveal-target text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">El Problema Oculto</h2>
+              <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">El Riesgo Fiscal</h2>
               <h3 className="text-4xl md:text-5xl text-slate-900 mb-6 font-serif font-normal leading-tight">
-                ¿Sabías que un dígito erróneo en el reporte puede <span className="italic text-[#1A6B4A]">costarte millones?</span>
+                ¿Sabía que un dígito erróneo en el reporte puede <span className="italic text-[#1A6B4A]">costarle millones?</span>
               </h3>
               <p className="text-lg text-slate-600 font-medium">Transmitir información exógena con inconsistencias en las bases de terceros es el detonante principal de requerimientos y sanciones por parte de la DIAN.</p>
             </div>
@@ -562,7 +544,7 @@ export default function App() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="reveal-target text-center max-w-3xl mx-auto mb-16">
               <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">Servicio Done-For-You</h2>
-              <h3 className="text-4xl md:text-5xl font-serif text-slate-900 mb-4">Validamos tu información <span className="italic text-[#1A6B4A]">sin exponerte</span> a la nube pública</h3>
+              <h3 className="text-4xl md:text-5xl font-serif text-slate-900 mb-4">Validamos su información <span className="italic text-[#1A6B4A]">sin exponerla</span> a la nube pública</h3>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8 lg:gap-12 relative">
@@ -572,17 +554,17 @@ export default function App() {
                 {
                   icon: <Upload size={32} />,
                   title: "1. Envío de Base de Datos",
-                  desc: "Compartes tu base de terceros (proveedores, clientes, empleados) mediante canales encriptados directamente con nuestro equipo. Protegemos tu data con NDAs."
+                  desc: "La empresa transmite su base de terceros (proveedores, clientes, empleados) mediante canales encriptados. Protegemos su información con NDAs estrictos."
                 },
                 {
                   icon: <ShieldCheck size={32} />,
                   title: "2. Auditoría Interna Avanzada",
-                  desc: "Nuestros ingenieros procesan tu información en servidores locales cerrados utilizando nuestra IA propietaria para estructurar y verificar cada NIT, garantizando privacidad."
+                  desc: "Nuestros ingenieros procesan su información en servidores locales cerrados utilizando inteligencia financiera para verificar cada registro, garantizando privacidad total."
                 },
                 {
                   icon: <FileSpreadsheet size={32} />,
-                  title: "3. Entrega de Archivo Limpio",
-                  desc: "Te devolvemos un archivo depurado, limpio y configurado bajo los requisitos exactos del prevalidador oficial de la DIAN, listo para que tu equipo lo integre."
+                  title: "3. Entrega y Reporte",
+                  desc: "Devolvemos un archivo depurado, estructurado y configurado bajo los requisitos exactos del prevalidador de la DIAN, listo para su integración contable."
                 }
               ].map((step, idx) => (
                 <div key={idx} className={`reveal-target ${idx === 1 ? 'reveal-delay-100' : idx === 2 ? 'reveal-delay-200' : ''} relative group text-center`}>
@@ -597,112 +579,58 @@ export default function App() {
           </div>
         </section>
 
-        {/* Savings Calculator Visual e Interactivo */}
-        <section id="calculadora" className="py-24 bg-white border-t border-slate-200/50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="reveal-target text-center max-w-3xl mx-auto mb-12">
-              <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">Eficiencia Financiera</h2>
-              <h3 className="text-4xl md:text-5xl font-serif text-slate-900 mb-4">Proyección de <span className="italic text-[#1A6B4A]">Ahorro Operativo</span></h3>
+        {/* ==================================================== */}
+        {/* NUEVA SECCIÓN: AHORRO DE TIEMPO (ESTÁTICA Y DE ALTO IMPACTO) */}
+        {/* ==================================================== */}
+        <section id="calculadora" className="py-24 bg-white border-t border-slate-200/50 relative overflow-hidden">
+          {/* Decorative background blur */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="reveal-target text-center max-w-3xl mx-auto mb-16">
+              <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">Eficiencia Operativa</h2>
+              <h3 className="text-4xl md:text-5xl font-serif text-slate-900 mb-4">El verdadero costo de <span className="italic text-[#1A6B4A]">hacerlo a mano</span></h3>
+              <p className="text-slate-600 text-lg">Un ejemplo real del tiempo invertido en procesar tan solo <strong className="text-slate-900">10 NITs</strong>.</p>
             </div>
 
-            <div className="reveal-target bg-[#0B3D2E] rounded-3xl overflow-hidden shadow-2xl">
-              <div className="grid lg:grid-cols-2">
-                
-                <div className="p-8 lg:p-12 relative flex flex-col justify-center">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="p-2 bg-emerald-500/20 rounded-lg text-emerald-400">
-                      <Calculator size={24} />
-                    </div>
-                    <h2 className="text-2xl font-bold text-white">¿Cuál es su exposición actual?</h2>
-                  </div>
-                  <p className="text-slate-300 mb-6 font-light">Ajuste el volumen de su base para proyectar las horas y el capital inmovilizado en procesos de verificación manual.</p>
-
-                  <div className="space-y-6">
-                    <div className="flex flex-wrap gap-3 mb-2">
-                      <span className="bg-red-500/10 border border-red-500/20 text-red-400 text-xs md:text-sm font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-all shadow-[0_0_15px_rgba(239,68,68,0.15)]">
-                        <AlertOctagon size={14} /> Costo operativo manual: {formatCurrency(manualCost)}
-                      </span>
-                      <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs md:text-sm font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-all">
-                        <Clock size={14} /> +{hoursSaved}h operativas a favor
-                      </span>
-                      <span className="bg-teal-500/10 border border-teal-500/20 text-teal-300 text-xs md:text-sm font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-all">
-                        <TrendingDown size={14} /> +{formatCurrency(savings)} liberados
-                      </span>
-                    </div>
-
-                    <div>
-                      <div className="flex justify-between mb-2">
-                        <label className="text-sm font-medium text-slate-300">Volumen de terceros a depurar</label>
-                        <span className="text-emerald-400 font-bold">{nits > 8000 ? '+8.000' : nits.toLocaleString('es-CO')} NITs</span>
-                      </div>
-                      <input 
-                        type="range" 
-                        min="1000" 
-                        max="8000" 
-                        step="500" 
-                        value={nits}
-                        onChange={(e) => setNits(Number(e.target.value))}
-                        className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
-                      />
-                      <div className="flex justify-between text-emerald-200/50 text-xs font-mono mt-2">
-                        <span>1k</span>
-                        <span>3k</span>
-                        <span>5k</span>
-                        <span>+5k</span>
-                      </div>
-                    </div>
-
-                    <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4 mt-4">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-sm font-medium text-slate-400">Base Salarial Analista (Fijo)</span>
-                        <span className="text-slate-300 font-mono text-sm">{formatCurrency(fixedSalary)}</span>
-                      </div>
-                      <p className="text-[11px] text-slate-500 italic mt-2">* Proyección estructurada sobre un promedio de 10 minutos de trabajo continuo por NIT (búsqueda DIAN, validación RUES y corrección documental).</p>
-                    </div>
-                  </div>
+            <div className="reveal-target max-w-4xl mx-auto flex flex-col md:flex-row items-stretch justify-center gap-8">
+              
+              {/* Manual */}
+              <div className="flex-1 bg-rose-50 border border-rose-100 rounded-[2rem] p-10 flex flex-col items-center text-center relative overflow-hidden group shadow-lg">
+                <div className="absolute top-0 left-0 w-full h-1 bg-rose-300"></div>
+                <div className="w-16 h-16 bg-rose-100 text-rose-500 rounded-full flex items-center justify-center mb-6 shadow-sm">
+                  <Clock size={32} />
                 </div>
+                <h4 className="text-xl font-bold text-slate-900 mb-2">Proceso Manual</h4>
+                <p className="text-slate-600 text-sm mb-6">Búsqueda 1 a 1 en plataformas (DIAN y RUES), validación y digitación.</p>
+                <div className="text-5xl md:text-6xl font-black text-rose-600 mb-2 tracking-tighter">100<span className="text-3xl">m</span></div>
+                <p className="text-rose-500/80 font-bold bg-rose-100/50 px-4 py-1.5 rounded-full text-sm mt-2">1 hora y 40 minutos inmovilizados</p>
+              </div>
 
-                <div className="bg-gradient-to-br from-[#1A6B4A] to-[#0d4a32] p-8 lg:p-12 flex flex-col justify-center relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400 rounded-full mix-blend-overlay filter blur-3xl opacity-20"></div>
-                  
-                  <div className="space-y-6 relative z-10">
-                    <div className="bg-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-sm relative overflow-hidden">
-                      <div className="flex items-center gap-2 mb-1 relative z-10">
-                        <div className="text-sm text-emerald-100">Inversión en Auditoría Automatizada</div>
-                      </div>
-                      <div className={`text-2xl font-bold text-white transition-all duration-500 relative z-10`}>
-                        {formatCurrency(lmsCost)}
-                      </div>
-                    </div>
+              {/* VS badge */}
+              <div className="flex items-center justify-center -my-10 md:-mx-12 md:my-0 z-10">
+                <div className="w-14 h-14 bg-white rounded-full shadow-xl flex items-center justify-center font-black text-slate-300 border border-slate-100 text-xl">VS</div>
+              </div>
 
-                    <div className="bg-white rounded-2xl p-6 shadow-xl transform scale-105 relative border border-emerald-100 overflow-hidden">
-                      <div className="absolute -right-6 -top-6 text-emerald-50 opacity-50">
-                        <BarChart3 size={100} />
-                      </div>
-                      <div className="absolute top-4 right-4 animate-pulse">
-                        <Sparkles size={24} className="text-amber-400" />
-                      </div>
-                      <div className="relative z-10">
-                        <div className="text-sm font-bold text-emerald-600 uppercase tracking-wider mb-2 flex items-center gap-2">
-                          <TrendingDown size={16} /> Ahorro proyectado con nuestro servicio
-                        </div>
-                        <div className={`text-4xl lg:text-5xl font-extrabold text-[#0B3D2E] mb-2 transition-all duration-500 relative z-10`}>
-                          {formatCurrency(savings)}
-                        </div>
-                        <div className="text-sm text-slate-600 font-medium mt-2">Retorno de eficiencia medible para su departamento contable.</div>
-                      </div>
-                    </div>
+              {/* LMS IA */}
+              <div className="flex-1 bg-[#0B3D2E] rounded-[2rem] p-10 flex flex-col items-center text-center relative overflow-hidden shadow-2xl transform md:scale-105 border border-[#1A6B4A]">
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500 rounded-full mix-blend-overlay filter blur-3xl opacity-30 animate-pulse"></div>
 
-                  </div>
+                <div className="w-16 h-16 bg-[#1A6B4A] border border-emerald-500/30 text-emerald-400 rounded-full flex items-center justify-center mb-6 relative z-10 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                  <Zap size={32} />
                 </div>
-
+                <h4 className="text-xl font-bold text-white mb-2 relative z-10">Inteligencia LMS</h4>
+                <p className="text-emerald-100/70 text-sm mb-6 relative z-10">Cruce automatizado masivo y generación de archivo estructurado.</p>
+                <div className="text-5xl md:text-6xl font-black text-emerald-400 mb-2 relative z-10 tracking-tighter">1.2<span className="text-3xl">s</span></div>
+                <p className="text-emerald-900 font-bold bg-emerald-400 px-4 py-1.5 rounded-full text-sm mt-2 relative z-10 shadow-lg">Ejecución inmediata</p>
               </div>
             </div>
-            
-            <div className="mt-12 text-center">
-              <button onClick={scrollToCalendly} className="bg-[#0B3D2E] hover:bg-[#1A6B4A] text-white px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-lg flex items-center justify-center gap-3 mx-auto">
-                <Calendar size={20} />
-                Agendar sesión de evaluación
+
+            <div className="mt-16 text-center reveal-target reveal-delay-200">
+              <button onClick={scrollToPlanes} className="bg-slate-900 hover:bg-black text-white px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-xl shadow-slate-900/20 flex items-center justify-center gap-3 mx-auto hover:-translate-y-1">
+                Ver planes de fee
+                <ArrowRight size={20} />
               </button>
             </div>
           </div>
@@ -754,7 +682,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* NUEVA TABLA DE PRECIOS DINÁMICA (Estructura Tarifa Base + NIT) */}
+        {/* TABLA DE PRECIOS DINÁMICA */}
         <section id="planes" className="bg-[#0B3D2E] py-24 relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
           <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-[#1A6B4A] rounded-full blur-3xl opacity-30 pointer-events-none"></div>
@@ -770,16 +698,16 @@ export default function App() {
             </div>
 
             {/* TABLA DE PRECIOS (DISEÑO PREMIUM SAAS) */}
-            <div className="reveal-target bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
-              <div className="overflow-x-auto no-scrollbar">
-                <table className="w-full text-left border-collapse min-w-[800px]">
+            <div className="reveal-target bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200 w-full overflow-x-auto pb-4">
+              <div className="min-w-[900px] lg:min-w-full">
+                <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-[11px] font-bold uppercase tracking-wider">
-                      <th className="p-6 w-1/5">Paquete / Volumen</th>
-                      <th className="p-6 w-1/5">Tarifa Básica</th>
-                      <th className="p-6 w-1/5">Inversión x NIT</th>
-                      <th className="p-6 w-1/5">Total Estimado</th>
-                      <th className="p-6 w-1/5 text-center">Acción</th>
+                      <th className="p-5 md:p-6 w-[25%]">Paquete / Volumen</th>
+                      <th className="p-5 md:p-6 w-[15%]">Tarifa Básica</th>
+                      <th className="p-5 md:p-6 w-[20%]">Inversión x NIT</th>
+                      <th className="p-5 md:p-6 w-[20%]">Total Estimado</th>
+                      <th className="p-5 md:p-6 w-[20%] text-center">Acción</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
@@ -791,31 +719,31 @@ export default function App() {
                       return (
                         <tr key={idx} className={`${isPopular ? 'bg-emerald-50/30 border-l-4 border-[#1A6B4A] hover:bg-emerald-50/80' : 'hover:bg-slate-50'} transition-colors group relative`}>
                           
-                          <td className="p-6">
-                            <div className="font-bold text-slate-900 text-xl mb-1 flex items-center gap-2">
+                          <td className="p-5 md:p-6">
+                            <div className="font-bold text-slate-900 text-lg sm:text-xl mb-1 flex items-center gap-2">
                               {tier.name} 
                               {tier.badge && <span className={`text-[9px] px-2 py-0.5 rounded-full uppercase tracking-widest ${tier.badgeColor ? tier.badgeColor : 'bg-[#1A6B4A] text-white'}`}>{tier.badge}</span>}
                             </div>
                             <div className="text-slate-500 text-sm">Hasta {tier.nits} NITs</div>
                           </td>
                           
-                          <td className="p-6 align-middle">
-                            <div className="font-semibold text-slate-700 text-lg">{tier.base}</div>
-                            {!isEnterprise && <div className="text-slate-400 text-xs">Pago único</div>}
+                          <td className="p-5 md:p-6 align-middle">
+                            <div className="font-semibold text-slate-700 text-base sm:text-lg">{tier.base}</div>
+                            {!isEnterprise && <div className="text-slate-400 text-[10px] sm:text-xs">Pago único</div>}
                           </td>
                           
-                          <td className="p-6 align-middle">
-                            <div className="font-semibold text-slate-700 text-lg">{tier.unit}</div>
+                          <td className="p-5 md:p-6 align-middle">
+                            <div className="font-semibold text-slate-700 text-base sm:text-lg">{tier.unit}</div>
                           </td>
                           
-                          <td className="p-6 align-middle">
-                            <div className={`font-extrabold text-3xl tracking-tight ${isEnterprise ? 'text-slate-900 text-2xl' : 'text-[#1A6B4A]'}`}>
+                          <td className="p-5 md:p-6 align-middle">
+                            <div className={`font-extrabold text-2xl sm:text-3xl tracking-tight ${isEnterprise ? 'text-slate-900 text-xl sm:text-2xl' : 'text-[#1A6B4A]'}`}>
                               {tier.total}
                             </div>
                           </td>
                           
-                          <td className="p-6 align-middle text-center">
-                            <button onClick={scrollToCalendly} className={`w-full bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3.5 rounded-xl font-bold text-sm transition-all ${isPopular ? 'bg-[#1A6B4A] text-white hover:bg-[#0B3D2E] shadow-md' : 'group-hover:bg-[#1A6B4A] group-hover:text-white'} ${isEnterprise ? 'bg-slate-900 text-white hover:bg-black group-hover:bg-black' : ''}`}>
+                          <td className="p-5 md:p-6 align-middle text-center">
+                            <button onClick={scrollToCalendly} className={`w-full whitespace-nowrap bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-3 rounded-xl font-bold text-xs sm:text-sm transition-all ${isPopular ? 'bg-[#1A6B4A] text-white hover:bg-[#0B3D2E] shadow-md' : 'group-hover:bg-[#1A6B4A] group-hover:text-white'} ${isEnterprise ? 'bg-slate-900 text-white hover:bg-black group-hover:bg-black' : ''}`}>
                               {isEnterprise ? 'Contactar Ejecutivo' : 'Agendar'}
                             </button>
                           </td>
@@ -864,7 +792,7 @@ export default function App() {
                 <ul className="space-y-2 text-sm">
                   <li><a href="#como-funciona" className="hover:text-emerald-400 transition-colors">Metodología</a></li>
                   <li><a href="#caracteristicas" className="hover:text-emerald-400 transition-colors">Cobertura Estratégica</a></li>
-                  <li><a href="#calculadora" className="hover:text-emerald-400 transition-colors">Eficiencia Financiera</a></li>
+                  <li><a href="#calculadora" className="hover:text-emerald-400 transition-colors">Eficiencia Operativa</a></li>
                 </ul>
               </div>
 
@@ -881,22 +809,21 @@ export default function App() {
             <div className="pt-8 border-t border-slate-800 text-sm flex flex-col md:flex-row justify-between items-center gap-4">
               <p>© {new Date().getFullYear()} LMS Accounting Group. Todos los derechos reservados.</p>
               <p className="text-slate-500 flex items-center gap-1">
-                Servicios de Auditoría con Inteligencia Artificial Privada
+                Servicios de Auditoría con Inteligencia Financiera
               </p>
             </div>
           </div>
         </footer>
 
-        {/* CTA Flotante Sutil (Desaparece al llegar al fondo) */}
+        {/* CTA Flotante Sutil */}
         <div className={`fixed bottom-6 lg:bottom-10 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolledPastHero && !isNearBottom ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-24 opacity-0 scale-90 pointer-events-none'}`}>
-          <button onClick={scrollToCalendly} className="bg-[#0B3D2E] text-white px-5 sm:px-6 py-3.5 rounded-full font-bold text-sm sm:text-base shadow-[0_15px_40px_-10px_rgba(11,61,46,0.8)] border border-[#1A6B4A]/50 flex items-center gap-3 hover:bg-[#1A6B4A] hover:scale-105 transition-all duration-300 group">
-            {/* Indicador Pulse animado */}
+          <button onClick={scrollToCalendly} className="bg-[#0B3D2E] text-white px-5 sm:px-6 py-3.5 rounded-full font-bold text-sm sm:text-base shadow-[0_15px_40px_-10px_rgba(11,61,46,0.8)] border border-[#1A6B4A]/50 flex items-center gap-3 hover:bg-[#1A6B4A] hover:scale-105 transition-all duration-300 group whitespace-nowrap">
             <span className="relative flex h-3 w-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
             </span>
             
-            <span className="whitespace-nowrap">Agendar evaluación estructural</span>
+            <span>Agendar evaluación estructural</span>
             <ChevronRight size={18} className="text-emerald-400 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
