@@ -158,10 +158,10 @@ export default function App() {
   ];
 
   const pricingTiers = [
-    { name: "Starter", nits: "1.000", base: "$300.000", unit: "$70", total: "$370.000", feature: "Validación y cruce DIAN", highlight: false },
-    { name: "Básico", nits: "3.000", base: "$300.000", unit: "$60", total: "$480.000", feature: "Validación y cruce DIAN", highlight: false },
-    { name: "Pro", nits: "5.000", base: "$300.000", unit: "$50", total: "$550.000", feature: "Validación prioritaria", highlight: "border-2 border-[#1A6B4A] shadow-lg shadow-emerald-500/10", badge: "Más Popular" },
-    { name: "Premium", nits: "Más de 5.000", base: "$300.000", unit: "$40", total: "A la medida", feature: "Soporte dedicado & SLAs", highlight: "border-2 border-amber-400 shadow-xl shadow-amber-500/20 bg-gradient-to-b from-white to-amber-50/30", badge: "Exclusivo", badgeIcon: Sparkles, badgeColor: "bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-900" }
+    { name: "Hasta 1.000 NITs", base: "$300.000", unit: "$70", total: "$370.000", isEnterprise: false, highlight: false },
+    { name: "Hasta 3.000 NITs", base: "$300.000", unit: "$60", total: "$480.000", isEnterprise: false, highlight: false },
+    { name: "Hasta 5.000 NITs", base: "$300.000", unit: "$50", total: "$550.000", isEnterprise: false, highlight: "border-2 border-[#1A6B4A] shadow-lg shadow-emerald-500/10", badge: "Más Frecuente" },
+    { name: "Más de 5.000 NITs", base: "$300.000", unit: "$40", total: "A la medida", isEnterprise: true, highlight: "border-2 border-amber-400 shadow-xl shadow-amber-500/20 bg-gradient-to-b from-white to-amber-50/30", badge: "Corporativo", badgeIcon: Sparkles, badgeColor: "bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-900" }
   ];
 
   return (
@@ -337,6 +337,9 @@ export default function App() {
                 <button onClick={scrollToCalendly} className="w-full sm:w-auto bg-[#10b981] hover:bg-[#059669] text-white px-8 py-4 rounded-full font-bold text-lg transition-all shadow-[0_0_40px_-10px_rgba(16,185,129,0.5)] flex items-center justify-center gap-2 group">
                   <Calendar size={20} className="group-hover:scale-110 transition-transform" />
                   Agendar reunión de diagnóstico
+                </button>
+                <button onClick={scrollToPlanes} className="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white border border-white/10 px-8 py-4 rounded-full font-bold text-lg transition-all flex items-center justify-center gap-2 backdrop-blur-md">
+                  Ver planes de fee
                 </button>
               </div>
               
@@ -682,7 +685,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* TABLA DE PRECIOS DINÁMICA */}
+        {/* NUEVA TABLA DE PRECIOS DINÁMICA (Estructura Tarifa Base + NIT) */}
         <section id="planes" className="bg-[#0B3D2E] py-24 relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
           <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-[#1A6B4A] rounded-full blur-3xl opacity-30 pointer-events-none"></div>
@@ -703,7 +706,7 @@ export default function App() {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-[11px] font-bold uppercase tracking-wider">
-                      <th className="p-5 md:p-6 w-[25%]">Paquete / Volumen</th>
+                      <th className="p-5 md:p-6 w-[25%]">Volumen de NITs</th>
                       <th className="p-5 md:p-6 w-[15%]">Tarifa Básica</th>
                       <th className="p-5 md:p-6 w-[20%]">Inversión x NIT</th>
                       <th className="p-5 md:p-6 w-[20%]">Total Estimado</th>
@@ -713,23 +716,23 @@ export default function App() {
                   <tbody className="divide-y divide-slate-100">
                     
                     {pricingTiers.map((tier, idx) => {
-                      const isEnterprise = tier.name === "Enterprise";
-                      const isPopular = tier.name === "Pro";
+                      const isEnterprise = tier.isEnterprise;
+                      const isPopular = tier.badge === "Más Frecuente";
 
                       return (
                         <tr key={idx} className={`${isPopular ? 'bg-emerald-50/30 border-l-4 border-[#1A6B4A] hover:bg-emerald-50/80' : 'hover:bg-slate-50'} transition-colors group relative`}>
                           
                           <td className="p-5 md:p-6">
-                            <div className="font-bold text-slate-900 text-lg sm:text-xl mb-1 flex items-center gap-2">
+                            <div className="font-bold text-slate-900 text-lg sm:text-xl mb-1 flex items-center gap-2 flex-wrap">
                               {tier.name} 
-                              {tier.badge && <span className={`text-[9px] px-2 py-0.5 rounded-full uppercase tracking-widest ${tier.badgeColor ? tier.badgeColor : 'bg-[#1A6B4A] text-white'}`}>{tier.badge}</span>}
+                              {tier.badge && <span className={`text-[9px] px-2 py-0.5 rounded-full uppercase tracking-widest whitespace-nowrap ${tier.badgeColor ? tier.badgeColor : 'bg-[#1A6B4A] text-white'}`}>{tier.badgeIcon && <tier.badgeIcon size={10} className="inline mr-1" />}{tier.badge}</span>}
                             </div>
-                            <div className="text-slate-500 text-sm">Hasta {tier.nits} NITs</div>
+                            <div className="text-slate-500 text-sm hidden md:block">Base + Costo por registro</div>
                           </td>
                           
                           <td className="p-5 md:p-6 align-middle">
                             <div className="font-semibold text-slate-700 text-base sm:text-lg">{tier.base}</div>
-                            {!isEnterprise && <div className="text-slate-400 text-[10px] sm:text-xs">Pago único</div>}
+                            <div className="text-slate-400 text-[10px] sm:text-xs">Fija</div>
                           </td>
                           
                           <td className="p-5 md:p-6 align-middle">
