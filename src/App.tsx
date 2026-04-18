@@ -1,837 +1,1032 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Upload, 
-  FileSpreadsheet, 
-  Bot, 
-  CheckCircle2, 
-  ShieldCheck, 
-  Clock, 
-  Menu, 
-  X, 
-  Download,
-  AlertTriangle,
-  ChevronRight,
-  BarChart3,
-  AlertOctagon,
-  TrendingDown,
-  Building2,
-  Users,
-  Globe,
-  UserX,
-  MessageSquare,
-  ChevronDown,
-  Calendar,
-  Play,
-  Sparkles,
-  Star,
-  ArrowRight,
-  Database,
-  Lock,
-  Zap
-} from 'lucide-react';
-
-/* =========================================
-   COMPONENTE DEL LOGO DE LA MARCA
-   ========================================= */
-const BrandLogo = ({ onClick, isDark = false }) => (
-  <div className="flex items-center gap-2 sm:gap-3 cursor-pointer group" onClick={onClick} translate="no">
-    <div className="relative w-8 h-8 sm:w-11 sm:h-11 shrink-0 transition-transform duration-500 group-hover:scale-105">
-      <svg viewBox="0 0 100 100" className="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="8" y="6" width="20" height="84" rx="3" fill={isDark ? "#F8FAFC" : "#1B202D"} />
-        <rect x="8" y="70" width="84" height="20" rx="3" fill={isDark ? "#F8FAFC" : "#1B202D"} />
-        <rect x="34" y="42" width="14" height="24" rx="2" fill="#C2E6CE" />
-        <rect x="54" y="26" width="14" height="40" rx="2" fill="#5FB287" />
-        <rect x="74" y="10" width="14" height="56" rx="2" fill="#268153" />
-      </svg>
-    </div>
-    <div className="flex flex-col justify-center">
-      <div className="flex items-baseline leading-none">
-        <span className={`text-xl sm:text-[1.65rem] font-bold tracking-tight ${isDark ? 'text-white' : 'text-[#1B202D]'}`}>LMS</span>
-        <span className={`text-base sm:text-[1.3rem] font-medium tracking-tight ml-[0.35rem] ${isDark ? 'text-slate-300' : 'text-[#1B202D]'}`}>Accounting Group</span>
-        <span className="text-2xl sm:text-4xl font-bold text-[#5FB287] leading-none ml-0.5">.</span>
-      </div>
-      <span className={`text-[7px] sm:text-[9px] font-semibold uppercase tracking-[0.35em] mt-1 ml-0.5 ${isDark ? 'text-emerald-400' : 'text-[#5B9F75]'}`}>
-        Inteligencia Financiera
-      </span>
-    </div>
-  </div>
-);
-
-export default function App() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
-  const [isNearBottom, setIsNearBottom] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [openFaq, setOpenFaq] = useState(null);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
-      
-      setIsScrolled(scrollY > 20);
-      setIsScrolledPastHero(scrollY > windowHeight * 0.7);
-      setIsNearBottom(scrollY + windowHeight >= documentHeight - 800); 
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('reveal-visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { 
-      threshold: 0.1, 
-      rootMargin: "0px 0px -10% 0px" 
-    });
-
-    document.querySelectorAll('.reveal-target').forEach((el) => {
-      observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  const scrollToCalendly = () => {
-    const element = document.getElementById('agendamiento-calendly');
-    if (element) {
-      const y = element.getBoundingClientRect().top - 100;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-  };
-
-  const scrollToPlanes = () => {
-    const element = document.getElementById('planes');
-    if (element) {
-      const y = element.getBoundingClientRect().top - 100;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-  };
-
-  const handleDownloadExample = () => {
-    const csvContent = 
-      "TD,NIT/CC,DV,Primer Apellido,Segundo Apellido,Primer Nombre,Otros Nombres,Razon Social,Cod Dpto,Cod Mun,Pais\n" +
-      "31,830003564,9,,,,,\"EMPRESA DE ENERGIA S.A ESP\",11,001,169\n" +
-      "31,900234567,1,,,,,\"TECNOLOGIA AVANZADA S.A.S.\",05,001,169\n" +
-      "13,1010123456,7,RODRIGUEZ,MARTINEZ,ANA,,,76,001,169\n" +
-      "31,860001022,3,,,,,\"COMERCIALIZADORA NACIONAL\",08,001,169\n" +
-      "13,1020333444,2,PEREZ,GOMEZ,JUAN,DIEGO,,11,001,169";
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ana Molano Peluquería - Expertos en estética facial, capilar y spa de uñas en Bogotá. Puente Aranda, Cra. 43C #5-84.">
+    <!-- Open Graph / WhatsApp / Redes Sociales -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.anamolanopeluqueria.com/">
+    <meta property="og:title" content="Ana Molano Peluquería | Salón de Belleza y Spa en Bogotá">
+    <meta property="og:description" content="Peluquería profesional, spa de uñas, estética facial y masajes en Bogotá. Carrera 43C #5-84. ¡Agenda tu cita hoy!">
+    <meta property="og:image" content="https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776449105/0W3A1359_duecdn.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="es_CO">
+    <meta property="og:site_name" content="Ana Molano Peluquería">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Ana Molano Peluquería | Salón de Belleza y Spa en Bogotá">
+    <meta name="twitter:description" content="Peluquería, spa de uñas, estética y masajes en Bogotá. ¡Agenda tu cita!">
+    <meta name="twitter:image" content="https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776449105/0W3A1359_duecdn.jpg">
+    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="peluquería Bogotá, salón belleza Bogotá, spa uñas Bogotá, nail bar Bogotá, lifting pestañas Bogotá, estética facial Bogotá, Ana Molano Peluquería">
+    <link rel="canonical" href="https://www.anamolanopeluqueria.com/">
     
-    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", "LMS_Ejemplo_Estructura_Exogena.csv");
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+    <!-- Favicon temporal -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
 
-  const faqs = [
-    {
-      q: "¿Es un software en la nube donde tengo que subir mi información?",
-      a: "No. Comprendemos que la información contable y fiscal es sumamente sensible. Operamos bajo un modelo de consultoría estructurada (Done-For-You). La empresa transmite su base de datos mediante canales encriptados y nuestro equipo de ingenieros la procesa en servidores locales cerrados, mitigando por completo los riesgos asociados a la nube pública."
-    },
-    {
-      q: "¿Qué sucede si nuestro documento de origen está desorganizado?",
-      a: "Nuestra tecnología propietaria está capacitada para reestructurar y organizar la información independientemente del formato crudo. El único requisito funcional es contar con una columna identificadora (NIT o Cédula)."
-    },
-    {
-      q: "¿En qué basan la proyección de ahorro de tiempo operativo?",
-      a: "El modelo matemático refleja la pérdida operativa real. Se calcula proyectando los 10 minutos de tiempo estandarizado que toma auditar, cruzar y corregir manualmente cada NIT en las plataformas gubernamentales y reestructurarlo en el formato Excel."
-    },
-    {
-      q: "¿Qué datos específicos auditan en este proceso?",
-      a: "Verificamos la existencia y vigencia del RUT, corregimos y estandarizamos las razones sociales y aseguramos la segmentación correcta de nombres y apellidos para personas naturales, lo cual es un requisito vital para evitar requerimientos de la DIAN."
-    },
-    {
-      q: "¿En qué consiste la sesión de evaluación inicial?",
-      a: "Es una sesión estratégica de 30 minutos. En ella analizaremos el volumen de su información, revisaremos las posibles contingencias fiscales asociadas a su sector y estructuraremos un acuerdo de confidencialidad (NDA) para avanzar con seguridad."
-    }
-  ];
-
-  const pricingTiers = [
-    { name: "Hasta 1.000 NITs", base: "$300.000", unit: "$70", total: "$370.000", isEnterprise: false, highlight: false },
-    { name: "Hasta 3.000 NITs", base: "$300.000", unit: "$60", total: "$480.000", isEnterprise: false, highlight: false },
-    { name: "Hasta 5.000 NITs", base: "$300.000", unit: "$50", total: "$550.000", isEnterprise: false, highlight: "border-2 border-[#1A6B4A] shadow-lg shadow-emerald-500/10", badge: "Más Frecuente" },
-    { name: "Más de 5.000 NITs", base: "$300.000", unit: "$40", total: "A la medida", isEnterprise: true, highlight: "border-2 border-amber-400 shadow-xl shadow-amber-500/20 bg-gradient-to-b from-white to-amber-50/30", badge: "Corporativo", badgeIcon: Sparkles, badgeColor: "bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-900" }
-  ];
-
-  return (
-    <>
-      <style>
-        {`
-          @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700;800&display=swap');
-          
-          .font-sans { font-family: 'Outfit', sans-serif; }
-          .font-serif { font-family: 'Instrument Serif', serif; }
-
-          @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-          }
-          .animate-marquee {
-            animation: marquee 40s linear infinite;
-            width: max-content;
-          }
-          @keyframes float1 {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(5%, 10%) scale(1.05); }
-          }
-          @keyframes float2 {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(-5%, -10%) scale(1.05); }
-          }
-          .animate-float1 { animation: float1 15s ease-in-out infinite; }
-          .animate-float2 { animation: float2 20s ease-in-out infinite; }
-          
-          @keyframes scan {
-            0% { transform: translateY(-100%); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translateY(400%); opacity: 0; }
-          }
-          .animate-scan { animation: scan 3s ease-in-out infinite; }
-
-          .reveal-target {
-            opacity: 0;
-            transform: translateY(40px) scale(0.98);
-            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
-            will-change: opacity, transform;
-          }
-          .reveal-visible {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-          .reveal-delay-100 { transition-delay: 100ms; }
-          .reveal-delay-200 { transition-delay: 200ms; }
-          .reveal-delay-300 { transition-delay: 300ms; }
-          
-          @keyframes premiumFadeUp {
-            from { opacity: 0; transform: translateY(40px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-          }
-          .animate-premium-up {
-            opacity: 0;
-            animation: premiumFadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-          }
-          .anim-delay-100 { animation-delay: 100ms; }
-          .anim-delay-200 { animation-delay: 200ms; }
-          .anim-delay-300 { animation-delay: 300ms; }
-          .anim-delay-400 { animation-delay: 400ms; }
-
-          .no-scrollbar::-webkit-scrollbar {
-            display: none;
-          }
-          .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-          }
-        `}
-      </style>
-
-      <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-[#10b981] selection:text-white relative">
-        
-        {/* Navigation - Diseño Dock Flotante */}
-        <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'py-3' : 'py-5'}`}>
-          <div className={`absolute inset-0 transition-opacity duration-500 ${isScrolled ? 'bg-white/90 backdrop-blur-xl border-b border-slate-200/50 shadow-sm opacity-100' : 'opacity-0'}`}></div>
-
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center">
-              
-              <div className="flex-1 flex justify-start relative z-10">
-                <BrandLogo isDark={!isScrolled} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />
-              </div>
-              
-              <div className={`hidden lg:flex flex-none items-center justify-center p-1.5 rounded-full border transition-all duration-500 relative z-10 ${isScrolled ? 'bg-slate-100/60 border-slate-200/60 backdrop-blur-md shadow-sm' : 'bg-white/5 border-white/10 backdrop-blur-md'}`}>
-                {[
-                  { name: 'El Riesgo', href: '#problema' },
-                  { name: 'Nuestra Metodología', href: '#como-funciona' },
-                  { name: 'Eficiencia', href: '#calculadora' },
-                  { name: 'Planes', href: '#planes' }
-                ].map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 ${isScrolled ? 'text-slate-600 hover:text-[#1A6B4A] hover:bg-white hover:shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/10'}`}
-                  >
-                    {item.name}
-                  </a>
-                ))}
-              </div>
-
-              <div className="hidden lg:flex flex-1 justify-end items-center gap-4 relative z-10">
-                <button onClick={scrollToPlanes} className={`text-sm font-bold transition-colors hover:scale-105 ${isScrolled ? 'text-slate-600 hover:text-[#1A6B4A]' : 'text-emerald-100 hover:text-white'}`}>
-                  Ver planes de fee
-                </button>
-                <button onClick={scrollToCalendly} className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all transform hover:scale-105 flex items-center gap-2 ${isScrolled ? 'bg-[#1A6B4A] hover:bg-[#0B3D2E] text-white shadow-lg shadow-emerald-500/20' : 'bg-white text-[#0B3D2E] hover:bg-slate-100 shadow-xl'}`}>
-                  <Calendar size={16} />
-                  Agendar Diagnóstico
-                </button>
-              </div>
-
-              <div className="lg:hidden relative z-10">
-                <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className={`${isScrolled ? 'text-slate-900' : 'text-white'}`}>
-                  {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Mobile Menu */}
-          {isMobileMenuOpen && (
-            <div className="lg:hidden absolute top-full left-0 w-full bg-white shadow-2xl border-t border-slate-100 py-4 px-4 flex flex-col space-y-4">
-              <a href="#problema" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">El Riesgo</a>
-              <a href="#como-funciona" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">Nuestra Metodología</a>
-              <a href="#calculadora" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">Eficiencia</a>
-              <a href="#planes" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 font-medium p-2">Planes</a>
-              <div className="border-t border-slate-100 pt-4 flex flex-col gap-3">
-                <button onClick={() => { setIsMobileMenuOpen(false); scrollToPlanes(); }} className="text-slate-600 font-bold p-2 text-center">
-                  Ver planes de fee
-                </button>
-                <button onClick={() => { setIsMobileMenuOpen(false); scrollToCalendly(); }} className="bg-[#1A6B4A] text-white px-5 py-3 rounded-xl font-medium w-full flex justify-center items-center gap-2 shadow-lg">
-                  <Calendar size={18} />
-                  Agendar Diagnóstico
-                </button>
-              </div>
-            </div>
-          )}
-        </nav>
-
-        {/* Hero Section */}
-        <section className="relative pt-32 pb-24 lg:pt-48 lg:pb-32 overflow-hidden bg-[#0B3D2E] min-h-[95vh] flex flex-col justify-center">
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-emerald-900/40 blur-[120px] mix-blend-screen animate-float1"></div>
-            <div className="absolute bottom-[-20%] right-[-10%] w-[70vw] h-[70vw] rounded-full bg-teal-800/30 blur-[150px] mix-blend-screen animate-float2"></div>
-            <div className="absolute top-[30%] left-[40%] w-[50vw] h-[50vw] rounded-full bg-[#1A6B4A]/30 blur-[120px] mix-blend-screen animate-float1" style={{animationDelay: '-5s'}}></div>
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-          </div>
-          
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10">
-            <div className="max-w-4xl mx-auto text-center">
-              
-              <div className="animate-premium-up inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 shadow-lg backdrop-blur-md mb-8 hover:bg-white/10 transition-colors cursor-default">
-                <div className="flex gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={14} className="text-yellow-400 fill-yellow-400" />
-                  ))}
-                </div>
-                <span className="text-sm text-emerald-50 font-medium">+ de 20 empresas confían en nosotros</span>
-              </div>
-              
-              <h1 className="animate-premium-up anim-delay-100 text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] mb-6 tracking-tight">
-                Valida miles de <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-200">NITs sin errores</span> en segundos.
-              </h1>
-              
-              <p className="animate-premium-up anim-delay-200 text-lg sm:text-xl text-slate-300 mb-10 leading-relaxed max-w-2xl mx-auto font-light">
-                Audita tu base de datos contra el <span className="font-serif italic text-emerald-300 text-2xl mx-1">RUES</span> y los registros de la <span className="font-serif italic text-emerald-300 text-2xl mx-1">DIAN</span>. Extrae información exacta, corrige el dígito de verificación y previene <span className="text-white font-medium border-b border-emerald-400/50 pb-0.5">contingencias operativas</span>.
-              </p>
-              
-              <div className="animate-premium-up anim-delay-300 flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-                <button onClick={scrollToCalendly} className="w-full sm:w-auto bg-[#10b981] hover:bg-[#059669] text-white px-8 py-4 rounded-full font-bold text-lg transition-all shadow-[0_0_40px_-10px_rgba(16,185,129,0.5)] flex items-center justify-center gap-2 group">
-                  <Calendar size={20} className="group-hover:scale-110 transition-transform" />
-                  Agendar reunión de diagnóstico
-                </button>
-                <button onClick={scrollToPlanes} className="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white border border-white/10 px-8 py-4 rounded-full font-bold text-lg transition-all flex items-center justify-center gap-2 backdrop-blur-md">
-                  Ver planes de fee
-                </button>
-              </div>
-              
-              {/* ========================================================= */}
-              {/* Gráfico Visual del Proceso                                */}
-              {/* ========================================================= */}
-              <div className="animate-premium-up anim-delay-400 relative max-w-6xl mx-auto rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-slate-700/50 bg-slate-900/80 backdrop-blur-xl overflow-hidden flex flex-col md:flex-row">
-                
-                {/* Left Side: Archivo Enviado */}
-                <div className="w-full md:w-4/12 p-6 border-b md:border-b-0 md:border-r border-slate-700/50 bg-slate-800/30 flex flex-col justify-center">
-                  <div className="flex flex-col gap-1 mb-4">
-                    <div className="flex items-center gap-2 text-slate-400 text-sm font-medium justify-between">
-                      <div className="flex items-center gap-2">
-                        <Lock size={16} className="text-emerald-400" /> Paso 1: Archivo Recibido
-                      </div>
-                    </div>
-                    <p className="text-[11px] text-slate-500 font-light leading-tight text-left">Ejemplo: Listado de NITs sin formato ni verificación.</p>
-                  </div>
-                  <div className="relative group mt-2">
-                    <div className="w-full h-48 bg-slate-900 border border-slate-600/50 rounded-xl p-4 text-slate-500 font-mono text-xs flex flex-col items-center justify-center shadow-inner leading-relaxed">
-                       <FileSpreadsheet size={40} className="text-slate-600 mb-3" />
-                       <span>[ ARCHIVO.CSV ENCRIPTADO ]</span>
-                       <span className="mt-2 text-[10px] text-emerald-500/50">Base_Terceros_2026.xlsx</span>
-                    </div>
-                    <div className="absolute bottom-3 right-3">
-                      <div className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1.5 rounded-md text-[10px] font-bold flex items-center gap-1.5 cursor-default">
-                        <ShieldCheck size={12} /> AES-256
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-xs text-slate-500 mt-4 text-center">Recepción encriptada del documento para su auditoría.</p>
-                </div>
-
-                {/* Middle AI Bot Indicator */}
-                <div className="hidden md:flex absolute left-[33.33%] top-1/2 -translate-y-1/2 -translate-x-1/2 w-14 h-14 bg-[#1A6B4A] rounded-full border-4 border-slate-900 items-center justify-center z-20 shadow-[0_0_20px_rgba(26,107,74,0.8)]">
-                  <Bot size={24} className="text-emerald-400 animate-pulse" />
-                </div>
-
-                {/* Right Side: Tabla Entregable */}
-                <div className="w-full md:w-8/12 p-6 bg-slate-900/50 relative overflow-hidden flex flex-col justify-center">
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-500/5 to-transparent w-full h-20 animate-scan pointer-events-none"></div>
-                  
-                  <div className="w-full relative z-10 rounded-xl overflow-hidden shadow-[0_0_30px_rgba(16,185,129,0.1)] border border-emerald-500/20 bg-white flex flex-col">
-                     
-                     <div className="bg-slate-50 py-3 px-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <div className="flex flex-col gap-1">
-                          <div className="flex items-center gap-2">
-                            <CheckCircle2 size={16} className="text-emerald-500" /> 
-                            <span className="text-slate-700 text-xs font-bold uppercase tracking-wider">Paso 2: Archivo Estructurado</span>
-                          </div>
-                          <p className="text-[10px] text-slate-500 font-normal">Resultado: DV calculado, nombres separados y validación DIAN.</p>
-                        </div>
-                        <div className="flex gap-1 hidden sm:flex">
-                          <div className="w-2 h-2 rounded-full bg-slate-300"></div>
-                          <div className="w-2 h-2 rounded-full bg-slate-300"></div>
-                          <div className="w-2 h-2 rounded-full bg-slate-300"></div>
-                        </div>
-                     </div>
-                     
-                     <div className="overflow-x-auto no-scrollbar">
-                       <table className="w-full text-left text-[10px] sm:text-[11px] font-mono text-slate-600 bg-white whitespace-nowrap">
-                         <thead className="bg-slate-100/80 text-slate-500 border-b border-slate-200">
-                           <tr>
-                             <th className="py-2 px-3 font-semibold">T.D.</th>
-                             <th className="py-2 px-3 font-semibold">NIT/CC</th>
-                             <th className="py-2 px-3 font-semibold">DV</th>
-                             <th className="py-2 px-3 font-semibold">Razón Social / Nombres</th>
-                             <th className="py-2 px-3 font-semibold text-emerald-600 bg-emerald-50/50">Cód. Dpto</th>
-                             <th className="py-2 px-3 font-semibold text-emerald-600 bg-emerald-50/50">Cód. Mun</th>
-                           </tr>
-                         </thead>
-                         <tbody className="divide-y divide-slate-100">
-                           <tr className="hover:bg-slate-50 transition-colors">
-                             <td className="py-2 px-3 font-medium text-slate-700">31</td>
-                             <td className="py-2 px-3">830003564</td>
-                             <td className="py-2 px-3 font-bold text-[#1A6B4A]">9</td>
-                             <td className="py-2 px-3 truncate max-w-[150px]">EMPRESA DE ENERGÍA S.A ESP</td>
-                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">11</td>
-                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">001</td>
-                           </tr>
-                           <tr className="hover:bg-slate-50 transition-colors">
-                             <td className="py-2 px-3 font-medium text-slate-700">31</td>
-                             <td className="py-2 px-3">900234567</td>
-                             <td className="py-2 px-3 font-bold text-[#1A6B4A]">1</td>
-                             <td className="py-2 px-3 truncate max-w-[150px]">TECNOLOGÍA AVANZADA S.A.S.</td>
-                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">05</td>
-                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">001</td>
-                           </tr>
-                           <tr className="hover:bg-slate-50 transition-colors">
-                             <td className="py-2 px-3 font-medium text-slate-700">13</td>
-                             <td className="py-2 px-3">1010123456</td>
-                             <td className="py-2 px-3 font-bold text-[#1A6B4A]">7</td>
-                             <td className="py-2 px-3 truncate max-w-[150px]">RODRIGUEZ MARTINEZ ANA</td>
-                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">76</td>
-                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">001</td>
-                           </tr>
-                           <tr className="hover:bg-slate-50 transition-colors">
-                             <td className="py-2 px-3 font-medium text-slate-700">31</td>
-                             <td className="py-2 px-3">860001022</td>
-                             <td className="py-2 px-3 font-bold text-[#1A6B4A]">3</td>
-                             <td className="py-2 px-3 truncate max-w-[150px]">COMERCIALIZADORA NACIONAL</td>
-                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">08</td>
-                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">001</td>
-                           </tr>
-                           <tr className="hover:bg-slate-50 transition-colors">
-                             <td className="py-2 px-3 font-medium text-slate-700">13</td>
-                             <td className="py-2 px-3">1020333444</td>
-                             <td className="py-2 px-3 font-bold text-[#1A6B4A]">2</td>
-                             <td className="py-2 px-3 truncate max-w-[150px]">PEREZ GOMEZ JUAN DIEGO</td>
-                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">11</td>
-                             <td className="py-2 px-3 font-medium text-emerald-600 bg-emerald-50/20">001</td>
-                           </tr>
-                         </tbody>
-                       </table>
-                     </div>
-
-                     <div className="bg-slate-50 p-3 sm:p-4 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3">
-                        <span className="text-xs text-slate-500 font-medium hidden sm:inline-block">Estructura lista para el prevalidador</span>
-                        <button onClick={handleDownloadExample} className="w-full sm:w-auto text-xs font-bold bg-[#1A6B4A] hover:bg-[#0B3D2E] text-white px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm hover:shadow-md">
-                           <Download size={14} /> Descargar Ejemplo (.CSV)
-                        </button>
-                     </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Logo Ticker / Prueba Social */}
-        <section className="py-10 border-b border-slate-200 bg-white overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4">
-            <p className="text-center text-sm font-bold text-slate-400 uppercase tracking-widest mb-8">Ecosistema y Plataformas Integradas</p>
-            <div className="relative flex overflow-x-hidden group">
-              <div className="animate-marquee whitespace-nowrap flex items-center gap-16 py-2 group-hover:[animation-play-state:paused]">
-                {[...Array(3)].map((_, i) => (
-                  <React.Fragment key={i}>
-                    <div className="flex items-center gap-2 text-slate-400 grayscale hover:grayscale-0 hover:text-[#1A6B4A] transition-all cursor-pointer">
-                      <BarChart3 size={28} /> <span className="font-bold text-xl">Siigo</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-slate-400 grayscale hover:grayscale-0 hover:text-[#1A6B4A] transition-all cursor-pointer">
-                      <Building2 size={28} /> <span className="font-bold text-xl">Loggro</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-slate-400 grayscale hover:grayscale-0 hover:text-[#1A6B4A] transition-all cursor-pointer">
-                      <Globe size={28} /> <span className="font-bold text-xl">FacturaTech</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-slate-400 grayscale hover:grayscale-0 hover:text-[#1A6B4A] transition-all cursor-pointer">
-                      <ShieldCheck size={28} /> <span className="font-bold text-xl">DIAN API</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-slate-400 grayscale hover:grayscale-0 hover:text-[#1A6B4A] transition-all cursor-pointer">
-                      <Users size={28} /> <span className="font-bold text-xl">Alegra</span>
-                    </div>
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* El Problema Oculto */}
-        <section id="problema" className="py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="reveal-target text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">El Riesgo Fiscal</h2>
-              <h3 className="text-4xl md:text-5xl text-slate-900 mb-6 font-serif font-normal leading-tight">
-                ¿Sabía que un dígito erróneo en el reporte puede <span className="italic text-[#1A6B4A]">costarle millones?</span>
-              </h3>
-              <p className="text-lg text-slate-600 font-medium">Transmitir información exógena con inconsistencias en las bases de terceros es el detonante principal de requerimientos y sanciones por parte de la DIAN.</p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="reveal-target bg-rose-50 border border-rose-100 rounded-3xl p-8 hover:shadow-lg transition-shadow">
-                <div className="w-14 h-14 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center mb-6">
-                  <AlertOctagon size={28} />
-                </div>
-                <div className="text-3xl font-extrabold text-rose-600 mb-3 leading-tight">Sanciones de Alto Nivel</div>
-                <h4 className="text-lg font-bold text-slate-900 mb-2">Multas Variables</h4>
-                <p className="text-slate-600 leading-relaxed text-sm">Es la penalidad a la que se expone una compañía por suministrar información tributaria con errores, inconsistencias o de manera extemporánea.</p>
-              </div>
-
-              <div className="reveal-target reveal-delay-100 bg-amber-50 border border-amber-100 rounded-3xl p-8 hover:shadow-lg transition-shadow">
-                <div className="w-14 h-14 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mb-6">
-                  <Clock size={28} />
-                </div>
-                <div className="text-4xl font-extrabold text-amber-600 mb-3">3 Semanas</div>
-                <h4 className="text-lg font-bold text-slate-900 mb-2">Carga Operativa</h4>
-                <p className="text-slate-600 leading-relaxed text-sm">Es el tiempo estandarizado que invierte un departamento contable depurando y validando manualmente listados de RUTs para el cierre fiscal.</p>
-              </div>
-
-              <div className="reveal-target reveal-delay-200 bg-emerald-50 border border-emerald-100 rounded-3xl p-8 hover:shadow-lg transition-shadow">
-                <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-6">
-                  <TrendingDown size={28} />
-                </div>
-                <div className="text-4xl font-extrabold text-emerald-600 mb-3">90%</div>
-                <h4 className="text-lg font-bold text-slate-900 mb-2">Bases con Errores</h4>
-                <p className="text-slate-600 leading-relaxed text-sm">Nueve de cada diez empresas colombianas inician su proceso de auditoría con terceros inactivos, direcciones inválidas o regímenes erróneos.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* How It Works */}
-        <section id="como-funciona" className="py-24 bg-slate-50 relative">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="reveal-target text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">Servicio Done-For-You</h2>
-              <h3 className="text-4xl md:text-5xl font-serif text-slate-900 mb-4">Validamos su información <span className="italic text-[#1A6B4A]">sin exponerla</span> a la nube pública</h3>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-8 lg:gap-12 relative">
-              <div className="hidden md:block absolute top-24 left-[15%] right-[15%] h-0.5 bg-slate-200 -z-10"></div>
-              
-              {[
-                {
-                  icon: <Upload size={32} />,
-                  title: "1. Envío de Base de Datos",
-                  desc: "La empresa transmite su base de terceros (proveedores, clientes, empleados) mediante canales encriptados. Protegemos su información con NDAs estrictos."
-                },
-                {
-                  icon: <ShieldCheck size={32} />,
-                  title: "2. Auditoría Interna Avanzada",
-                  desc: "Nuestros ingenieros procesan su información en servidores locales cerrados utilizando inteligencia financiera para verificar cada registro, garantizando privacidad total."
-                },
-                {
-                  icon: <FileSpreadsheet size={32} />,
-                  title: "3. Entrega y Reporte",
-                  desc: "Devolvemos un archivo depurado, estructurado y configurado bajo los requisitos exactos del prevalidador de la DIAN, listo para su integración contable."
+    <title>Ana Molano Peluquería | Salón de Belleza y Spa</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Parisienne&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        logo: ['Parisienne', 'cursive'],
+                    },
+                    colors: {
+                        ana: {
+                            light: '#ffeef5',
+                            accent: '#ff73a8',
+                            dark: '#e83e8c',
+                            black: '#1f1f1f',
+                        }
+                    }
                 }
-              ].map((step, idx) => (
-                <div key={idx} className={`reveal-target ${idx === 1 ? 'reveal-delay-100' : idx === 2 ? 'reveal-delay-200' : ''} relative group text-center`}>
-                  <div className="w-20 h-20 mx-auto bg-white border-4 border-slate-50 rounded-2xl flex items-center justify-center text-[#1A6B4A] shadow-xl shadow-slate-200/50 mb-6 group-hover:scale-110 group-hover:bg-[#1A6B4A] group-hover:text-white transition-all duration-300">
-                    {step.icon}
-                  </div>
-                  <h4 className="text-xl font-bold text-slate-900 mb-3">{step.title}</h4>
-                  <p className="text-slate-600 leading-relaxed text-sm">{step.desc}</p>
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        .input-minimalista { background-color: transparent; border: 1px solid #e5e7eb; border-radius: 0px; padding: 0.75rem 1rem; transition: all 0.3s ease; }
+        .input-minimalista:focus { outline: none; border-color: #e83e8c; box-shadow: none; }
+        .service-card:hover .service-img-overlay { background-color: rgba(0,0,0,0.1); }
+        .page-view { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .page-view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .zoom-img { transition: transform 0.7s ease; }
+        .group:hover .zoom-img { transform: scale(1.05); }
+        .bono-shadow { box-shadow: -10px 15px 30px rgba(0,0,0,0.15); }
+        .carousel-track { transition: transform 0.7s ease-in-out; }
+        .time-pill input:checked + div { background-color: #e83e8c !important; color: white !important; border-color: #e83e8c !important; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Animación para el fondo del agendamiento */
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob { animation: blob 7s infinite; }
+        .animation-delay-2000 { animation-delay: 2s; }
+
+        /* Efecto de movimiento suave (Ken Burns) para el carrusel */
+        @keyframes kenBurns {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.08); }
+        }
+        .animate-kenburns { animation: kenBurns 18s ease-in-out infinite alternate; }
+
+        /* Animación sutil de flotación */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float { animation: float 5s ease-in-out infinite; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+        }
+
+        .reveal {
+            opacity: 0; transform: translateY(28px);
+            transition: opacity 0.65s cubic-bezier(0.22,1,0.36,1), transform 0.65s cubic-bezier(0.22,1,0.36,1);
+            will-change: opacity, transform;
+        }
+        .reveal.r-left  { transform: translateX(-28px); }
+        .reveal.r-right { transform: translateX(28px); }
+        .reveal.visible { opacity: 1 !important; transform: none !important; }
+
+        .nav-line { position:relative; display:inline-block; }
+        .nav-line::after {
+            content:''; position:absolute; left:0; bottom:-2px; width:100%; height:1.5px;
+            background:#e83e8c; transform:scaleX(0); transform-origin:right;
+            transition:transform 0.32s cubic-bezier(0.22,1,0.36,1);
+        }
+        .nav-line:hover::after { transform:scaleX(1); transform-origin:left; }
+
+        .btn-mag { transition: transform 0.2s cubic-bezier(0.22,1,0.36,1), box-shadow 0.2s ease; }
+        .btn-mag:hover { box-shadow: 0 8px 28px rgba(232,62,140,0.3); }
+        
+        .ripple-effect { position:relative; overflow:hidden; }
+        .ripple-effect::before {
+            content:''; position:absolute; inset:0; background:rgba(255,255,255,0.18);
+            transform:scale(0); opacity:0; transition:transform 0.4s ease, opacity 0.4s ease;
+            border-radius:inherit;
+        }
+        .ripple-effect:active::before { transform:scale(1); opacity:1; transition:0s; }
+
+        /* Mejora en la animación de las listas de servicios */
+        .price-row-anim { transition: all 0.3s cubic-bezier(0.22,1,0.36,1); border-radius:4px; margin-bottom: 2px;}
+        .price-row-anim:hover { background: rgba(232,62,140,0.04); transform: translateX(6px); padding-left: 0.25rem; }
+        .price-row-anim:hover .w-1\.5 { transform:scale(1.6); background-color:#e83e8c !important; }
+        .price-row-anim .w-1\.5 { transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); }
+
+        .card-lift { transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s ease; }
+        .card-lift:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(232,62,140,0.06); }
+        
+        .wa-pulse { animation: waPulse 3s ease-in-out infinite; }
+        @keyframes waPulse {
+            0%,100% { box-shadow:0 10px 30px rgba(37,211,102,0.4); }
+            50%      { box-shadow:0 10px 40px rgba(37,211,102,0.6),0 0 0 7px rgba(37,211,102,0.1); }
+        }
+        .nav-shadow { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    </style>
+</head>
+<body class="bg-white text-gray-900 font-sans antialiased pt-[120px] md:pt-[150px] flex flex-col min-h-screen">
+
+    <header class="fixed top-0 w-full z-50">
+        <div class="bg-ana-dark text-white py-2 px-3 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto flex flex-row justify-between items-center text-[10px] md:text-xs tracking-widest uppercase font-semibold">
+                <div class="flex items-center gap-2 md:gap-4">
+                    <a href="tel:+573133292214" class="flex items-center gap-1 hover:text-pink-200 transition-colors active:scale-95">
+                        <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.487 17.14l-4.065-3.696a1.001 1.001 0 00-1.391.043l-2.393 2.461c-.576-.11-1.734-.471-2.926-1.66-1.192-1.193-1.553-2.354-1.66-2.926l2.459-2.394a1 1 0 00.043-1.391L6.859 3.513a1 1 0 00-1.391-.087l-2.17 1.861a1 1 0 00-.29.649c-.015.25-.301 6.172 4.291 10.766C11.305 20.707 16.323 21 16.576 21a1 1 0 00.65-.29l1.86-2.171a.999.999 0 00-.086-1.399z"/></svg>
+                        <span class="hidden sm:inline">(+57) </span>313 329 2214
+                    </a>
+                    <span class="hidden md:inline text-pink-300">|</span>
+                    <span class="hidden md:inline">📍 Puente Aranda - Cra. 43c #5-84</span>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ==================================================== */}
-        {/* NUEVA SECCIÓN: AHORRO DE TIEMPO (ESTÁTICA Y DE ALTO IMPACTO) */}
-        {/* ==================================================== */}
-        <section id="calculadora" className="py-24 bg-white border-t border-slate-200/50 relative overflow-hidden">
-          {/* Decorative background blur */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none"></div>
-
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="reveal-target text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">Eficiencia Operativa</h2>
-              <h3 className="text-4xl md:text-5xl font-serif text-slate-900 mb-4">El verdadero costo de <span className="italic text-[#1A6B4A]">hacerlo a mano</span></h3>
-              <p className="text-slate-600 text-lg">Un ejemplo real del tiempo invertido en procesar tan solo <strong className="text-slate-900">10 NITs</strong>.</p>
-            </div>
-
-            <div className="reveal-target max-w-4xl mx-auto flex flex-col md:flex-row items-stretch justify-center gap-8">
-              
-              {/* Manual */}
-              <div className="flex-1 bg-rose-50 border border-rose-100 rounded-[2rem] p-10 flex flex-col items-center text-center relative overflow-hidden group shadow-lg">
-                <div className="absolute top-0 left-0 w-full h-1 bg-rose-300"></div>
-                <div className="w-16 h-16 bg-rose-100 text-rose-500 rounded-full flex items-center justify-center mb-6 shadow-sm">
-                  <Clock size={32} />
+                <div class="flex items-center gap-3 md:gap-3">
+                    <span class="hidden sm:inline text-pink-200">Síguenos:</span>
+                    <a href="https://www.instagram.com/anamolanopeluqueria" target="_blank" aria-label="Instagram" class="hover:text-pink-200 transition-colors active:scale-90"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+                    <a href="https://www.facebook.com/anamolanopeluqueria" target="_blank" aria-label="Facebook" class="hover:text-pink-200 transition-colors active:scale-90"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
                 </div>
-                <h4 className="text-xl font-bold text-slate-900 mb-2">Proceso Manual</h4>
-                <p className="text-slate-600 text-sm mb-6">Búsqueda 1 a 1 en plataformas (DIAN y RUES), validación y digitación.</p>
-                <div className="text-5xl md:text-6xl font-black text-rose-600 mb-2 tracking-tighter">100<span className="text-3xl">m</span></div>
-                <p className="text-rose-500/80 font-bold bg-rose-100/50 px-4 py-1.5 rounded-full text-sm mt-2">1 hora y 40 minutos inmovilizados</p>
-              </div>
-
-              {/* VS badge */}
-              <div className="flex items-center justify-center -my-10 md:-mx-12 md:my-0 z-10">
-                <div className="w-14 h-14 bg-white rounded-full shadow-xl flex items-center justify-center font-black text-slate-300 border border-slate-100 text-xl">VS</div>
-              </div>
-
-              {/* LMS IA */}
-              <div className="flex-1 bg-[#0B3D2E] rounded-[2rem] p-10 flex flex-col items-center text-center relative overflow-hidden shadow-2xl transform md:scale-105 border border-[#1A6B4A]">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
-                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500 rounded-full mix-blend-overlay filter blur-3xl opacity-30 animate-pulse"></div>
-
-                <div className="w-16 h-16 bg-[#1A6B4A] border border-emerald-500/30 text-emerald-400 rounded-full flex items-center justify-center mb-6 relative z-10 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
-                  <Zap size={32} />
-                </div>
-                <h4 className="text-xl font-bold text-white mb-2 relative z-10">Inteligencia LMS</h4>
-                <p className="text-emerald-100/70 text-sm mb-6 relative z-10">Cruce automatizado masivo y generación de archivo estructurado.</p>
-                <div className="text-5xl md:text-6xl font-black text-emerald-400 mb-2 relative z-10 tracking-tighter">1.2<span className="text-3xl">s</span></div>
-                <p className="text-emerald-900 font-bold bg-emerald-400 px-4 py-1.5 rounded-full text-sm mt-2 relative z-10 shadow-lg">Ejecución inmediata</p>
-              </div>
             </div>
-
-            <div className="mt-16 text-center reveal-target reveal-delay-200">
-              <button onClick={scrollToPlanes} className="bg-slate-900 hover:bg-black text-white px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-xl shadow-slate-900/20 flex items-center justify-center gap-3 mx-auto hover:-translate-y-1">
-                Ver planes de fee
-                <ArrowRight size={20} />
-              </button>
-            </div>
-          </div>
-        </section>
-
-        {/* FAQ - Acordeón Premium */}
-        <section className="py-24 bg-slate-50 border-y border-slate-200/50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid lg:grid-cols-12 gap-12 items-start">
-              
-              <div className="lg:col-span-5 reveal-target sticky top-32">
-                <h2 className="text-[#1A6B4A] font-bold tracking-wide uppercase text-sm mb-3">Directorio de Consultas</h2>
-                <h3 className="text-4xl md:text-5xl font-serif text-slate-900 mb-6 leading-tight">Preguntas <br/> <span className="italic text-[#1A6B4A]">Frecuentes</span></h3>
-                <p className="text-slate-600 font-light mb-8 text-lg leading-relaxed">Resolvemos las inquietudes más comunes respecto a nuestro protocolo de verificación y el resguardo de la información. Si requiere un análisis específico, reserve una sesión ejecutiva en vivo.</p>
-                <button onClick={scrollToCalendly} className="flex items-center gap-2 text-[#1A6B4A] font-bold hover:text-[#0B3D2E] transition-colors border-b-2 border-transparent hover:border-[#0B3D2E] pb-1">
-                  <MessageSquare size={18} />
-                  Programar llamada con un asesor
-                </button>
-              </div>
-
-              <div className="lg:col-span-7 space-y-4 reveal-target reveal-delay-100">
-                {faqs.map((faq, index) => (
-                  <div 
-                    key={index} 
-                    className={`bg-white rounded-2xl overflow-hidden transition-all duration-300 border ${openFaq === index ? 'border-emerald-300 shadow-lg shadow-emerald-500/5' : 'border-slate-200 hover:border-emerald-200'}`}
-                  >
-                    <button 
-                      onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                      className="w-full px-6 md:px-8 py-6 text-left flex justify-between items-center focus:outline-none"
-                    >
-                      <span className={`font-bold text-lg transition-colors ${openFaq === index ? 'text-[#1A6B4A]' : 'text-slate-900'}`}>{faq.q}</span>
-                      <ChevronDown 
-                        className={`text-slate-400 transition-transform duration-300 shrink-0 ml-4 ${openFaq === index ? 'rotate-180 text-[#1A6B4A]' : ''}`} 
-                        size={20} 
-                      />
-                    </button>
-                    <div 
-                      className={`px-6 md:px-8 text-slate-600 transition-all duration-300 ease-in-out font-light leading-relaxed ${
-                        openFaq === index ? 'pb-6 max-h-40 opacity-100' : 'max-h-0 opacity-0 pb-0'
-                      }`}
-                    >
-                      {faq.a}
+        </div>
+        <nav class="w-full bg-white/95 backdrop-blur-md border-b border-gray-100 transition-all duration-300 shadow-sm relative z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16 md:h-24">
+                    <div class="flex-shrink-0 flex items-center cursor-pointer active:scale-95 transition-transform" onclick="navigate('home');">
+                        <div class="flex flex-col items-center justify-center pt-2 md:pt-0">
+                            <span class="font-logo text-3xl md:text-5xl text-ana-black font-bold" style="line-height: 0.8; padding-bottom: 2px;">Ana Molano</span>
+                            <span class="text-[7px] md:text-[10px] tracking-[0.3em] text-gray-500 uppercase mt-1">Peluquería & Spa</span>
+                        </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-
-            </div>
-          </div>
-        </section>
-
-        {/* NUEVA TABLA DE PRECIOS DINÁMICA (Estructura Tarifa Base + NIT) */}
-        <section id="planes" className="bg-[#0B3D2E] py-24 relative overflow-hidden">
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
-          <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-[#1A6B4A] rounded-full blur-3xl opacity-30 pointer-events-none"></div>
-          
-          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="reveal-target text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold font-serif text-white mb-4 leading-tight">
-                Modelos de <span className="italic text-emerald-300">Validación por Registro</span>
-              </h2>
-              <p className="text-emerald-100/70 text-lg max-w-2xl mx-auto font-light">
-                Seleccione la cobertura adecuada para su volumen operativo. Procesamiento interno seguro sin software en la nube.
-              </p>
-            </div>
-
-            {/* TABLA DE PRECIOS (DISEÑO PREMIUM SAAS) */}
-            <div className="reveal-target bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200 w-full overflow-x-auto pb-4">
-              <div className="min-w-[900px] lg:min-w-full">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-[11px] font-bold uppercase tracking-wider">
-                      <th className="p-5 md:p-6 w-[25%]">Volumen de NITs</th>
-                      <th className="p-5 md:p-6 w-[15%]">Tarifa Básica</th>
-                      <th className="p-5 md:p-6 w-[20%]">Inversión x NIT</th>
-                      <th className="p-5 md:p-6 w-[20%]">Total Estimado</th>
-                      <th className="p-5 md:p-6 w-[20%] text-center">Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    
-                    {pricingTiers.map((tier, idx) => {
-                      const isEnterprise = tier.isEnterprise;
-                      const isPopular = tier.badge === "Más Frecuente";
-
-                      return (
-                        <tr key={idx} className={`${isPopular ? 'bg-emerald-50/30 border-l-4 border-[#1A6B4A] hover:bg-emerald-50/80' : 'hover:bg-slate-50'} transition-colors group relative`}>
-                          
-                          <td className="p-5 md:p-6">
-                            <div className="font-bold text-slate-900 text-lg sm:text-xl mb-1 flex items-center gap-2 flex-wrap">
-                              {tier.name} 
-                              {tier.badge && <span className={`text-[9px] px-2 py-0.5 rounded-full uppercase tracking-widest whitespace-nowrap ${tier.badgeColor ? tier.badgeColor : 'bg-[#1A6B4A] text-white'}`}>{tier.badgeIcon && <tier.badgeIcon size={10} className="inline mr-1" />}{tier.badge}</span>}
-                            </div>
-                            <div className="text-slate-500 text-sm hidden md:block">Base + Costo por registro</div>
-                          </td>
-                          
-                          <td className="p-5 md:p-6 align-middle">
-                            <div className="font-semibold text-slate-700 text-base sm:text-lg">{tier.base}</div>
-                            <div className="text-slate-400 text-[10px] sm:text-xs">Fija</div>
-                          </td>
-                          
-                          <td className="p-5 md:p-6 align-middle">
-                            <div className="font-semibold text-slate-700 text-base sm:text-lg">{tier.unit}</div>
-                          </td>
-                          
-                          <td className="p-5 md:p-6 align-middle">
-                            <div className={`font-extrabold text-2xl sm:text-3xl tracking-tight ${isEnterprise ? 'text-slate-900 text-xl sm:text-2xl' : 'text-[#1A6B4A]'}`}>
-                              {tier.total}
-                            </div>
-                          </td>
-                          
-                          <td className="p-5 md:p-6 align-middle text-center">
-                            <button onClick={scrollToCalendly} className={`w-full whitespace-nowrap bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-3 rounded-xl font-bold text-xs sm:text-sm transition-all ${isPopular ? 'bg-[#1A6B4A] text-white hover:bg-[#0B3D2E] shadow-md' : 'group-hover:bg-[#1A6B4A] group-hover:text-white'} ${isEnterprise ? 'bg-slate-900 text-white hover:bg-black group-hover:bg-black' : ''}`}>
-                              {isEnterprise ? 'Contactar Ejecutivo' : 'Agendar'}
+                    <div class="hidden md:flex items-center space-x-6 lg:space-x-8">
+                        <button onclick="navigate('nosotros');" class="text-xs font-bold tracking-[0.15em] text-gray-500 hover:text-ana-dark uppercase transition-colors">Nosotros</button>
+                        <div class="relative group py-6">
+                            <button onclick="navigate('servicios-portal');" class="flex items-center text-xs font-bold tracking-[0.15em] text-gray-500 hover:text-ana-dark uppercase transition-colors">
+                                Servicios
+                                <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Calendly Inline Widget */}
-            <div id="agendamiento-calendly" className="reveal-target mt-16 w-full max-w-5xl mx-auto">
-              <div className="bg-white rounded-3xl overflow-hidden shadow-2xl h-[700px] border border-white/10 relative">
-                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 to-teal-500 z-10"></div>
-                <iframe
-                  src="https://calendly.com/contacto-lms-accounting/30min?hide_gdpr_banner=1&background_color=ffffff&text_color=0f172a&primary_color=10b981"
-                  width="100%"
-                  height="100%"
-                  frameBorder="0"
-                  title="Agendar Diagnóstico LMS Accounting"
-                  className="relative z-0"
-                ></iframe>
-              </div>
-            </div>
-            
-          </div>
-        </section>
-
-        {/* Footer */}
-        <footer className="bg-slate-900 text-slate-400 py-16 border-t border-slate-800">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-              <div className="col-span-1 md:col-span-2">
-                <div className="mb-6">
-                  <BrandLogo isDark={true} />
+                            <div class="absolute top-full left-0 w-48 bg-white border border-gray-100 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left -translate-y-2 group-hover:translate-y-0">
+                                <button onclick="navigate('mujer')" class="block w-full text-left px-6 py-4 text-xs tracking-widest text-gray-700 hover:bg-ana-light hover:text-ana-dark uppercase border-b border-gray-50">Para Mujer</button>
+                                <button onclick="navigate('hombre')" class="block w-full text-left px-6 py-4 text-xs tracking-widest text-gray-700 hover:bg-ana-light hover:text-ana-dark uppercase">Para Hombre</button>
+                            </div>
+                        </div>
+                        <button onclick="navigate('ubicacion');" class="text-xs font-bold tracking-[0.15em] text-gray-500 hover:text-ana-dark uppercase transition-colors">Ubicación</button>
+                        <button onclick="navigate('bonos')" class="text-xs font-bold tracking-[0.15em] text-ana-dark hover:text-ana-accent uppercase transition-colors">Bonos de Regalo</button>
+                        <button onclick="navigate('agendamiento')" class="bg-ana-dark hover:bg-ana-black text-white px-6 py-3 text-xs font-bold tracking-[0.1em] uppercase transition-all duration-300 shadow-md active:scale-95">
+                            Agendar Cita
+                        </button>
+                    </div>
+                    <div class="md:hidden flex items-center">
+                        <button onclick="toggleMobileMenu()" class="text-gray-900 focus:outline-none p-3 -mr-2 active:scale-90 transition-transform" aria-label="Abrir menú móvil">
+                            <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                        </button>
+                    </div>
                 </div>
-                <p className="text-sm text-slate-500 max-w-md mt-4 leading-relaxed">
-                  Soluciones tecnológicas para firmas corporativas. Minimice su riesgo fiscal ante la DIAN mediante modelos de auditoría confidencial.
-                </p>
-              </div>
-              
-              <div>
-                <h4 className="text-white font-semibold mb-4">Navegación</h4>
-                <ul className="space-y-2 text-sm">
-                  <li><a href="#como-funciona" className="hover:text-emerald-400 transition-colors">Metodología</a></li>
-                  <li><a href="#caracteristicas" className="hover:text-emerald-400 transition-colors">Cobertura Estratégica</a></li>
-                  <li><a href="#calculadora" className="hover:text-emerald-400 transition-colors">Eficiencia Operativa</a></li>
-                </ul>
-              </div>
-
-              <div>
-                <h4 className="text-white font-semibold mb-4">Conexión</h4>
-                <ul className="space-y-2 text-sm">
-                  <li><button onClick={scrollToCalendly} className="hover:text-emerald-400 transition-colors text-left">Reserva Ejecutiva</button></li>
-                  <li><a href="#" className="hover:text-emerald-400 transition-colors">Soporte y Consultas</a></li>
-                  <li><a href="#" className="hover:text-emerald-400 transition-colors">Protección de Datos</a></li>
-                </ul>
-              </div>
             </div>
-            
-            <div className="pt-8 border-t border-slate-800 text-sm flex flex-col md:flex-row justify-between items-center gap-4">
-              <p>© {new Date().getFullYear()} LMS Accounting Group. Todos los derechos reservados.</p>
-              <p className="text-slate-500 flex items-center gap-1">
-                Servicios de Auditoría con Inteligencia Financiera
-              </p>
+            <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full shadow-2xl max-h-[80vh] overflow-y-auto z-50">
+                <div class="px-4 pt-2 pb-6 space-y-1">
+                    <button onclick="navigate('nosotros');" class="block w-full text-left px-3 py-4 text-sm font-medium tracking-widest text-gray-900 border-b border-gray-50 uppercase active:bg-gray-50">Nosotros</button>
+                    <button onclick="navigate('servicios-portal')" class="block w-full text-left px-3 py-4 text-sm font-medium tracking-widest text-gray-900 border-b border-gray-50 uppercase active:bg-gray-50">Servicios</button>
+                    <button onclick="navigate('ubicacion');" class="block w-full text-left px-3 py-4 text-sm font-medium tracking-widest text-gray-900 border-b border-gray-50 uppercase active:bg-gray-50">Ubicación</button>
+                    <button onclick="navigate('bonos')" class="block w-full text-left px-3 py-4 text-sm font-medium tracking-widest text-ana-dark border-b border-gray-50 uppercase active:bg-gray-50">Bonos de Regalo</button>
+                    <button onclick="navigate('agendamiento')" class="block w-full text-center mt-4 bg-ana-dark text-white px-3 py-4 text-sm font-bold tracking-widest uppercase shadow-lg active:scale-95 transition-transform">Agendar Cita</button>
+                </div>
             </div>
-          </div>
-        </footer>
+        </nav>
+    </header>
 
-        {/* CTA Flotante Sutil */}
-        <div className={`fixed bottom-6 lg:bottom-10 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolledPastHero && !isNearBottom ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-24 opacity-0 scale-90 pointer-events-none'}`}>
-          <button onClick={scrollToCalendly} className="bg-[#0B3D2E] text-white px-5 sm:px-6 py-3.5 rounded-full font-bold text-sm sm:text-base shadow-[0_15px_40px_-10px_rgba(11,61,46,0.8)] border border-[#1A6B4A]/50 flex items-center gap-3 hover:bg-[#1A6B4A] hover:scale-105 transition-all duration-300 group whitespace-nowrap">
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-            </span>
-            
-            <span>Agendar evaluación estructural</span>
-            <ChevronRight size={18} className="text-emerald-400 group-hover:translate-x-1 transition-transform" />
-          </button>
+    <main class="flex-grow">
+        <!-- ==============================================
+             VISTA: HOME 
+             ============================================== -->
+        <div id="view-home" class="page-view active">
+            <!-- Carrusel Principal -->
+            <section class="relative w-full h-[65vh] md:h-[85vh] overflow-hidden group mt-0">
+                <div id="carousel-track" class="flex h-full w-[300%] carousel-track">
+                    <div class="w-1/3 h-full relative flex-shrink-0 bg-black overflow-hidden">
+                        <img src="https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776449105/0W3A1359_duecdn.jpg" alt="Ana Molano Peluquería" class="w-full h-full object-cover object-center opacity-90 animate-kenburns">
+                        <div class="absolute inset-0 bg-black/40 flex flex-col justify-center items-center text-center px-4">
+                            <h2 class="text-white text-3xl md:text-6xl lg:text-7xl font-light mb-2">Un espacio para <br class="md:hidden"><span class="font-semibold border-b-2 md:border-b-4 border-white pb-1">consentirte.</span></h2>
+                            <p class="text-pink-100 text-xs md:text-lg tracking-widest uppercase mt-6 md:mt-4 mb-8">Peluquería, Estética y Spa en Bogotá</p>
+                            <button onclick="navigate('agendamiento')" class="w-full max-w-[280px] md:max-w-none bg-ana-dark text-white hover:bg-ana-accent px-6 md:px-10 py-4 uppercase tracking-widest text-xs md:text-sm font-bold transition-all duration-300 shadow-[0_8px_25px_rgba(232,62,140,0.5)] hover:shadow-[0_12px_35px_rgba(255,115,168,0.6)] active:scale-95">Reserva tu cita</button>
+                        </div>
+                    </div>
+                    <div class="w-1/3 h-full relative flex-shrink-0 overflow-hidden">
+                        <img src="https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776452373/0W3A1704_cvff5q.jpg" alt="Servicio exclusivo de Nail Bar en Bogotá" class="w-full h-full object-cover animate-kenburns">
+                        <div class="absolute inset-0 bg-black/50 flex flex-col justify-center items-center md:items-start text-center md:text-left px-4 md:px-24">
+                            <h2 class="text-white text-3xl md:text-5xl lg:text-6xl font-light mb-2 leading-tight">Expertos en<br><span class="font-semibold border-b-2 md:border-b-4 border-white pb-1">Nail Bar & Spa.</span></h2>
+                            <button onclick="navigate('servicios-portal')" class="w-full max-w-[280px] md:max-w-none mt-8 md:mt-10 border border-white text-white hover:bg-white hover:text-black px-6 md:px-10 py-4 uppercase tracking-widest text-xs md:text-sm font-bold transition-all duration-300 shadow-lg shadow-black/30 active:scale-95">Ver Servicios</button>
+                        </div>
+                    </div>
+                    <div class="w-1/3 h-full relative flex-shrink-0 overflow-hidden">
+                        <img src="https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776450256/0W3A1841_f8b6mn.jpg" alt="Coloración y cuidado capilar profesional" class="w-full h-full object-cover animate-kenburns">
+                        <div class="absolute inset-0 bg-black/50 flex flex-col justify-center items-center md:items-end text-center md:text-right px-4 md:px-24">
+                            <h2 class="text-white text-3xl md:text-5xl lg:text-6xl font-light mb-2 leading-tight">La mejor versión de<br><span class="font-semibold border-b-2 md:border-b-4 border-white pb-1">tu cabello.</span></h2>
+                            <button onclick="navigate('agendamiento')" class="w-full max-w-[280px] md:max-w-none mt-8 md:mt-10 border border-white text-white hover:bg-white hover:text-black px-6 md:px-10 py-4 uppercase tracking-widest text-xs md:text-sm font-bold transition-all duration-300 shadow-lg shadow-black/30 active:scale-95">Transforma tu look</button>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="prevSlide()" class="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 w-12 h-12 md:w-12 items-center justify-center text-white border border-white/50 hover:bg-white hover:text-black transition-colors z-20 hidden md:flex backdrop-blur-sm active:scale-90"><svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path></svg></button>
+                <button onclick="nextSlide()" class="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-12 h-12 md:w-12 items-center justify-center text-white border border-white/50 hover:bg-white hover:text-black transition-colors z-20 hidden md:flex backdrop-blur-sm active:scale-90"><svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"></path></svg></button>
+                <div class="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 flex space-x-4 md:space-x-3 z-20">
+                    <button onclick="goToSlide(0)" class="carousel-dot w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-white transition-all duration-300"></button>
+                    <button onclick="goToSlide(1)" class="carousel-dot w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-white/40 hover:bg-white/70 transition-all duration-300"></button>
+                    <button onclick="goToSlide(2)" class="carousel-dot w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-white/40 hover:bg-white/70 transition-all duration-300"></button>
+                </div>
+            </section>
+
+            <!-- Barra Contacto -->
+            <section class="w-full bg-ana-black text-white border-t-4 border-ana-dark">
+                <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row">
+                    <div class="flex-1 p-6 md:p-8 flex items-center justify-center md:justify-end bg-ana-black md:border-r border-gray-800">
+                        <div class="text-center md:text-right">
+                            <span class="block text-gray-400 text-xs font-bold tracking-[0.2em] uppercase mb-2">Horario de Atención</span>
+                            <p class="font-light text-sm md:text-base mb-1">Lunes a Sábado: <strong class="font-bold">9:00 AM - 7:00 PM</strong> <br class="md:hidden"><span class="hidden md:inline"> | </span> Domingo: <strong class="font-bold">10:00 AM - 6:00 PM</strong></p>
+                            <span class="inline-block bg-white text-ana-dark text-[10px] md:text-xs px-3 py-1.5 font-bold mt-2 uppercase tracking-widest rounded-sm">Martes: Día de Descanso</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 p-6 md:p-8 flex flex-col items-center justify-center bg-[#1a1a1a]">
+                        <span class="block text-gray-400 text-xs font-bold tracking-[0.2em] uppercase mb-3">Reserva tu cita hoy</span>
+                        <a href="https://wa.me/573133292214?text=¡Hola!%20✨%20Me%20encantaría%20agendar%20una%20cita%20con%20ustedes.%20¿Me%20pueden%20ayudar%20con%20los%20horarios%20disponibles?%20💇‍♀️💅" target="_blank" class="bg-[#25D366] hover:bg-green-600 transition-all transform hover:scale-105 active:scale-95 px-6 md:px-8 py-3 md:py-4 rounded-full flex items-center gap-2 md:gap-3 text-xs md:text-sm font-bold shadow-lg w-full max-w-[280px] md:max-w-xs justify-center">
+                            <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                            WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Acerca de Nosotros Home -->
+            <section id="nosotros-home" class="py-16 md:py-20 bg-gray-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-center">
+                        <div class="order-2 md:order-1 relative">
+                            <div class="w-full aspect-[9/16] shadow-[0_10px_30px_rgba(0,0,0,0.1)] rounded-sm overflow-hidden relative bg-black cursor-pointer group" onclick="openGallery()">
+                                <img src="https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776450333/0W3A2011_xtfptm.jpg" alt="Equipo de Ana Molano Peluquería" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-out">
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="bg-ana-dark/90 backdrop-blur-sm text-white px-4 py-2 rounded-full text-xs font-bold tracking-widest uppercase flex items-center gap-2 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+                                        Ver fotos
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute -bottom-4 -right-4 md:-bottom-6 md:-right-6 bg-ana-dark text-white p-4 md:p-6 shadow-xl z-10 hidden sm:block pointer-events-none">
+                                <span class="block text-2xl md:text-3xl font-bold">100%</span>
+                                <span class="block text-[10px] md:text-xs uppercase tracking-widest">Profesional</span>
+                            </div>
+                        </div>
+                        <div class="order-1 md:order-2 text-center md:text-left">
+                            <h4 class="text-ana-dark tracking-[0.2em] text-xs md:text-sm font-bold uppercase mb-2">Acerca de la marca</h4>
+                            <h2 class="text-3xl md:text-5xl font-light text-ana-black mb-6 md:mb-8 tracking-tight">ANA MOLANO <br/><span class="font-bold">PELUQUERÍA</span></h2>
+                            <p class="text-gray-600 font-light leading-relaxed mb-6 text-sm md:text-base">Somos un salón de belleza y distribuidora enfocado en resaltar tu mejor versión. Combinamos la técnica, la relajación y el arte del color para brindarte experiencias únicas en estética facial, capilar y spa de uñas.</p>
+                            <div class="bg-ana-light p-5 md:p-6 border-l-4 border-ana-dark mb-8 relative overflow-hidden text-left">
+                                <h3 class="font-bold text-ana-dark uppercase tracking-widest text-xs md:text-sm mb-2 relative z-10">📍 Nuestra Ubicación</h3>
+                                <p class="text-gray-700 font-medium text-xs md:text-sm relative z-10 leading-relaxed">Visítanos en nuestras instalaciones, diseñadas especialmente para brindarte la comodidad y tranquilidad que mereces.<br><br><strong class="text-ana-black">Puente Aranda, Cra. 43c #5-84</strong><br>Nueva Primavera, Bogotá <br><span class="text-[10px] sm:text-xs text-gray-500 mt-1 inline-block">(A mano izquierda de la Distribuidora Olmos)</span><br><br>¡Te esperamos!</p>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <button onclick="openGallery()" class="w-full sm:w-auto border border-ana-dark bg-ana-dark text-white hover:bg-ana-accent hover:border-ana-accent px-8 py-4 md:py-3 text-xs font-bold tracking-[0.1em] uppercase transition-all duration-300 active:scale-95 shadow-lg flex justify-center items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    Ver Instalaciones
+                                </button>
+                                <button onclick="navigate('nosotros')" class="w-full sm:w-auto border border-ana-black text-ana-black hover:bg-ana-black hover:text-white px-8 py-4 md:py-3 text-xs font-bold tracking-[0.1em] uppercase transition-all duration-300 active:scale-95">Conoce a nuestro equipo</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bonos Home -->
+            <section class="py-12 md:py-16 bg-pink-50 relative overflow-hidden border-t border-pink-100">
+                <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
+                    <div class="md:w-1/2 text-center md:text-left">
+                        <h2 class="text-2xl md:text-3xl font-light text-ana-black mb-4">Regala <strong class="font-bold text-ana-dark">Belleza y Relajación</strong></h2>
+                        <p class="text-gray-600 font-light mb-6 md:mb-8 text-sm md:text-base leading-relaxed">El regalo perfecto para esa persona especial. Un momento de cuidado y renovación en manos de profesionales.</p>
+                        <button onclick="navigate('bonos')" class="w-full md:w-auto bg-ana-dark text-white hover:bg-ana-black px-8 py-4 md:py-3 text-xs font-bold tracking-[0.1em] uppercase transition-all duration-300 shadow-[0_8px_20px_rgba(232,62,140,0.3)] active:scale-95">Adquiere tu bono aquí</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tratamientos Estrella -->
+            <section class="py-16 md:py-20 bg-white border-t border-gray-100">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12 md:mb-16">
+                        <h2 class="text-2xl md:text-4xl font-light text-ana-black mb-3 md:mb-4 tracking-tight uppercase">Tratamientos Estrella</h2>
+                        <div class="w-12 h-0.5 bg-ana-dark mx-auto mb-4"></div>
+                        <p class="text-gray-500 font-light text-sm md:text-base">Conoce nuestros servicios más solicitados y sus beneficios.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                        <div class="service-card group flex flex-col h-full bg-gray-50 hover:bg-white shadow-sm hover:shadow-[0_10px_30px_rgba(232,62,140,0.06)] transition-all duration-500 border-t-4 border-ana-dark rounded-sm">
+                            <div class="p-6 md:p-8 flex-grow">
+                                <h3 class="text-xl md:text-2xl font-logo font-bold text-ana-dark mb-2">Aminoácidos</h3>
+                                <p class="text-xs md:text-sm font-light text-gray-600 mb-6 italic">¿Tu cabello luce opaco, sin vida y con frizz? El complemento perfecto para devolverle la vitalidad.</p>
+                                <ul class="space-y-2 text-xs md:text-sm font-light text-gray-700">
+                                    <li class="flex items-center"><svg class="w-3 h-3 md:w-4 md:h-4 text-ana-accent mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Controla el frizz</li>
+                                    <li class="flex items-center"><svg class="w-3 h-3 md:w-4 md:h-4 text-ana-accent mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Sella puntas y da brillo</li>
+                                    <li class="flex items-center"><svg class="w-3 h-3 md:w-4 md:h-4 text-ana-accent mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Reconstruye fibra capilar</li>
+                                </ul>
+                            </div>
+                            <div class="mt-auto px-6 pb-6 md:px-8 md:pb-8">
+                                <div class="pt-4 border-t border-gray-100 text-center">
+                                    <button onclick="navigate('agendamiento')" class="text-[10px] md:text-xs font-bold text-ana-dark uppercase tracking-widest hover:text-ana-accent transition-all flex items-center justify-center gap-1 w-full opacity-90 hover:opacity-100 group-hover:translate-x-1 duration-300">
+                                        Agendar este servicio <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="service-card group flex flex-col h-full bg-gray-50 hover:bg-white shadow-sm hover:shadow-[0_10px_30px_rgba(232,62,140,0.06)] transition-all duration-500 border-t-4 border-ana-dark rounded-sm">
+                            <div class="p-6 md:p-8 flex-grow">
+                                <h3 class="text-xl md:text-2xl font-logo font-bold text-ana-dark mb-2">Nail Bar Exclusivo</h3>
+                                <p class="text-xs md:text-sm font-light text-gray-600 mb-6 italic">Desde sistemas ligeros (Press On) hasta bases de gel para fortalecer uñas débiles (Rubber/Poly Gel).</p>
+                                <ul class="space-y-2 text-xs md:text-sm font-light text-gray-700">
+                                    <li class="flex items-center"><svg class="w-3 h-3 md:w-4 md:h-4 text-ana-accent mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Aplicación rápida y natural</li>
+                                    <li class="flex items-center"><svg class="w-3 h-3 md:w-4 md:h-4 text-ana-accent mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Fortalece la uña (Rubber)</li>
+                                    <li class="flex items-center"><svg class="w-3 h-3 md:w-4 md:h-4 text-ana-accent mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Ideal para extensión (Poly Gel)</li>
+                                </ul>
+                            </div>
+                            <div class="mt-auto px-6 pb-6 md:px-8 md:pb-8">
+                                <div class="pt-4 border-t border-gray-100 text-center">
+                                    <button onclick="navigate('agendamiento')" class="text-[10px] md:text-xs font-bold text-ana-dark uppercase tracking-widest hover:text-ana-accent transition-all flex items-center justify-center gap-1 w-full opacity-90 hover:opacity-100 group-hover:translate-x-1 duration-300">
+                                        Agendar este servicio <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="service-card group flex flex-col h-full bg-gray-50 hover:bg-white shadow-sm hover:shadow-[0_10px_30px_rgba(232,62,140,0.06)] transition-all duration-500 border-t-4 border-ana-dark rounded-sm">
+                            <div class="p-6 md:p-8 flex-grow">
+                                <h3 class="text-xl md:text-2xl font-logo font-bold text-ana-dark mb-2">Lifting Pestañas</h3>
+                                <p class="text-xs md:text-sm font-light text-gray-600 mb-6 italic">El proceso es sencillo. En menos de una hora tendrás pestañas largas, curvas y llenas de personalidad.</p>
+                                <ul class="space-y-2 text-xs md:text-sm font-light text-gray-700">
+                                    <li class="flex items-center"><svg class="w-3 h-3 md:w-4 md:h-4 text-ana-accent mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Tratamiento 100% seguro</li>
+                                    <li class="flex items-center"><svg class="w-3 h-3 md:w-4 md:h-4 text-ana-accent mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Mirada de impacto instantánea</li>
+                                    <li class="flex items-center"><svg class="w-3 h-3 md:w-4 md:h-4 text-ana-accent mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Olvídate de la pestañina</li>
+                                </ul>
+                            </div>
+                            <div class="mt-auto px-6 pb-6 md:px-8 md:pb-8">
+                                <div class="pt-4 border-t border-gray-100 text-center">
+                                    <button onclick="navigate('agendamiento')" class="text-[10px] md:text-xs font-bold text-ana-dark uppercase tracking-widest hover:text-ana-accent transition-all flex items-center justify-center gap-1 w-full opacity-90 hover:opacity-100 group-hover:translate-x-1 duration-300">
+                                        Agendar este servicio <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Testimonios -->
+            <section class="py-16 md:py-20 bg-[#efeae2] border-t border-gray-200 relative overflow-hidden">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="text-center mb-10 md:mb-14">
+                        <h2 class="text-2xl md:text-4xl font-light text-gray-800 mb-3 tracking-tight">LO QUE DICEN <span class="font-bold text-gray-900">NUESTRAS CLIENTAS</span></h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10 max-w-5xl mx-auto">
+                        <div class="flex justify-start hover:-translate-y-1 transition-transform duration-300"><div class="bg-white p-6 md:p-8 rounded-2xl rounded-tl-none shadow-sm relative w-full"><div class="flex text-yellow-400 mb-4"><svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg><svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg><svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg><svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg><svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg></div><p class="text-sm md:text-base text-gray-600 italic mb-5 leading-relaxed">"Excelente servicio. El equipo es súper amable y el resultado de mi lifting de pestañas fue sencillamente espectacular. ¡Súper recomendado!"</p><h5 class="text-xs font-bold uppercase tracking-widest text-ana-dark">- Camila V.</h5></div></div>
+                        <div class="flex justify-start hover:-translate-y-1 transition-transform duration-300"><div class="bg-white p-6 md:p-8 rounded-2xl rounded-tl-none shadow-sm relative w-full border-t-4 border-ana-accent"><div class="flex text-yellow-400 mb-4"><svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg><svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg><svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg><svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg><svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg></div><p class="text-sm md:text-base text-gray-600 italic mb-5 leading-relaxed">"El tratamiento de aminoácidos me dejó el cabello hermoso. Llevaba meses lidiando con el frizz y por fin logré controlarlo. ¡Gracias Ana Molano!"</p><h5 class="text-xs font-bold uppercase tracking-widest text-ana-dark">- Laura M.</h5></div></div>
+                        <div class="flex justify-start hover:-translate-y-1 transition-transform duration-300"><div class="bg-white p-6 md:p-8 rounded-2xl rounded-tl-none shadow-sm relative w-full"><div class="flex text-yellow-400 mb-4"><svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg><svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg><svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg><svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg><svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg></div><p class="text-sm md:text-base text-gray-600 italic mb-5 leading-relaxed">"El Nail Bar es mi lugar favorito. Mis uñas de Poly Gel me duraron casi el mes intactas. Las instalaciones son preciosas y muy relajantes."</p><h5 class="text-xs font-bold uppercase tracking-widest text-ana-dark">- Andrea G.</h5></div></div>
+                    </div>
+                </div>
+            </section>
         </div>
 
-      </div>
-    </>
-  );
-}
+        <!-- ==============================================
+             VISTA: NOSOTROS 
+             ============================================== -->
+        <div id="view-nosotros" class="page-view">
+            <section class="pt-20 pb-16 md:pt-32 md:pb-20 bg-pink-50 text-center px-4 border-b border-pink-100">
+                <h1 class="text-3xl md:text-5xl font-light text-ana-black mb-4 tracking-tight">SOBRE <strong class="font-bold text-ana-dark">NOSOTROS</strong></h1>
+                <div class="w-16 h-0.5 bg-ana-dark mx-auto mb-6"></div>
+                <p class="text-gray-600 font-light max-w-2xl mx-auto text-sm md:text-base leading-relaxed">Más que un salón de belleza, somos un espacio dedicado a resaltar tu esencia natural.</p>
+            </section>
+            
+            <section class="py-16 md:py-20 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div class="order-2 lg:order-1">
+                            <h3 class="text-xs md:text-sm font-bold tracking-[0.2em] text-ana-dark uppercase mb-3">Nuestra Marca</h3>
+                            <h2 class="text-3xl md:text-4xl font-light text-ana-black mb-6">El arte de <br><strong class="font-bold">crear belleza</strong></h2>
+                            <p class="text-gray-600 font-light leading-relaxed mb-6 text-sm md:text-base">En Ana Molano Peluquería iniciamos con un sueño claro: ofrecer un servicio integral donde la técnica profesional del más alto nivel se encuentre con la calidez humana.</p>
+                            <div class="flex items-center gap-4 text-ana-black font-medium">
+                                <span class="text-4xl font-logo text-ana-dark">Ana Molano</span>
+                                <span class="w-12 h-px bg-gray-300"></span>
+                                <span class="text-xs uppercase tracking-widest text-gray-500">Fundadora</span>
+                            </div>
+                            <div class="mt-8">
+                                <button onclick="openGallery()" class="w-full sm:w-auto border border-ana-dark bg-ana-dark text-white hover:bg-ana-accent hover:border-ana-accent px-8 py-4 md:py-3 text-xs font-bold tracking-[0.1em] uppercase transition-all duration-300 active:scale-95 shadow-lg flex justify-center items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    Ver Galería del Salón
+                                </button>
+                            </div>
+                        </div>
+                        <div class="order-1 lg:order-2">
+                            <div class="relative w-full pb-[56.25%] bg-gray-900 rounded-sm overflow-hidden shadow-2xl group cursor-pointer" onclick="openGallery()">
+                                <img src="https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776450333/0W3A2011_xtfptm.jpg" alt="Equipo de Ana Molano Peluquería" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-1000 ease-out">
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="bg-ana-dark/90 backdrop-blur-sm text-white px-4 py-2 rounded-full text-xs font-bold tracking-widest uppercase flex items-center gap-2 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+                                        Tocar para ver fotos
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="py-16 md:py-24 bg-gray-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12 md:mb-16">
+                        <h2 class="text-3xl md:text-4xl font-light text-ana-black mb-4">Nuestro <strong class="font-bold">Equipo</strong></h2>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-6 max-w-5xl mx-auto">
+                        <div class="bg-white rounded-sm overflow-hidden shadow-md hover:-translate-y-2 transition-transform duration-300 border border-gray-100"><div class="h-80 w-full overflow-hidden bg-pink-100"><img src="https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776450295/0W3A1664_fptbbp.jpg" alt="Ana Molano - Master Stylist" class="w-full h-full object-cover object-top"></div><div class="p-6 text-center border-t-4 border-ana-accent bg-white"><h3 class="text-lg font-bold text-ana-black mb-1">Ana Molano</h3><p class="text-[10px] font-bold tracking-widest text-ana-dark uppercase mb-3">Master Stylist</p><p class="text-xs text-gray-500 font-light">Especialista en colorimetría avanzada y diseño de imagen. Líder y fundadora.</p></div></div>
+                        <div class="bg-white rounded-sm overflow-hidden shadow-md hover:-translate-y-2 transition-transform duration-300 border border-gray-100"><div class="h-80 w-full overflow-hidden bg-pink-100"><img src="https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776450294/0W3A1617_x0teaw.jpg" alt="Tatiana - Nail Artist" class="w-full h-full object-cover object-top"></div><div class="p-6 text-center border-t-4 border-ana-accent bg-white"><h3 class="text-lg font-bold text-ana-black mb-1">Tatiana</h3><p class="text-[10px] font-bold tracking-widest text-ana-dark uppercase mb-3">Nail Artist</p><p class="text-xs text-gray-500 font-light">Experta en sistemas Press On, Polygel y decoración a mano alzada.</p></div></div>
+                        <div class="bg-white rounded-sm overflow-hidden shadow-md hover:-translate-y-2 transition-transform duration-300 border border-gray-100"><div class="h-80 w-full overflow-hidden bg-pink-100"><img src="https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776450311/0W3A1944_iezgag.jpg" alt="Zamara - Esteticista" class="w-full h-full object-cover object-top"></div><div class="p-6 text-center border-t-4 border-ana-accent bg-white"><h3 class="text-lg font-bold text-ana-black mb-1">Zamara</h3><p class="text-[10px] font-bold tracking-widest text-ana-dark uppercase mb-3">Esteticista</p><p class="text-xs text-gray-500 font-light">Apasionada por el cuidado de la piel, lifting de pestañas y micropigmentación.</p></div></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==============================================
+             VISTA: SERVICIOS PORTAL 
+             ============================================== -->
+        <div id="view-servicios-portal" class="page-view">
+            <section class="py-16 md:py-20 bg-gray-50 min-h-[80vh] flex items-center">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    <div class="text-center mb-10 md:mb-12"><h2 class="text-3xl md:text-5xl font-light text-ana-black mb-3 md:mb-4 tracking-tight">NUESTROS <strong class="font-bold text-ana-dark">SERVICIOS</strong></h2><div class="w-12 h-0.5 bg-ana-dark mx-auto mb-4"></div></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
+                        <div onclick="navigate('mujer')" class="relative h-[300px] md:h-96 group cursor-pointer overflow-hidden rounded-sm shadow-xl active:scale-[0.98] transition-transform"><img src="https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776452352/0W3A1801_ddhbvs.jpg" alt="Servicios de belleza para mujer" class="w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105"><div class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center transition-colors group-hover:bg-black/50"><h3 class="text-white text-4xl md:text-5xl font-logo mb-2 group-hover:scale-110 transition-transform duration-500">Para Mujer</h3></div></div>
+                        <div onclick="navigate('hombre')" class="relative h-[300px] md:h-96 group cursor-pointer overflow-hidden rounded-sm shadow-xl active:scale-[0.98] transition-transform"><img src="https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776450440/0W3A1911_cbjvsj.jpg" alt="Servicios de barbería para hombre" class="w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105 grayscale group-hover:grayscale-0"><div class="absolute inset-0 bg-black/50 flex flex-col items-center justify-center transition-colors"><h3 class="text-white text-4xl md:text-5xl font-logo mb-2 group-hover:scale-110 transition-transform duration-500">Para Hombre</h3></div></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==============================================
+             VISTA: BONOS 
+             ============================================== -->
+        <div id="view-bonos" class="page-view">
+            <section class="py-12 md:py-24 bg-ana-light relative overflow-hidden min-h-[80vh] flex flex-col justify-center">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-center">
+                        <div class="text-center md:text-left">
+                            <h2 class="text-3xl md:text-5xl font-light text-ana-black mb-4 md:mb-6 leading-tight">Regala <br><strong class="font-bold text-ana-dark">Belleza y Relajación</strong></h2>
+                            <p class="text-gray-700 font-light mb-8 leading-relaxed text-sm md:text-lg">Un regalo que se disfruta. Con los bonos de regalo de Ana Molano Peluquería, regalas un rato para disfrutar, para resaltar la belleza natural en manos de profesionales con gran experiencia.</p>
+                        </div>
+                        <div class="bg-white p-6 md:p-10 shadow-2xl rounded-sm border-t-4 border-ana-dark relative">
+                            <h3 class="text-lg md:text-xl font-bold text-ana-black mb-5 md:mb-6 uppercase tracking-widest text-center md:text-left">Solicita tu Bono</h3>
+                            <form class="space-y-4 md:space-y-5" onsubmit="procesarBono(event)">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+                                    <input type="text" id="bono-nombre" placeholder="Tu nombre completo" class="w-full bg-gray-50 border border-gray-200 p-4 focus:border-ana-dark focus:ring-0 outline-none transition-colors text-xs md:text-sm font-medium" required>
+                                    <input type="email" id="bono-email" placeholder="Tu correo electrónico" class="w-full bg-gray-50 border border-gray-200 p-4 focus:border-ana-dark focus:ring-0 outline-none transition-colors text-xs md:text-sm font-medium" required>
+                                </div>
+                                <textarea id="bono-mensaje" rows="4" placeholder="¿Qué servicio deseas regalar?" class="w-full bg-gray-50 border border-gray-200 p-4 focus:border-ana-dark focus:ring-0 outline-none transition-colors text-xs md:text-sm font-medium resize-none" required></textarea>
+                                <button type="submit" class="w-full border-2 border-ana-dark bg-ana-dark text-white hover:bg-white hover:text-ana-dark px-6 py-4 text-xs md:text-sm font-bold uppercase tracking-widest transition-all duration-300 flex justify-center items-center gap-2 shadow-md active:scale-95">Enviar solicitud por WhatsApp</button>
+                                <p class="text-[10px] text-gray-500 mt-4 text-center md:text-left flex items-center justify-center md:justify-start gap-1.5">
+                                    <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                    <strong class="font-medium text-gray-600">Medios de pago:</strong> Nequi, Daviplata o Transferencia.
+                                </p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==============================================
+             VISTA: MUJER 
+             ============================================== -->
+        <div id="view-mujer" class="page-view">
+            <div class="py-16 md:py-20 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12 md:mb-16"><h2 class="text-3xl md:text-5xl font-light text-ana-black mb-3 md:mb-4 tracking-tight">SERVICIOS MUJER</h2><div class="w-12 h-0.5 bg-ana-dark mx-auto"></div></div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+                        <div class="service-card group flex flex-col h-full bg-gray-50 hover:bg-white shadow-sm hover:shadow-[0_10px_30px_rgba(232,62,140,0.06)] transition-all duration-500 border-t-4 border-ana-dark rounded-sm">
+                            <div class="relative h-64 md:h-80 w-full mb-0 overflow-hidden bg-gray-100 cursor-pointer active:scale-[0.98] transition-transform" onclick="navigate('agendamiento')">
+                                <img src="https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776450391/0W3A1829_yw8a2m.jpg" alt="Cuidado Capilar Femenino" class="w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105">
+                                <div class="service-img-overlay absolute inset-0 bg-black/30 md:bg-black/10 transition-colors duration-300 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100">
+                                    <span class="bg-white/90 text-ana-black px-4 py-3 md:py-2 text-[10px] md:text-xs font-bold uppercase tracking-widest">Agendar Cita</span>
+                                </div>
+                            </div>
+                            <div class="p-5 md:p-6 flex-grow">
+                                <h3 class="text-lg md:text-xl font-bold text-ana-black mb-4 tracking-wide uppercase">Cuidado Capilar</h3>
+                                <ul class="space-y-0 w-full">
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Corte de Cabello</span><span class="text-[10px] md:text-xs font-medium text-gray-400">$20.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Lavado / Shampoo</span><span class="text-[10px] md:text-xs font-medium text-gray-400">Desde $5.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Cepillado</span><span class="text-[10px] md:text-xs font-medium text-gray-400">Desde $20.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Tinturas / Color</span><span class="text-[10px] md:text-xs font-medium text-gray-400">Previa valoración</span></li>
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Mechas / Balayage</span><span class="text-[10px] md:text-xs font-medium text-gray-400">Previa valoración</span></li>
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Repolarización</span><span class="text-[10px] md:text-xs font-medium text-gray-400">Desde $30.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Aminoácidos</span><span class="text-[10px] md:text-xs font-medium text-gray-400">Desde $100.000</span></li>
+                                </ul>
+                            </div>
+                            <div class="mt-auto px-5 pb-5 md:px-6 md:pb-6">
+                                <div class="pt-4 border-t border-gray-100 text-center">
+                                    <button onclick="navigate('agendamiento')" class="text-[10px] md:text-xs font-bold text-ana-dark uppercase tracking-widest hover:text-ana-accent transition-all flex items-center justify-center gap-1 w-full opacity-90 hover:opacity-100 group-hover:translate-x-1 duration-300">
+                                        Agendar este servicio <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="service-card group flex flex-col h-full bg-gray-50 hover:bg-white shadow-sm hover:shadow-[0_10px_30px_rgba(232,62,140,0.06)] transition-all duration-500 border-t-4 border-ana-dark rounded-sm">
+                            <div class="relative h-64 md:h-80 w-full mb-0 overflow-hidden bg-gray-100 cursor-pointer active:scale-[0.98] transition-transform" onclick="navigate('agendamiento')">
+                                <img src="https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776450407/0W3A1736_cstnou.jpg" alt="Spa de uñas para mujeres" class="w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105">
+                                <div class="service-img-overlay absolute inset-0 bg-black/30 md:bg-black/10 transition-colors duration-300 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100">
+                                    <span class="bg-white/90 text-ana-black px-4 py-3 md:py-2 text-[10px] md:text-xs font-bold uppercase tracking-widest">Agendar Cita</span>
+                                </div>
+                            </div>
+                            <div class="p-5 md:p-6 flex-grow">
+                                <h3 class="text-lg md:text-xl font-bold text-ana-black mb-4 tracking-wide uppercase">Nail Bar & Spa</h3>
+                                <ul class="space-y-0 w-full">
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Manicure Tradicional</span><span class="text-[10px] md:text-xs font-medium text-gray-400">$20.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Pedicure Tradicional</span><span class="text-[10px] md:text-xs font-medium text-gray-400">$25.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Semipermanente</span><span class="text-[10px] md:text-xs font-medium text-gray-400">$45.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Pedicure Semi</span><span class="text-[10px] md:text-xs font-medium text-gray-400">$50.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Base Rubber</span><span class="text-[10px] md:text-xs font-medium text-gray-400">$65.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Baño Poly gel</span><span class="text-[10px] md:text-xs font-medium text-gray-400">$75.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Press On</span><span class="text-[10px] md:text-xs font-medium text-gray-400">$90.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Montura Poly gel</span><span class="text-[10px] md:text-xs font-medium text-gray-400">$130.000</span></li>
+                                </ul>
+                            </div>
+                            <div class="mt-auto px-5 pb-5 md:px-6 md:pb-6">
+                                <div class="pt-4 border-t border-gray-100 text-center">
+                                    <button onclick="navigate('agendamiento')" class="text-[10px] md:text-xs font-bold text-ana-dark uppercase tracking-widest hover:text-ana-accent transition-all flex items-center justify-center gap-1 w-full opacity-90 hover:opacity-100 group-hover:translate-x-1 duration-300">
+                                        Agendar este servicio <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="service-card group flex flex-col h-full bg-gray-50 hover:bg-white shadow-sm hover:shadow-[0_10px_30px_rgba(232,62,140,0.06)] transition-all duration-500 border-t-4 border-ana-dark rounded-sm">
+                            <div class="relative h-64 md:h-80 w-full mb-0 overflow-hidden bg-gray-100 cursor-pointer active:scale-[0.98] transition-transform" onclick="navigate('agendamiento')">
+                                <img src="https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776452352/0W3A1801_ddhbvs.jpg" alt="Tratamientos faciales y estéticos" class="w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105">
+                                <div class="service-img-overlay absolute inset-0 bg-black/30 md:bg-black/10 transition-colors duration-300 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100">
+                                    <span class="bg-white/90 text-ana-black px-4 py-3 md:py-2 text-[10px] md:text-xs font-bold uppercase tracking-widest">Agendar Cita</span>
+                                </div>
+                            </div>
+                            <div class="p-5 md:p-6 flex-grow">
+                                <h3 class="text-lg md:text-xl font-bold text-ana-black mb-4 tracking-wide uppercase">Estética & Mirada</h3>
+                                <ul class="space-y-0 w-full">
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Masajes Reductores</span><span class="text-[10px] md:text-xs font-medium text-gray-400">Desde $50.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Limpieza Facial</span><span class="text-[10px] md:text-xs font-medium text-gray-400">Desde $60.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Micropigmentación</span><span class="text-[10px] md:text-xs font-medium text-gray-400">Previa valoración</span></li>
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Lifting de Pestañas</span><span class="text-[10px] md:text-xs font-medium text-gray-400">Desde $50.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-ana-accent mr-3"></div> Diseño de Cejas</span><span class="text-[10px] md:text-xs font-medium text-gray-400">Desde $15.000</span></li>
+                                </ul>
+                            </div>
+                            <div class="mt-auto px-5 pb-5 md:px-6 md:pb-6">
+                                <div class="pt-4 border-t border-gray-100 text-center">
+                                    <button onclick="navigate('agendamiento')" class="text-[10px] md:text-xs font-bold text-ana-dark uppercase tracking-widest hover:text-ana-accent transition-all flex items-center justify-center gap-1 w-full opacity-90 hover:opacity-100 group-hover:translate-x-1 duration-300">
+                                        Agendar este servicio <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             VISTA: HOMBRE 
+             ============================================== -->
+        <div id="view-hombre" class="page-view">
+            <div class="py-16 md:py-20 bg-gray-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12 md:mb-16"><h2 class="text-3xl md:text-5xl font-light text-ana-black mb-3 md:mb-4 tracking-tight">SERVICIOS HOMBRE</h2><div class="w-12 h-0.5 bg-ana-dark mx-auto"></div></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 max-w-4xl mx-auto">
+                        <div class="service-card group flex flex-col h-full bg-white shadow-sm hover:shadow-[0_10px_30px_rgba(232,62,140,0.06)] transition-all duration-500 border-t-4 border-gray-800 rounded-sm">
+                            <div class="relative h-64 md:h-80 w-full mb-0 overflow-hidden bg-gray-200 cursor-pointer active:scale-[0.98] transition-transform" onclick="navigate('agendamiento')">
+                                <img src="https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776450441/0W3A1922_bj4r5o.jpg" alt="Corte de cabello y barbería" class="w-full h-full object-cover grayscale transition-transform duration-1000 ease-out group-hover:scale-105 group-hover:grayscale-0">
+                                <div class="service-img-overlay absolute inset-0 bg-black/30 md:bg-black/20 transition-colors duration-300 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100">
+                                    <span class="bg-white/90 text-ana-black px-4 py-3 text-[10px] font-bold uppercase tracking-widest">Agendar Cita</span>
+                                </div>
+                            </div>
+                            <div class="p-5 md:p-6 flex-grow">
+                                <h3 class="text-lg md:text-xl font-bold text-ana-black mb-4 tracking-wide uppercase">Corte & Estilo</h3>
+                                <ul class="space-y-0 w-full">
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-gray-800 mr-3"></div> Corte Clásico y Moderno</span><span class="text-[10px] md:text-xs font-medium text-gray-400">$20.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-gray-800 mr-3"></div> Lavado / Shampoo</span><span class="text-[10px] md:text-xs font-medium text-gray-400">Desde $5.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-gray-800 mr-3"></div> Colorimetría Masculina</span><span class="text-[10px] md:text-xs font-medium text-gray-400">Desde $40.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-gray-800 mr-3"></div> Camuflaje de Canas</span><span class="text-[10px] md:text-xs font-medium text-gray-400">Desde $30.000</span></li>
+                                </ul>
+                            </div>
+                            <div class="mt-auto px-5 pb-5 md:px-6 md:pb-6">
+                                <div class="pt-4 border-t border-gray-100 text-center">
+                                    <button onclick="navigate('agendamiento')" class="text-[10px] md:text-xs font-bold text-gray-800 uppercase tracking-widest hover:text-ana-dark transition-all flex items-center justify-center gap-1 w-full opacity-90 hover:opacity-100 group-hover:translate-x-1 duration-300">
+                                        Agendar este servicio <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="service-card group flex flex-col h-full bg-white shadow-sm hover:shadow-[0_10px_30px_rgba(232,62,140,0.06)] transition-all duration-500 border-t-4 border-gray-800 rounded-sm">
+                            <div class="relative h-64 md:h-80 w-full mb-0 overflow-hidden bg-gray-200 cursor-pointer active:scale-[0.98] transition-transform" onclick="navigate('agendamiento')">
+                                <img src="https://images.unsplash.com/photo-1512618831669-521d4b375f5d?q=80&w=1974&auto=format&fit=crop" alt="Cuidado personal y estético masculino" class="w-full h-full object-cover grayscale transition-transform duration-1000 ease-out group-hover:scale-105 group-hover:grayscale-0">
+                                <div class="service-img-overlay absolute inset-0 bg-black/30 md:bg-black/20 transition-colors duration-300 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100">
+                                    <span class="bg-white/90 text-ana-black px-4 py-3 text-[10px] font-bold uppercase tracking-widest">Agendar Cita</span>
+                                </div>
+                            </div>
+                            <div class="p-5 md:p-6 flex-grow">
+                                <h3 class="text-lg md:text-xl font-bold text-ana-black mb-4 tracking-wide uppercase">Cuidado Personal</h3>
+                                <ul class="space-y-0 w-full">
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-gray-800 mr-3"></div> Limpieza Facial Profunda</span><span class="text-[10px] md:text-xs font-medium text-gray-400">Desde $60.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-gray-800 mr-3"></div> Manicure Masculino</span><span class="text-[10px] md:text-xs font-medium text-gray-400">$20.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 border-b border-gray-50 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-gray-800 mr-3"></div> Pedicure y SPA</span><span class="text-[10px] md:text-xs font-medium text-gray-400">$25.000</span></li>
+                                    <li class="flex justify-between items-center py-2.5 px-1 price-row-anim"><span class="flex items-center text-gray-800 font-medium text-xs md:text-sm"><div class="w-1.5 h-1.5 rounded-full bg-gray-800 mr-3"></div> Masajes Relajantes</span><span class="text-[10px] md:text-xs font-medium text-gray-400">Desde $50.000</span></li>
+                                </ul>
+                            </div>
+                            <div class="mt-auto px-5 pb-5 md:px-6 md:pb-6">
+                                <div class="pt-4 border-t border-gray-100 text-center">
+                                    <button onclick="navigate('agendamiento')" class="text-[10px] md:text-xs font-bold text-gray-800 uppercase tracking-widest hover:text-ana-dark transition-all flex items-center justify-center gap-1 w-full opacity-90 hover:opacity-100 group-hover:translate-x-1 duration-300">
+                                        Agendar este servicio <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             VISTA: UBICACION 
+             ============================================== -->
+        <div id="view-ubicacion" class="page-view">
+            <section class="py-16 md:py-20 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16">
+                        <div class="flex flex-col justify-between bg-gray-50 p-6 md:p-10 border-t-4 border-ana-dark shadow-sm">
+                            <div>
+                                <h2 class="text-2xl md:text-3xl font-light text-ana-black mb-8 md:mb-10 tracking-wide uppercase">Visítanos</h2>
+                                <div class="mb-8">
+                                    <h3 class="text-xs md:text-sm font-bold tracking-[0.1em] text-ana-dark uppercase mb-2">Sede Principal</h3>
+                                    <p class="text-gray-600 font-light leading-relaxed text-sm md:text-base">
+                                        <strong class="font-bold text-gray-900">Puente Aranda</strong><br/>
+                                        Cra. 43c #5-84, Nueva Primavera<br/>
+                                        Bogotá, Cundinamarca<br/>
+                                        <span class="text-xs text-gray-500 mt-1 inline-block">(A mano izquierda de la Distribuidora Olmos)</span>
+                                    </p>
+                                </div>
+                                <div class="mb-6">
+                                    <h3 class="text-xs md:text-sm font-bold tracking-[0.1em] text-ana-dark uppercase mb-3">Horarios</h3>
+                                    <ul class="text-gray-600 font-light space-y-3 text-sm md:text-base">
+                                        <li class="flex justify-between border-b border-gray-200 pb-2"><span>Lunes a Sábado:</span> <span class="font-medium text-gray-900">9:00 AM - 7:00 PM</span></li>
+                                        <li class="flex justify-between border-b border-gray-200 pb-2"><span>Domingos:</span> <span class="font-medium text-gray-900">10:00 AM - 6:00 PM</span></li>
+                                        <li class="text-ana-dark pt-2 text-xs md:text-sm font-bold tracking-wider uppercase">Martes cerrado (Día de descanso)</li>
+                                    </ul>
+                                </div>
+                                <div class="mt-6">
+                                    <h3 class="text-xs md:text-sm font-bold tracking-[0.1em] text-ana-dark uppercase mb-3">Cómo Llegar</h3>
+                                    <div class="w-full h-48 md:h-64 rounded-sm overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow">
+                                        <iframe src="https://maps.google.com/maps?q=Ana+Molano+Peluqueria+Bogota&t=&z=16&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa de Ana Molano Peluquería"></iframe>
+                                    </div>
+                                    <a href="https://maps.google.com/?q=Ana+Molano+Peluqueria+Bogota" target="_blank" class="inline-flex items-center gap-2 mt-3 text-xs font-bold text-ana-dark hover:text-ana-black uppercase tracking-widest transition-colors">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                        Abrir en Google Maps
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col justify-center items-center bg-ana-light p-8 md:p-10 border border-pink-100 text-center shadow-sm">
+                            <svg class="w-12 h-12 md:w-16 md:h-16 text-ana-dark mb-4 md:mb-6 animate-float" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                            <h2 class="text-xl md:text-2xl font-bold text-ana-black mb-3 md:mb-4 tracking-wide uppercase">Atención Rápida</h2>
+                            <p class="text-gray-600 font-light mb-6 md:mb-8 text-sm md:text-base">La forma más rápida de hacernos una consulta directa es escribiéndonos a nuestro WhatsApp.</p>
+                            <a href="https://wa.me/573133292214?text=¡Hola!%20✨%20Me%20encantaría%20hacerles%20una%20consulta.%20💅" target="_blank" class="w-full bg-[#25D366] hover:bg-green-600 text-white px-6 py-4 text-xs md:text-sm font-bold tracking-[0.1em] uppercase transition-colors shadow-lg flex justify-center items-center active:scale-95">Escribir al WhatsApp</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==============================================
+             VISTA: AGENDAMIENTO 
+             ============================================== -->
+        <div id="view-agendamiento" class="page-view">
+            <div class="py-12 md:py-20 bg-pink-50 min-h-[80vh] relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-pink-100 to-transparent opacity-60 pointer-events-none"></div>
+                <div class="absolute -top-24 -right-24 w-96 h-96 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob pointer-events-none"></div>
+                <div class="absolute top-48 -left-24 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000 pointer-events-none"></div>
+                
+                <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="bg-white shadow-2xl p-6 md:p-10 border-t-4 border-ana-dark rounded-xl">
+                        <div class="text-center mb-8 md:mb-12">
+                            <h2 class="text-3xl md:text-4xl font-light text-ana-black mb-3 tracking-tight uppercase">Reserva tu <strong class="font-bold text-ana-dark">Espacio</strong></h2>
+                            <p class="text-gray-500 font-light text-sm md:text-base px-2 max-w-2xl mx-auto">Sigue estos dos sencillos pasos para agendar tu cita. Recibirás un correo de confirmación automáticamente.</p>
+                        </div>
+                        <div class="mb-10 md:mb-12">
+                            <h3 class="text-xs md:text-sm font-bold tracking-widest text-ana-dark uppercase mb-4 md:mb-5 border-b border-pink-100 pb-3 flex items-center gap-2">
+                                <span class="bg-ana-light text-ana-dark w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span>
+                                Selecciona el Servicio Principal
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+                                <label class="time-pill cursor-pointer active:scale-[0.98] transition-transform"><input type="radio" name="servicio_cal" value="Capilar" class="hidden" onchange="mostrarCalendly()"><div class="border-2 border-pink-100 p-5 text-center hover:border-ana-dark hover:bg-pink-50 transition-all font-medium text-sm bg-white rounded-lg shadow-sm text-gray-700">Cuidado Capilar (Color, Keratina)</div></label>
+                                <label class="time-pill cursor-pointer active:scale-[0.98] transition-transform"><input type="radio" name="servicio_cal" value="Nails" class="hidden" onchange="mostrarCalendly()"><div class="border-2 border-pink-100 p-5 text-center hover:border-ana-dark hover:bg-pink-50 transition-all font-medium text-sm bg-white rounded-lg shadow-sm text-gray-700">Nail Spa (Manos y Pies)</div></label>
+                                <label class="time-pill cursor-pointer active:scale-[0.98] transition-transform"><input type="radio" name="servicio_cal" value="Estetica" class="hidden" onchange="mostrarCalendly()"><div class="border-2 border-pink-100 p-5 text-center hover:border-ana-dark hover:bg-pink-50 transition-all font-medium text-sm bg-white rounded-lg shadow-sm text-gray-700">Estética (Masajes, Faciales)</div></label>
+                                <label class="time-pill cursor-pointer active:scale-[0.98] transition-transform"><input type="radio" name="servicio_cal" value="Hombre" class="hidden" onchange="mostrarCalendly()"><div class="border-2 border-pink-100 p-5 text-center hover:border-ana-dark hover:bg-pink-50 transition-all font-medium text-sm bg-white rounded-lg shadow-sm text-gray-700">Corte & Estilo / Hombre</div></label>
+                            </div>
+                        </div>
+                        <div id="calendly-section" class="opacity-30 pointer-events-none transition-all duration-700">
+                            <h3 class="text-xs md:text-sm font-bold tracking-widest text-ana-dark uppercase mb-4 md:mb-5 border-b border-pink-100 pb-3 flex items-center gap-2">
+                                <span class="bg-ana-light text-ana-dark w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span>
+                                Elige tu fecha y hora
+                            </h3>
+                            <div class="calendly-inline-widget bg-white rounded-lg overflow-hidden" data-url="https://calendly.com/anamolanopeluqueria/30min?hide_gdpr_banner=1&background_color=ffffff&text_color=1f1f1f&primary_color=e83e8c" style="min-width:320px;height:700px;"></div>
+                            <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==============================================
+         FOOTER 
+         ============================================== -->
+    <footer class="bg-[#111111] text-white pt-16 md:pt-20 pb-8 md:pb-10 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-10 mb-12 md:mb-16 text-center md:text-left">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="inline-block animate-float">
+                        <h3 class="text-4xl font-logo mb-3 md:mb-4">Ana Molano</h3>
+                    </div>
+                    <p class="text-gray-400 text-xs font-light leading-relaxed mb-6 px-4 md:px-0">Un espacio que combina la ciencia y el arte de la belleza. Peluquería, spa de uñas y distribuidora oficial.</p>
+                    <div class="flex justify-center md:justify-start space-x-5 md:space-x-4">
+                        <a href="https://www.instagram.com/anamolanopeluqueria" target="_blank" aria-label="Instagram de Ana Molano" class="text-gray-400 hover:text-white transition-colors"><svg class="w-6 h-6 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+                        <a href="https://www.facebook.com/anamolanopeluqueria" target="_blank" aria-label="Facebook de Ana Molano" class="text-gray-400 hover:text-white transition-colors"><svg class="w-6 h-6 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-widest mb-5 md:mb-6">Servicios Rápidos</h4>
+                    <ul class="space-y-4 md:space-y-3 text-sm font-light text-gray-400">
+                        <li><button onclick="navigate('mujer')" class="hover:text-white transition-colors py-1">Servicios Mujer</button></li>
+                        <li><button onclick="navigate('hombre')" class="hover:text-white transition-colors py-1">Servicios Hombre</button></li>
+                        <li><button onclick="navigate('bonos')" class="hover:text-ana-accent transition-colors font-medium py-1">Comprar Bono de Regalo</button></li>
+                        <li><button onclick="navigate('agendamiento')" class="hover:text-white transition-colors py-1">Agendar Cita</button></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-widest mb-5 md:mb-6">Información</h4>
+                    <ul class="space-y-4 md:space-y-3 text-sm font-light text-gray-400">
+                        <li><button onclick="navigate('nosotros')" class="hover:text-white transition-colors py-1">Nuestra Filosofía y Equipo</button></li>
+                        <li><button onclick="navigate('ubicacion')" class="hover:text-white transition-colors py-1">Ubicación y Horarios</button></li>
+                        <li class="pt-4 text-white font-medium"><a href="mailto:hola@anamolanopeluqueria.com" class="hover:text-ana-accent transition-colors">hola@anamolanopeluqueria.com</a></li>
+                        <li class="text-white font-medium">+57 313 329 2214</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-widest mb-5 md:mb-6">Newsletter</h4>
+                    <p class="text-sm font-light text-gray-400 mb-4 px-4 md:px-0">Entérate de las últimas promociones.</p>
+                    <form class="flex flex-col gap-3" onsubmit="procesarNewsletter(event)">
+                        <input type="email" id="nl-email" placeholder="Correo electrónico" class="bg-white text-black px-4 py-3 text-sm w-full focus:outline-none text-center md:text-left rounded-sm" required>
+                        <button type="submit" class="text-center md:text-left font-bold text-sm tracking-widest uppercase hover:text-ana-dark transition-colors py-3 md:py-0 active:scale-95">Recibir por WhatsApp</button>
+                    </form>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-6 md:pt-8 text-[10px] md:text-xs font-light text-gray-500 flex flex-col md:flex-row justify-center md:justify-between items-center text-center">
+                <p>&copy; 2026 ANA MOLANO PELUQUERÍA. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- FAB WHATSAPP -->
+    <a href="https://wa.me/573133292214?text=¡Hola!%20✨%20Me%20encantaría%20hacerles%20una%20consulta.%20💅" target="_blank" aria-label="Escríbenos por WhatsApp" class="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 bg-[#25D366] hover:bg-green-600 text-white w-12 h-12 md:w-14 md:h-14 rounded-full shadow-[0_10px_30px_rgba(37,211,102,0.4)] flex items-center justify-center transition-transform hover:-translate-y-1 active:scale-90 wa-pulse">
+        <svg class="w-6 h-6 md:w-8 md:h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    </a>
+
+    <!-- LIGHTBOX DE GALERÍA -->
+    <div id="gallery-lightbox" class="fixed inset-0 z-[100] bg-black/95 hidden flex-col justify-center items-center opacity-0 transition-opacity duration-300">
+        <button onclick="closeGallery()" class="absolute top-4 right-4 md:top-8 md:right-8 text-white/70 hover:text-white p-2 transition-colors z-50 bg-black/30 rounded-full">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <div class="relative w-full max-w-6xl px-4 flex items-center justify-between h-[80vh]">
+            <button onclick="changeGalleryImage(-1)" class="text-white/70 hover:text-white p-2 transition-colors z-50 bg-black/30 hover:bg-ana-dark rounded-full active:scale-90">
+                <svg class="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path></svg>
+            </button>
+            <div class="flex-1 flex justify-center items-center h-full px-2 md:px-8">
+                <img id="lightbox-img" src="" alt="Instalaciones" class="max-h-full max-w-full object-contain rounded-sm shadow-2xl">
+            </div>
+            <button onclick="changeGalleryImage(1)" class="text-white/70 hover:text-white p-2 transition-colors z-50 bg-black/30 hover:bg-ana-dark rounded-full active:scale-90">
+                <svg class="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+        </div>
+        <div class="absolute bottom-6 md:bottom-10 left-0 w-full text-center text-white/70 text-xs md:text-sm font-bold tracking-widest uppercase">
+            <span id="gallery-counter">1</span> / <span id="gallery-total">8</span>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // --- GALERÍA DE IMÁGENES ---
+        const galleryImages = [
+            "https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776454700/0W3A1345_amcels.jpg",
+            "https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776454703/0W3A1385_wnezet.jpg",
+            "https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776454701/0W3A1287_bpgfuw.jpg",
+            "https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776454704/0W3A1412_vlsxjc.jpg",
+            "https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776454707/0W3A1551_bghuqu.jpg",
+            "https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776454705/0W3A1543_wkxcxz.jpg",
+            "https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776454707/0W3A1511_dgiks9.jpg",
+            "https://res.cloudinary.com/dfj0ckm10/image/upload/f_auto,q_auto/v1776454931/0W3A1308_mxol8a.jpg"
+        ];
+        
+        let currentGalleryIndex = 0;
+
+        function openGallery(startIndex = 0) {
+            currentGalleryIndex = startIndex;
+            updateGalleryUI();
+            const lightbox = document.getElementById('gallery-lightbox');
+            lightbox.classList.remove('hidden');
+            lightbox.classList.add('flex');
+            setTimeout(() => { lightbox.classList.remove('opacity-0'); lightbox.classList.add('opacity-100'); }, 10);
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        function closeGallery() {
+            const lightbox = document.getElementById('gallery-lightbox');
+            lightbox.classList.remove('opacity-100');
+            lightbox.classList.add('opacity-0');
+            setTimeout(() => { lightbox.classList.add('hidden'); lightbox.classList.remove('flex'); }, 300);
+            document.body.style.overflow = ''; 
+        }
+
+        function changeGalleryImage(direction) {
+            currentGalleryIndex += direction;
+            if (currentGalleryIndex < 0) currentGalleryIndex = galleryImages.length - 1;
+            if (currentGalleryIndex >= galleryImages.length) currentGalleryIndex = 0;
+            updateGalleryUI();
+        }
+
+        function updateGalleryUI() {
+            const img = document.getElementById('lightbox-img');
+            img.src = galleryImages[currentGalleryIndex];
+            document.getElementById('gallery-counter').textContent = currentGalleryIndex + 1;
+            document.getElementById('gallery-total').textContent = galleryImages.length;
+        }
+
+        document.addEventListener('keydown', (e) => {
+            const lightbox = document.getElementById('gallery-lightbox');
+            if (!lightbox.classList.contains('hidden')) {
+                if (e.key === 'Escape') closeGallery();
+                if (e.key === 'ArrowRight') changeGalleryImage(1);
+                if (e.key === 'ArrowLeft') changeGalleryImage(-1);
+            }
+        });
+
+        // --- NAVEGACIÓN SPA ---
+        function navigate(viewId, updateHistory = true) {
+            document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
+            const targetView = document.getElementById('view-' + viewId);
+            if(targetView) targetView.classList.add('active');
+            
+            const mobileMenu = document.getElementById('mobile-menu');
+            if(!mobileMenu.classList.contains('hidden')) mobileMenu.classList.add('hidden');
+            
+            if(updateHistory) { history.pushState(null, null, '#' + viewId); }
+            if(viewId !== 'home') window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.addEventListener('popstate', () => {
+            const hash = window.location.hash.replace('#', '') || 'home';
+            navigate(hash, false);
+        });
+
+        function toggleMobileMenu() { document.getElementById('mobile-menu').classList.toggle('hidden'); }
+        
+        // --- FORMULARIOS ---
+        function procesarBono(event) {
+            event.preventDefault();
+            const nombre = document.getElementById('bono-nombre').value;
+            const email = document.getElementById('bono-email').value;
+            const descripcion = document.getElementById('bono-mensaje').value;
+            const numeroWhatsApp = "573133292214";
+            const mensaje = `🎁 *¡Hola! Quiero regalar un Bono de Ana Molano* 🎁%0A%0A📋 *Mis datos:*%0A- *Nombre:* ${nombre}%0A- *Correo:* ${email}%0A%0A💝 *Lo que quiero regalar:*%0A${descripcion}%0A%0A¡Por favor indíquenme cómo realizo el pago y el proceso! Quedo atenta(o).`;
+            window.open(`https://wa.me/${numeroWhatsApp}?text=${mensaje}`, '_blank');
+        }
+
+        function procesarNewsletter(event) {
+            event.preventDefault();
+            const email = document.getElementById('nl-email').value;
+            const numeroWhatsApp = "573133292214";
+            const mensaje = `✨ *¡Hola Ana Molano Peluquería!* ✨%0AQuiero suscribirme a su lista de clientes para recibir promociones y descuentos.%0AMi correo es: ${email}`;
+            window.open(`https://wa.me/${numeroWhatsApp}?text=${mensaje}`, '_blank');
+            document.getElementById('nl-email').value = '';
+        }
+
+        function mostrarCalendly() {
+            const calendlySec = document.getElementById('calendly-section');
+            calendlySec.classList.remove('opacity-30', 'pointer-events-none');
+            setTimeout(() => { calendlySec.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 200);
+        }
+
+        // --- CARRUSEL ---
+        let currentSlide = 0;
+        const totalSlides = 3;
+        let slideInterval;
+        
+        function updateCarousel() {
+            const track = document.getElementById('carousel-track');
+            const dots = document.querySelectorAll('.carousel-dot');
+            if(track) track.style.transform = `translateX(-${currentSlide * (100 / totalSlides)}%)`;
+            dots.forEach((dot, index) => {
+                if (index === currentSlide) { dot.classList.remove('bg-white/40'); dot.classList.add('bg-white'); }
+                else { dot.classList.remove('bg-white'); dot.classList.add('bg-white/40'); }
+            });
+        }
+        function nextSlide() { currentSlide = (currentSlide + 1) % totalSlides; updateCarousel(); resetInterval(); }
+        function prevSlide() { currentSlide = (currentSlide - 1 + totalSlides) % totalSlides; updateCarousel(); resetInterval(); }
+        function goToSlide(index) { currentSlide = index; updateCarousel(); resetInterval(); }
+        function resetInterval() { clearInterval(slideInterval); slideInterval = setInterval(nextSlide, 6000); }
+
+        // --- ANIMACIONES & SCROLL REVEAL ---
+        (function(){
+            const RAF = requestAnimationFrame;
+            const isMouse = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+
+            function initReveal(){
+                var obs = new IntersectionObserver(function(entries){
+                    entries.forEach(function(e){
+                        if(e.isIntersecting){
+                            e.target.classList.add('visible');
+                            obs.unobserve(e.target);
+                        }
+                    });
+                },{threshold:0.1, rootMargin:'0px 0px -30px 0px'});
+
+                document.querySelectorAll('.service-card').forEach(function(el,i){
+                    el.classList.add('reveal'); el.style.transitionDelay = (i*0.09)+'s'; obs.observe(el);
+                });
+                document.querySelectorAll('#view-nosotros .grid > div, #view-home .grid > div').forEach(function(el,i){
+                    if(!el.classList.contains('reveal')){
+                        el.classList.add('reveal'); el.style.transitionDelay = (i*0.08)+'s'; obs.observe(el);
+                    }
+                });
+                document.querySelectorAll('.stat-section, .stat-item').forEach(function(el){
+                    el.classList.add('reveal'); obs.observe(el);
+                });
+                var left = document.querySelector('#nosotros-home .order-2');
+                var right = document.querySelector('#nosotros-home .order-1');
+                if(left){ left.classList.add('reveal','r-left'); obs.observe(left); }
+                if(right){ right.classList.add('reveal','r-right'); obs.observe(right); }
+            }
+
+            document.querySelectorAll('nav .hidden.md\\:flex button, footer button').forEach(function(btn){
+                btn.classList.add('nav-line');
+            });
+
+            if(isMouse){
+                var magSel = ['button.bg-ana-dark','button.border-ana-dark','a.bg-ana-dark','a[href*="wa.me"].rounded-full'].join(',');
+                document.querySelectorAll(magSel).forEach(function(btn){
+                    btn.classList.add('btn-mag');
+                    btn.addEventListener('mousemove',function(e){
+                        var r=btn.getBoundingClientRect();
+                        var dx=(e.clientX-r.left-r.width/2)*0.2; var dy=(e.clientY-r.top-r.height/2)*0.2;
+                        btn.style.transform='translate('+dx+'px,'+dy+'px)';
+                    });
+                    btn.addEventListener('mouseleave',function(){ btn.style.transform='translate(0,0)'; });
+                });
+
+                var heroMedia = document.querySelectorAll('#carousel-track img');
+                window.addEventListener('scroll',function(){
+                    var sy = window.scrollY;
+                    heroMedia.forEach(function(m){ m.style.transform='translateY('+(sy*0.22)+'px)'; });
+                },{passive:true});
+            }
+
+            document.querySelectorAll('button,a').forEach(function(el){ el.classList.add('ripple-effect'); });
+            document.querySelectorAll('#view-mujer li, #view-hombre li').forEach(function(li){ li.classList.add('price-row-anim'); });
+            document.querySelectorAll('#view-nosotros .bg-white.rounded-sm, #view-home .bg-gray-50').forEach(function(el){ el.classList.add('card-lift'); });
+
+            var navEl=document.querySelector('nav');
+            if(navEl){
+                window.addEventListener('scroll',function(){ navEl.classList.toggle('nav-shadow', window.scrollY>8); },{passive:true});
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                resetInterval();
+                initReveal();
+                const hash = window.location.hash.replace('#', '');
+                if(hash && document.getElementById('view-' + hash)) {
+                    navigate(hash, false);
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
